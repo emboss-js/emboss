@@ -163,15 +163,16 @@ export const BAR_STYLES = `
   pointer-events: none;
 }
 
-/* Status-driven fill gradients */
+/* Status-driven fill gradients — use background-image longhand, not background shorthand,
+   because var() containing gradient values can fail shorthand parsing in some browsers */
 .emboss-bar[data-status="active"] .emboss-bar-fill {
-  background: var(--emboss-fill-active);
+  background-image: var(--emboss-fill-active);
 }
 .emboss-bar[data-status="done"] .emboss-bar-fill {
-  background: var(--emboss-fill-done);
+  background-image: var(--emboss-fill-done);
 }
 .emboss-bar[data-status="upcoming"] .emboss-bar-fill {
-  background: var(--emboss-fill-upcoming);
+  background-image: var(--emboss-fill-upcoming);
 }
 
 /* Opacity states — theme-responsive via CSS variables */
