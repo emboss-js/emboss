@@ -45,3 +45,20 @@ export function dayToX(dayOffset: number, dayWidth: number): number {
 export function xToDay(x: number, dayWidth: number): number {
   return Math.round(x / dayWidth)
 }
+
+export function daysInMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate()
+}
+
+const MONTH_NAMES = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+]
+
+export function getMonthName(month: number, full = false): string {
+  if (full) {
+    return ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'][month]
+  }
+  return MONTH_NAMES[month]
+}

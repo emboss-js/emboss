@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emboss — Phase 2 Demo</title>
+  <link rel="stylesheet" href="../src/core/themes/grayscale.css">
+  <link rel="stylesheet" href="../src/core/themes/dark.css">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6f8; padding: 24px; }
+    .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar button {
+      padding: 6px 14px; border: 1px solid #d1d5db; border-radius: 6px;
+      background: #fff; cursor: pointer; font-size: 13px; color: #374151;
+    }
+    .toolbar button:hover { background: #f0f1f4; }
+    .toolbar button.active { background: #374151; color: #fff; border-color: #374151; }
+    #chart { width: 100%; height: 500px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .dark-mode { background: #0f1117; }
+    .dark-mode .toolbar button { background: #1a1d23; color: #d1d5db; border-color: #374151; }
+    .dark-mode .toolbar button.active { background: #6b7280; color: #fff; }
+    .dark-mode #chart { border-color: #2a2d36; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <button data-view="day">Day</button>
+    <button data-view="week" class="active">Week</button>
+    <button data-view="month">Month</button>
+    <button data-view="quarter">Quarter</button>
+    <span style="width:1px;background:#d1d5db;margin:0 4px;"></span>
+    <button data-density="dense">Dense</button>
+    <button data-density="working" class="active">Working</button>
+    <button data-density="presentation">Presentation</button>
+    <span style="width:1px;background:#d1d5db;margin:0 4px;"></span>
+    <button id="toggle-dark">Dark Mode</button>
+    <button id="toggle-weekends">Weekends</button>
+  </div>
+  <div id="chart"></div>
+
+  <script type="module">
+    import { Emboss } from '../src/index.ts'
+    import { todayMarker, tooltips, dependencyArrows } from '../src/extensions/free/index.ts'
+
+    const rows = [
+      { id: 'p1', type: 'phase', name: 'Design Phase', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], phaseColor: '#6366f1', children: ['t1','t2','t3'] },
+      { id: 't1', type: 'task', name: 'Wireframes', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 0, duration: 7, progress: 100, status: 'done', dependencies: [] },
+      { id: 't2', type: 'task', name: 'Visual Design', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 5, duration: 10, progress: 60, status: 'active', dependencies: ['t1'] },
+      { id: 't3', type: 'task', name: 'Prototyping', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 12, duration: 8, progress: 25, status: 'active', dependencies: ['t2'] },
+      { id: 'p2', type: 'phase', name: 'Development', depth: 0, parentId: null, collapsed: false, hidden: false, start: 15, duration: 30, progress: 10, status: 'active', dependencies: [], phaseColor: '#8b5cf6', children: ['t4','t5','t6','t7'] },
+      { id: 't4', type: 'task', name: 'Frontend Setup', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 15, duration: 5, progress: 80, status: 'active', dependencies: [] },
+      { id: 't5', type: 'task', name: 'API Integration', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 20, duration: 12, progress: 0, status: 'upcoming', dependencies: ['t4'] },
+      { id: 't6', type: 'task', name: 'Database Schema', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 18, duration: 8, progress: 40, status: 'active', dependencies: [] },
+      { id: 't7', type: 'subtask', name: 'Migration Scripts', depth: 2, parentId: 't6', collapsed: false, hidden: false, start: 22, duration: 4, progress: 0, status: 'upcoming', dependencies: ['t6'] },
+      { id: 't8', type: 'task', name: 'QA & Testing', depth: 0, parentId: null, collapsed: false, hidden: false, start: 35, duration: 10, progress: 0, status: 'upcoming', dependencies: ['t5', 't7'] },
+    ]
+
+    // Project started ~20 days ago so today marker appears mid-chart
+    const projectStart = new Date()
+    projectStart.setDate(projectStart.getDate() - 20)
+
+    const chart = new Emboss('#chart', rows, {
+      view: 'week',
+      density: 'working',
+      startDate: projectStart,
+      extensions: [todayMarker, tooltips, dependencyArrows],
+    })
+
+    // View buttons
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        chart.setView(btn.dataset.view)
+      })
+    })
+
+    // Density buttons
+    document.querySelectorAll('[data-density]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-density]').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        chart.setDensity(btn.dataset.density)
+      })
+    })
+
+    // Dark mode toggle
+    let dark = false
+    document.getElementById('toggle-dark').addEventListener('click', () => {
+      dark = !dark
+      document.body.classList.toggle('dark-mode', dark)
+      chart.setTheme(dark ? 'dark' : 'grayscale')
+    })
+
+    // Weekend toggle
+    let weekends = false
+    document.getElementById('toggle-weekends').addEventListener('click', () => {
+      weekends = !weekends
+      chart.state.settings.markWeekends = weekends
+      chart.render()
+    })
+
+    // Log drag events
+    chart.on('onDragEnd', (row, update) => {
+      console.log('Drag end:', row.name, update)
+    })
+  </script>
+</body>
+</html>

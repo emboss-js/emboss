@@ -24,4 +24,10 @@
 
   --emboss-track: #2a2d36;
   --emboss-today: #f87171;
+
+  --emboss-fill-active: linear-gradient(90deg, #4b5563, #6b7280);
+  --emboss-fill-done: linear-gradient(90deg, #6b7280, #7d8694);
+  --emboss-fill-upcoming: linear-gradient(90deg, #4b5563, #6b7280);
+  --emboss-opacity-done: 0.75;
+  --emboss-opacity-upcoming: 0.7;
 }
