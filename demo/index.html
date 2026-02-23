@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emboss — Phase 2 Demo</title>
+  <title>Emboss — Phase 5 Demo</title>
   <link rel="stylesheet" href="../src/core/themes/grayscale.css">
   <link rel="stylesheet" href="../src/core/themes/dark.css">
   <style>
@@ -42,9 +42,10 @@
   <script type="module">
     import { Emboss } from '../src/index.ts'
     import { todayMarker, tooltips, dependencyArrows } from '../src/extensions/free/index.ts'
+    import { sidebar } from '../src/extensions/paid/organize/index.ts'
 
     const rows = [
-      { id: 'p1', type: 'phase', name: 'Design Phase', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], phaseColor: '#6366f1', children: ['t1','t2','t3'] },
+      { id: 'p1', type: 'phase', name: 'Design Phase', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], phaseColor: '#6366f1', children: ['t1','t2','t3','m1'] },
       { id: 't1', type: 'task', name: 'Wireframes', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 0, duration: 7, progress: 100, status: 'done', dependencies: [] },
       { id: 't2', type: 'task', name: 'Visual Design', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 5, duration: 10, progress: 60, status: 'active', dependencies: ['t1'] },
       { id: 't3', type: 'task', name: 'Prototyping', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 12, duration: 8, progress: 25, status: 'active', dependencies: ['t2'] },
@@ -53,6 +54,7 @@
       { id: 't5', type: 'task', name: 'API Integration', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 20, duration: 12, progress: 0, status: 'upcoming', dependencies: ['t4'] },
       { id: 't6', type: 'task', name: 'Database Schema', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 18, duration: 8, progress: 40, status: 'active', dependencies: [] },
       { id: 't7', type: 'subtask', name: 'Migration Scripts', depth: 2, parentId: 't6', collapsed: false, hidden: false, start: 22, duration: 4, progress: 0, status: 'upcoming', dependencies: ['t6'] },
+      { id: 'm1', type: 'milestone', name: 'Design Review', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 19, duration: 0, progress: 0, status: 'upcoming', dependencies: ['t2', 't3'] },
       { id: 't8', type: 'task', name: 'QA & Testing', depth: 0, parentId: null, collapsed: false, hidden: false, start: 35, duration: 10, progress: 0, status: 'upcoming', dependencies: ['t5', 't7'] },
     ]
 
@@ -64,7 +66,7 @@
       view: 'week',
       density: 'working',
       startDate: projectStart,
-      extensions: [todayMarker, tooltips, dependencyArrows],
+      extensions: [sidebar, todayMarker, tooltips, dependencyArrows],
     })
 
     // View buttons
