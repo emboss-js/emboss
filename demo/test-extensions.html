@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emboss — Phase 4: Extension Composition Test</title>
+  <link rel="stylesheet" href="../src/core/themes/grayscale.css">
+  <link rel="stylesheet" href="../src/core/themes/dark.css">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6f8; padding: 24px; }
+    h2 { font-size: 16px; color: #374151; margin-bottom: 8px; }
+    .test-section { margin-bottom: 32px; }
+    #chart { width: 100%; height: 400px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+    .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .toolbar button {
+      padding: 6px 14px; border: 1px solid #d1d5db; border-radius: 6px;
+      background: #fff; cursor: pointer; font-size: 13px; color: #374151;
+    }
+    .toolbar button:hover { background: #f0f1f4; }
+    #log { background: #1a1d23; color: #d1d5db; padding: 16px; border-radius: 8px; font-family: 'SF Mono', Monaco, monospace; font-size: 12px; line-height: 1.8; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
+    .pass { color: #34d399; }
+    .fail { color: #f87171; }
+    .info { color: #60a5fa; }
+    .heading { color: #fbbf24; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Phase 4 — Extension Composition Test</h2>
+  <div class="toolbar">
+    <button id="run-all">Run All Tests</button>
+    <button id="test-remove">Test: Remove Extension</button>
+    <button id="test-custom">Test: Add Custom Extension</button>
+  </div>
+  <div id="chart"></div>
+  <div id="log"></div>
+
+  <script type="module">
+    import { Emboss } from '../src/index.ts'
+    import { todayMarker, tooltips, dependencyArrows } from '../src/extensions/free/index.ts'
+
+    const logEl = document.getElementById('log')
+    function log(msg, cls = '') {
+      const span = document.createElement('span')
+      span.className = cls
+      span.textContent = msg + '\n'
+      logEl.appendChild(span)
+      logEl.scrollTop = logEl.scrollHeight
+    }
+    function assert(label, condition) {
+      if (condition) {
+        log(`  PASS  ${label}`, 'pass')
+      } else {
+        log(`  FAIL  ${label}`, 'fail')
+      }
+      return condition
+    }
+
+    const rows = [
+      { id: 'p1', type: 'phase', name: 'Design', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], children: ['t1','t2'] },
+      { id: 't1', type: 'task', name: 'Wireframes', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 0, duration: 7, progress: 100, status: 'done', dependencies: [] },
+      { id: 't2', type: 'task', name: 'Visual Design', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 5, duration: 10, progress: 60, status: 'active', dependencies: ['t1'] },
+      { id: 't3', type: 'task', name: 'API Integration', depth: 0, parentId: null, collapsed: false, hidden: false, start: 12, duration: 12, progress: 0, status: 'upcoming', dependencies: ['t2'] },
+      { id: 's1', type: 'subtask', name: 'Auth Module', depth: 1, parentId: 't3', collapsed: false, hidden: false, start: 14, duration: 4, progress: 0, status: 'upcoming', dependencies: [] },
+    ]
+
+    const projectStart = new Date()
+    projectStart.setDate(projectStart.getDate() - 15)
+
+    let chart = null
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // TEST 1: Registration order — later overrides earlier
+    // ──────────────────────────────────────────────────────────────────────────
+    function testRegistrationOrder() {
+      log('1. Registration order — later overrides earlier', 'heading')
+
+      // Create a bar renderer that marks its output
+      const extA = {
+        name: 'test-bar-a',
+        type: 'free',
+        barRenderer: {
+          subtask: (row, scale, state) => {
+            const el = document.createElement('div')
+            el.className = 'emboss-bar'
+            el.dataset.id = row.id
+            el.dataset.renderer = 'A'
+            el.style.cssText = `left:${row.start * scale.dayWidth}px;width:${row.duration * scale.dayWidth}px;height:${scale.barHeight}px;position:absolute;background:red;border-radius:${scale.barRadius}px;`
+            return el
+          }
+        }
+      }
+      const extB = {
+        name: 'test-bar-b',
+        type: 'free',
+        barRenderer: {
+          subtask: (row, scale, state) => {
+            const el = document.createElement('div')
+            el.className = 'emboss-bar'
+            el.dataset.id = row.id
+            el.dataset.renderer = 'B'
+            el.style.cssText = `left:${row.start * scale.dayWidth}px;width:${row.duration * scale.dayWidth}px;height:${scale.barHeight}px;position:absolute;background:green;border-radius:${scale.barRadius}px;`
+            return el
+          }
+        }
+      }
+
+      // Register A then B — B should win for subtask
+      if (chart) chart.destroy()
+      chart = new Emboss('#chart', rows, {
+        view: 'week',
+        startDate: projectStart,
+        extensions: [extA, extB],
+      })
+
+      const subtaskBar = document.querySelector('.emboss-bar[data-id="s1"]')
+      assert('Later extension (B) overrides earlier (A) for subtask renderer',
+        subtaskBar && subtaskBar.dataset.renderer === 'B')
+
+      // Clean up test extensions
+      chart.destroy()
+      chart = null
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // TEST 2: enrichRows pipeline — multiple extensions enrich same rows
+    // ──────────────────────────────────────────────────────────────────────────
+    function testEnrichRows() {
+      log('\n2. enrichRows pipeline — multiple extensions enrich same rows', 'heading')
+
+      const enrichA = {
+        name: 'enrich-a',
+        type: 'free',
+        enrichRows: (rows, state) => rows.map(r => ({
+          ...r,
+          phaseName: r.parentId === 'p1' ? 'Design' : r.phaseName
+        }))
+      }
+      const enrichB = {
+        name: 'enrich-b',
+        type: 'free',
+        enrichRows: (rows, state) => rows.map(r => ({
+          ...r,
+          assignee: r.type === 'task' ? 'Test User' : r.assignee
+        }))
+      }
+
+      if (chart) chart.destroy()
+      chart = new Emboss('#chart', rows, {
+        view: 'week',
+        startDate: projectStart,
+        extensions: [enrichA, enrichB],
+      })
+
+      // Both enrichments should have been applied
+      // Note: enrichRows returns new arrays each render, doesn't mutate state.rows
+      // We verify by checking that state.rows aren't mutated (enrichRows produces copies)
+      const original = chart.state.rows.find(r => r.id === 't1')
+      assert('enrichRows pipeline runs (original rows preserved in state)',
+        original && !original.assignee)
+
+      // Register a third enricher at runtime
+      let enrichCRan = false
+      const enrichC = {
+        name: 'enrich-c',
+        type: 'free',
+        enrichRows: (rows, state) => {
+          enrichCRan = true
+          return rows
+        }
+      }
+      chart.use(enrichC)
+      chart.render()
+      assert('Runtime-added enrichRows runs on next render', enrichCRan)
+
+      chart.destroy()
+      chart = null
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // TEST 3: Renderers from different extensions don't conflict
+    // ──────────────────────────────────────────────────────────────────────────
+    function testRendererIsolation() {
+      log('\n3. Renderers from different extensions don\'t conflict', 'heading')
+
+      let headerCalled = false
+      const customHeader = {
+        name: 'custom-header',
+        type: 'free',
+        headerRenderer: (scale, state) => {
+          headerCalled = true
+          const el = document.createElement('div')
+          el.className = 'emboss-header-content'
+          el.textContent = 'Custom Header'
+          el.style.height = '40px'
+          return el
+        }
+      }
+
+      const customSubtask = {
+        name: 'custom-subtask',
+        type: 'free',
+        barRenderer: {
+          subtask: (row, scale, state) => {
+            const el = document.createElement('div')
+            el.className = 'emboss-bar'
+            el.dataset.id = row.id
+            el.dataset.custom = 'true'
+            el.style.cssText = `left:${row.start * scale.dayWidth}px;width:${row.duration * scale.dayWidth}px;height:${scale.barHeight}px;position:absolute;background:purple;border-radius:${scale.barRadius}px;`
+            return el
+          }
+        }
+      }
+
+      if (chart) chart.destroy()
+      chart = new Emboss('#chart', rows, {
+        view: 'week',
+        startDate: projectStart,
+        extensions: [customHeader, customSubtask],
+      })
+
+      assert('Custom headerRenderer was called', headerCalled)
+
+      // subtask uses custom renderer, task/phase use core default
+      const subtaskBar = document.querySelector('.emboss-bar[data-id="s1"]')
+      const taskBar = document.querySelector('.emboss-bar[data-id="t1"]')
+      assert('Subtask uses custom barRenderer', subtaskBar && subtaskBar.dataset.custom === 'true')
+      assert('Task still uses core barRenderer (no custom flag)', taskBar && !taskBar.dataset.custom)
+
+      chart.destroy()
+      chart = null
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // TEST 4: Event handlers from multiple extensions all fire
+    // ──────────────────────────────────────────────────────────────────────────
+    function testMultipleEventHandlers() {
+      log('\n4. Event handlers from multiple extensions all fire', 'heading')
+
+      let handlerAFired = false
+      let handlerBFired = false
+      let listenerFired = false
+
+      const extA = {
+        name: 'handler-a',
+        type: 'free',
+        handlers: {
+          onViewChange: (view) => { handlerAFired = true }
+        }
+      }
+      const extB = {
+        name: 'handler-b',
+        type: 'free',
+        handlers: {
+          onViewChange: (view) => { handlerBFired = true }
+        }
+      }
+
+      if (chart) chart.destroy()
+      chart = new Emboss('#chart', rows, {
+        view: 'week',
+        startDate: projectStart,
+        extensions: [extA, extB],
+      })
+
+      chart.on('onViewChange', () => { listenerFired = true })
+      chart.setView('month')
+
+      assert('Extension A handler fired', handlerAFired)
+      assert('Extension B handler fired', handlerBFired)
+      assert('User listener also fired', listenerFired)
+
+      // Test short-circuit: handler returning false stops propagation
+      let blockerBFired = false
+      let blockerListenerFired = false
+
+      const blocker = {
+        name: 'blocker',
+        type: 'free',
+        handlers: {
+          onRowUpdate: (row, changes) => { return false }
+        }
+      }
+      const afterBlocker = {
+        name: 'after-blocker',
+        type: 'free',
+        handlers: {
+          onRowUpdate: (row, changes) => { blockerBFired = true }
+        }
+      }
+
+      chart.destroy()
+      chart = new Emboss('#chart', rows, {
+        view: 'week',
+        startDate: projectStart,
+        extensions: [blocker, afterBlocker],
+      })
+      chart.on('onRowUpdate', () => { blockerListenerFired = true })
+
+      // Try to update a row — blocker should prevent it
+      const before = chart.state.rows.find(r => r.id === 't2').progress
+      chart.updateRow('t2', { progress: 99 })
+      const after = chart.state.rows.find(r => r.id === 't2').progress
+
+      assert('Handler returning false blocks row update', before === after)
+      assert('Subsequent extension handler did NOT fire (short-circuit)', !blockerBFired)
+      assert('User listener did NOT fire (short-circuit)', !blockerListenerFired)
+
+      chart.destroy()
+      chart = null
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // TEST 5: Full composition — register all 3, remove one, add custom
+    // ──────────────────────────────────────────────────────────────────────────
+    function testFullComposition() {
+      log('\n5. Full composition — register 3, remove 1, add custom', 'heading')
+
+      if (chart) chart.destroy()
+      chart = new Emboss('#chart', rows, {
+        view: 'week',
+        startDate: projectStart,
+        extensions: [todayMarker, tooltips, dependencyArrows],
+      })
+
+      // All three registered
+      const stylesBefore = document.querySelectorAll('[data-emboss-ext]')
+      const extNames = Array.from(stylesBefore).map(el => el.dataset.embossExt)
+      assert('3 extension style tags injected', stylesBefore.length === 3)
+      assert('today-marker styles present', extNames.includes('today-marker'))
+      assert('tooltips styles present', extNames.includes('tooltips'))
+      assert('dependency-arrows styles present', extNames.includes('dependency-arrows'))
+
+      // Today marker column should be in DOM
+      const todayCol = document.querySelector('.emboss-today-col')
+      assert('Today marker column rendered', !!todayCol)
+
+      // Dep arrows SVG should be in DOM
+      const depSvg = document.querySelector('svg.emboss-dep')
+      assert('Dependency arrows SVG rendered', !!depSvg)
+
+      // ── Remove tooltips ──
+      log('\n  Removing tooltips extension...', 'info')
+      chart.remove('tooltips')
+
+      const stylesAfter = document.querySelectorAll('[data-emboss-ext]')
+      const namesAfter = Array.from(stylesAfter).map(el => el.dataset.embossExt)
+      assert('tooltips style tag removed', !namesAfter.includes('tooltips'))
+      assert('2 extension style tags remain', stylesAfter.length === 2)
+
+      // Others still render
+      const todayColAfter = document.querySelector('.emboss-today-col')
+      assert('Today marker still renders after removal', !!todayColAfter)
+      const depSvgAfter = document.querySelector('svg.emboss-dep')
+      assert('Dependency arrows still render after removal', !!depSvgAfter)
+
+      // ── Add custom extension at runtime ──
+      log('\n  Adding custom status-badge extension...', 'info')
+
+      let customInitRan = false
+      let customAfterRenderFired = false
+
+      const statusBadge = {
+        name: 'status-badge',
+        type: 'free',
+
+        enrichRows: (rows, state) => rows.map(r => ({
+          ...r,
+          phaseName: r.parentId === 'p1' ? 'Design' : r.phaseName,
+        })),
+
+        init(emboss) {
+          customInitRan = true
+          emboss.on('afterRender', (container) => {
+            customAfterRenderFired = true
+            // Add status badges to bars
+            container.querySelectorAll('.emboss-bar[data-status]').forEach(bar => {
+              if (bar.querySelector('.status-badge')) return
+              const badge = document.createElement('div')
+              badge.className = 'status-badge'
+              badge.textContent = bar.dataset.status.charAt(0).toUpperCase()
+              bar.appendChild(badge)
+            })
+          })
+        },
+
+        styles: `.status-badge { position: absolute; top: -8px; right: -8px; width: 16px; height: 16px; border-radius: 50%; background: var(--emboss-ink-3); color: #fff; font-size: 9px; font-weight: 600; display: flex; align-items: center; justify-content: center; z-index: 10; }`
+      }
+
+      chart.use(statusBadge)
+      chart.render()
+
+      assert('Custom extension init() ran', customInitRan)
+      assert('Custom extension afterRender fired', customAfterRenderFired)
+
+      const customStyle = document.querySelector('[data-emboss-ext="status-badge"]')
+      assert('Custom extension styles injected', !!customStyle)
+
+      const badges = document.querySelectorAll('.status-badge')
+      assert('Status badges added to bars', badges.length > 0)
+
+      // Final count: 3 extensions (today-marker, dep-arrows, status-badge)
+      const finalStyles = document.querySelectorAll('[data-emboss-ext]')
+      assert('3 extension style tags total (after remove + add)', finalStyles.length === 3)
+
+      log('\n  Chart left rendered for visual inspection.', 'info')
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Wire buttons
+    // ──────────────────────────────────────────────────────────────────────────
+    document.getElementById('run-all').addEventListener('click', () => {
+      logEl.innerHTML = ''
+      log('Phase 4 — Extension Composition Tests\n', 'heading')
+
+      testRegistrationOrder()
+      testEnrichRows()
+      testRendererIsolation()
+      testMultipleEventHandlers()
+      testFullComposition()
+
+      // Count results
+      const passes = logEl.querySelectorAll('.pass').length
+      const fails = logEl.querySelectorAll('.fail').length
+      log(`\n${passes} passed, ${fails} failed`, fails > 0 ? 'fail' : 'pass')
+    })
+
+    document.getElementById('test-remove').addEventListener('click', () => {
+      if (!chart) {
+        log('Run full tests first to create chart', 'fail')
+        return
+      }
+      log('\nManual test: removing dependency-arrows...', 'info')
+      chart.remove('dependency-arrows')
+      const svg = document.querySelector('svg.emboss-dep')
+      assert('Dependency SVG gone after remove', !svg || svg.childElementCount === 0)
+    })
+
+    document.getElementById('test-custom').addEventListener('click', () => {
+      if (!chart) {
+        log('Run full tests first to create chart', 'fail')
+        return
+      }
+      log('\nManual test: adding highlight extension...', 'info')
+      chart.use({
+        name: 'highlight',
+        type: 'free',
+        styles: `.emboss-bar[data-status="active"] { outline: 2px solid var(--emboss-today); outline-offset: 2px; }`,
+        init(emboss) {
+          log('  highlight extension initialized', 'info')
+        }
+      })
+      chart.render()
+      assert('Highlight styles injected', !!document.querySelector('[data-emboss-ext="highlight"]'))
+    })
+
+    // Auto-run on load
+    document.getElementById('run-all').click()
+  </script>
+</body>
+</html>

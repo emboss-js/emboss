@@ -128,6 +128,7 @@ export interface EmbossInstance {
   toggleCollapse(rowId: string): void
   updateRow(rowId: string, changes: Partial<Row>): void
   use(extension: EmbossExtension): void
+  remove(name: string): void
   on(event: string, handler: (...args: any[]) => void): void
   render(): void
   destroy(): void

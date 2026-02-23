@@ -121,6 +121,29 @@ export class Emboss implements EmbossInstance {
     if (ext.init) ext.init(this)
   }
 
+  remove(name: string): void {
+    const idx = this.extensions.findIndex(e => e.name === name)
+    if (idx === -1) return
+
+    this.extensions.splice(idx, 1)
+
+    // Remove injected styles
+    const styleEl = document.head.querySelector(`[data-emboss-ext="${name}"]`)
+    if (styleEl) styleEl.remove()
+
+    // Rebuild renderer maps from remaining extensions
+    this.sidebarRenderers = {}
+    this.barRenderers = {}
+    this.headerRenderer = null
+    for (const ext of this.extensions) {
+      if (ext.sidebarRenderer) Object.assign(this.sidebarRenderers, ext.sidebarRenderer)
+      if (ext.barRenderer) Object.assign(this.barRenderers, ext.barRenderer)
+      if (ext.headerRenderer) this.headerRenderer = ext.headerRenderer
+    }
+
+    this.render()
+  }
+
   // ─── State mutations (Section 2) ───────────────────────────────────────────
 
   setView(view: EmbossState['view']): void {
