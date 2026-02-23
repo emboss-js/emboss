@@ -1,0 +1,37 @@
+/**
+ * @emboss/core — themes/grayscale.css
+ * CONTRACT: Section 6 (CSS custom properties — core defaults)
+ */
+
+:root {
+  --emboss-bg: #f5f6f8;
+  --emboss-surface: #fff;
+  --emboss-surface-2: #fafbfc;
+  --emboss-border: #f0f1f4;
+
+  --emboss-ink: #1a1d23;
+  --emboss-ink-2: #374151;
+  --emboss-ink-3: #6b7280;
+  --emboss-ink-4: #9ca3af;
+  --emboss-ink-5: #d1d5db;
+
+  --emboss-track: #e8ecf1;
+  --emboss-track-radius: 13px;
+
+  --emboss-fill-active: linear-gradient(90deg, #4b5563, #6b7280);
+  --emboss-fill-done: linear-gradient(90deg, #9ca3af, #a3a3a3);
+  --emboss-fill-upcoming: linear-gradient(90deg, #9ca3af, #a3a3a3);
+
+  --emboss-opacity-done: 0.45;
+  --emboss-opacity-upcoming: 0.5;
+
+  --emboss-today: #ef4444;
+
+  --emboss-row-h: 44px;
+  --emboss-bar-h: 26px;
+  --emboss-bar-r: 13px;
+  --emboss-day-w: 32px;
+  --emboss-sidebar-w: 280px;
+  --emboss-label-size: 11.5px;
+  --emboss-grid-opacity: 0.04;
+}

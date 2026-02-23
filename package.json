@@ -1,0 +1,40 @@
+{
+  "name": "@emboss/core",
+  "version": "0.1.0",
+  "description": "The Tiptap of Gantt charts. Beautiful, extensible, open core.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./extensions/free": {
+      "import": "./dist/extensions/free/index.mjs",
+      "require": "./dist/extensions/free/index.js"
+    },
+    "./extensions/organize": {
+      "import": "./dist/extensions/paid/organize/index.mjs",
+      "require": "./dist/extensions/paid/organize/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest"
+  },
+  "keywords": ["gantt", "chart", "timeline", "project-management", "emboss"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emboss-js/emboss"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.0.0"
+  }
+}

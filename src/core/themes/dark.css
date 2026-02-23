@@ -1,0 +1,27 @@
+/**
+ * @emboss/core — themes/dark.css
+ * CONTRACT: Section 6 (dark theme overrides), Section 9.7 (dark mode notes)
+ *
+ * Applied via .emboss-dark class on container.
+ * Track: #2a2d36 (subtle, not invisible)
+ * Glass highlight stays — white at lower opacity still reads on dark
+ * Fills pop more against dark background — this is a feature
+ * Today marker: #f87171 (slightly lighter red)
+ * Tooltips invert: light bg, dark text
+ */
+
+.emboss-dark {
+  --emboss-bg: #0f1117;
+  --emboss-surface: #1a1d23;
+  --emboss-surface-2: #1f222b;
+  --emboss-border: #2a2d36;
+
+  --emboss-ink: #e5e7eb;
+  --emboss-ink-2: #d1d5db;
+  --emboss-ink-3: #9ca3af;
+  --emboss-ink-4: #6b7280;
+  --emboss-ink-5: #374151;
+
+  --emboss-track: #2a2d36;
+  --emboss-today: #f87171;
+}
