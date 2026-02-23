@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · 05 Dependency Arrows</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--sf2:#fafbfc;--bd2:#f0f1f4;--blu:#3b82f6;--red:#ef4444;--pnk:#ec4899;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.sh{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+.hdr{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:4px;position:relative;top:-2px}
+.badge-core{background:#e8ecf1;color:var(--ink3)}
+.badge-paid{background:#fef3c7;color:#92400e}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:32px}
+h2{font-size:18px;font-weight:700;margin:32px 0 16px;padding-top:24px;border-top:1px solid var(--bd2)}h2:first-of-type{border-top:none;padding-top:0}
+.note{font-size:12px;color:var(--ink3);margin-bottom:16px}
+.c{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:20px}
+.c h3{font-size:14px;font-weight:600;margin-bottom:12px}
+.sg{display:grid;grid-template-columns:150px 1fr;gap:6px 16px;font-size:12px;margin:12px 0}.sg dt{color:var(--ink3);font-weight:500}.sg dd{color:var(--ink);font-family:var(--m);font-size:11px}
+code{font-family:var(--m);font-size:11px;background:var(--sf2);padding:1px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="sh">
+<div class="hdr"><h1>Dependency Arrows</h1><span class="badge badge-core">Core</span></div>
+<p class="sub">Bottom-to-top SVG bezier paths. Status-based styling: solid (active), dashed (future), faded (done). Arrows flow downward matching reading direction.</p>
+
+<h2>Routing Model: Bottom → Top</h2>
+<div class="c">
+<p class="note">Arrows exit bottom-center of source bar, enter top-center of target. Always flows downward — no horizontal spaghetti crossing rows.</p>
+<svg width="520" height="160" viewBox="0 0 520 160">
+  <defs>
+    <linearGradient id="g-a" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4b5563"/><stop offset="100%" stop-color="#6b7280"/></linearGradient>
+    <linearGradient id="g-d" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#9ca3af"/><stop offset="100%" stop-color="#a3a3a3"/></linearGradient>
+  </defs>
+  <!-- Source bar (row 1) -->
+  <rect x="60" y="20" width="180" height="26" rx="13" fill="#e8ecf1"/>
+  <rect x="60" y="20" width="120" height="26" rx="13" fill="url(#g-a)"/>
+  <text x="72" y="37" font-family="DM Sans" font-size="10" fill="white" font-weight="500">Research</text>
+  <!-- Target bar (row 2) -->
+  <rect x="200" y="100" width="200" height="26" rx="13" fill="#e8ecf1"/>
+  <rect x="200" y="100" width="80" height="26" rx="13" fill="url(#g-a)"/>
+  <text x="212" y="117" font-family="DM Sans" font-size="10" fill="white" font-weight="500">Wireframes</text>
+  <!-- Arrow: bottom-center of source → top-center of target -->
+  <path d="M150,46 C150,68 300,78 300,100" fill="none" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+  <!-- Connection dots -->
+  <circle cx="150" cy="46" r="3.5" fill="#6b7280" opacity="0.7"/>
+  <circle cx="300" cy="100" r="3.5" fill="#6b7280" opacity="0.7"/>
+  <!-- Arrow tip -->
+  <polygon points="296,96 300,100 304,96" fill="#6b7280" opacity="0.5"/>
+  <!-- Annotations -->
+  <text x="126" y="58" font-family="DM Mono" font-size="8" fill="#ec4899">exit: bottom-center</text>
+  <text x="308" y="97" font-family="DM Mono" font-size="8" fill="#ec4899">entry: top-center</text>
+</svg>
+<dl class="sg">
+  <dt>Exit point</dt><dd>Bottom-center of source bar</dd>
+  <dt>Entry point</dt><dd>Top-center of target bar</dd>
+  <dt>Direction</dt><dd>Always downward (matches reading order)</dd>
+  <dt>Path type</dt><dd>Cubic bezier S-curve</dd>
+  <dt>Adjacent rows</dt><dd>Nearly straight vertical drop</dd>
+  <dt>Distant rows</dt><dd>Gentle S-curve, wider spread proportional to distance</dd>
+</dl>
+</div>
+
+<h2>Status-Based Arrow Styles</h2>
+<div class="c">
+<p class="note">Three arrow styles based on dependency status. Creates natural hierarchy: active = clear, future = suggested, done = fades.</p>
+<svg width="520" height="320" viewBox="0 0 520 320">
+  <!-- ACTIVE DEPENDENCY -->
+  <text x="10" y="14" font-family="DM Sans" font-size="11" fill="var(--ink)" font-weight="600">Active dependency</text>
+  <text x="10" y="28" font-family="DM Sans" font-size="9" fill="#6b7280">source done/active → target active</text>
+  <rect x="60" y="40" width="160" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="60" y="40" width="160" height="22" rx="11" fill="url(#g-d)" opacity=".45"/>
+  <rect x="200" y="80" width="180" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="200" y="80" width="72" height="22" rx="11" fill="url(#g-a)"/>
+  <path d="M140,62 C140,68 290,74 290,80" fill="none" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+  <circle cx="140" cy="62" r="3.5" fill="#6b7280" opacity="0.7"/>
+  <circle cx="290" cy="80" r="3.5" fill="#6b7280" opacity="0.7"/>
+  <text x="400" y="74" font-family="DM Mono" font-size="9" fill="#6b7280">solid 1px</text>
+  <text x="400" y="86" font-family="DM Mono" font-size="9" fill="#6b7280">#6b7280 @0.5</text>
+  <text x="400" y="98" font-family="DM Mono" font-size="9" fill="#6b7280">dot 3.5px @0.7</text>
+
+  <!-- FUTURE DEPENDENCY -->
+  <text x="10" y="128" font-family="DM Sans" font-size="11" fill="var(--ink)" font-weight="600">Future dependency</text>
+  <text x="10" y="142" font-family="DM Sans" font-size="9" fill="#9ca3af">target is upcoming</text>
+  <rect x="60" y="155" width="160" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="60" y="155" width="72" height="22" rx="11" fill="url(#g-a)"/>
+  <rect x="200" y="195" width="180" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="200" y="195" width="180" height="22" rx="11" fill="url(#g-d)" opacity=".5"/>
+  <path d="M140,177 C140,183 290,189 290,195" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3" opacity="0.35"/>
+  <circle cx="140" cy="177" r="3" fill="#9ca3af" opacity="0.5"/>
+  <circle cx="290" cy="195" r="3" fill="#9ca3af" opacity="0.5"/>
+  <text x="400" y="190" font-family="DM Mono" font-size="9" fill="#9ca3af">dashed 4 3</text>
+  <text x="400" y="202" font-family="DM Mono" font-size="9" fill="#9ca3af">#9ca3af @0.35</text>
+  <text x="400" y="214" font-family="DM Mono" font-size="9" fill="#9ca3af">dot 3px @0.5</text>
+
+  <!-- COMPLETED DEPENDENCY -->
+  <text x="10" y="244" font-family="DM Sans" font-size="11" fill="var(--ink5)" font-weight="600">Completed dependency</text>
+  <text x="10" y="258" font-family="DM Sans" font-size="9" fill="#d1d5db">both source and target done</text>
+  <rect x="60" y="270" width="160" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="60" y="270" width="160" height="22" rx="11" fill="url(#g-d)" opacity=".45"/>
+  <rect x="200" y="295" width="180" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="200" y="295" width="180" height="22" rx="11" fill="url(#g-d)" opacity=".45"/>
+  <path d="M140,292 C140,296 290,292 290,295" fill="none" stroke="#d1d5db" stroke-width="1" opacity="0.25"/>
+  <circle cx="140" cy="292" r="2.5" fill="#d1d5db" opacity="0.3"/>
+  <circle cx="290" cy="295" r="2.5" fill="#d1d5db" opacity="0.3"/>
+  <text x="400" y="295" font-family="DM Mono" font-size="9" fill="#d1d5db">solid 1px</text>
+  <text x="400" y="307" font-family="DM Mono" font-size="9" fill="#d1d5db">#d1d5db @0.25</text>
+</svg>
+</div>
+
+<h2>Multi-Row S-Curves</h2>
+<div class="c">
+<p class="note">Bottom-to-top routing across multiple rows. S-curve width proportional to vertical distance.</p>
+<svg width="520" height="200" viewBox="0 0 520 200">
+  <!-- Row 1 -->
+  <rect x="60" y="10" width="180" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="60" y="10" width="120" height="22" rx="11" fill="url(#g-a)"/>
+  <!-- Row 2 -->
+  <rect x="160" y="60" width="180" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="160" y="60" width="72" height="22" rx="11" fill="url(#g-a)"/>
+  <!-- Row 3 (far) -->
+  <rect x="100" y="150" width="200" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="100" y="150" width="80" height="22" rx="11" fill="url(#g-a)"/>
+  <!-- Arrow 1→2 (adjacent — nearly straight) -->
+  <path d="M150,32 C150,42 250,50 250,60" fill="none" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+  <circle cx="150" cy="32" r="3.5" fill="#6b7280" opacity="0.7"/>
+  <circle cx="250" cy="60" r="3.5" fill="#6b7280" opacity="0.7"/>
+  <text x="270" y="44" font-family="DM Mono" font-size="8" fill="#ec4899">adjacent: tight curve</text>
+  <!-- Arrow 1→3 (distant — wide S-curve) -->
+  <path d="M200,32 C200,80 200,110 200,150" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3" opacity="0.35"/>
+  <circle cx="200" cy="32" r="3" fill="#9ca3af" opacity="0.5"/>
+  <circle cx="200" cy="150" r="3" fill="#9ca3af" opacity="0.5"/>
+  <text x="210" y="95" font-family="DM Mono" font-size="8" fill="#ec4899">distant: gentle drop</text>
+</svg>
+</div>
+
+<h2>Critical Path Highlight</h2>
+<div class="c">
+<p class="note">Critical arrows: solid, red, higher opacity. Non-critical fades further. <span class="badge badge-paid">Analyze Bundle</span></p>
+<svg width="520" height="140" viewBox="0 0 520 140">
+  <text x="10" y="14" font-family="DM Sans" font-size="10" fill="#ef4444" font-weight="600">Critical path</text>
+  <rect x="60" y="25" width="160" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="60" y="25" width="104" height="22" rx="11" fill="url(#g-a)"/>
+  <rect x="200" y="65" width="180" height="22" rx="11" fill="#e8ecf1"/>
+  <rect x="200" y="65" width="72" height="22" rx="11" fill="url(#g-a)"/>
+  <path d="M140,47 C140,53 290,59 290,65" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.7"/>
+  <circle cx="140" cy="47" r="3" fill="#ef4444" opacity="0.7"/>
+  <circle cx="290" cy="65" r="3" fill="#ef4444" opacity="0.7"/>
+
+  <text x="10" y="106" font-family="DM Sans" font-size="10" fill="#d1d5db">Non-critical (faded)</text>
+  <rect x="300" y="105" width="140" height="22" rx="11" fill="#e8ecf1" opacity=".5"/>
+  <rect x="300" y="105" width="56" height="22" rx="11" fill="url(#g-a)" opacity=".3"/>
+  <path d="M290,87 C290,93 370,99 370,105" fill="none" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 3" opacity="0.15"/>
+  <circle cx="370" cy="105" r="2" fill="#d1d5db" opacity="0.15"/>
+</svg>
+</div>
+
+<h2>Hover Interaction</h2>
+<div class="c">
+<p class="note">12px invisible hit area. Hover brightens arrow and dots. Pairs with dependency indicator dots on bars.</p>
+<dl class="sg">
+  <dt>Hit area</dt><dd>12px invisible stroke around path</dd>
+  <dt>Hover opacity</dt><dd>Active: 0.5 → 0.8 / Future: 0.35 → 0.7</dd>
+  <dt>Hover width</dt><dd>1px → 1.5px</dd>
+  <dt>Transition</dt><dd>0.15s ease</dd>
+  <dt>Bar dep dots</dt><dd>Brighten when connected arrow hovered</dd>
+</dl>
+</div>
+
+<h2>CSS Custom Properties</h2>
+<div class="c">
+<dl class="sg">
+  <dt>--emboss-arrow-active</dt><dd>#6b7280 solid @0.5</dd>
+  <dt>--emboss-arrow-future</dt><dd>#9ca3af dashed 4 3 @0.35</dd>
+  <dt>--emboss-arrow-done</dt><dd>#d1d5db solid @0.25</dd>
+  <dt>--emboss-arrow-width</dt><dd>1px</dd>
+  <dt>--emboss-dot-active</dt><dd>3.5px @0.7</dd>
+  <dt>--emboss-dot-future</dt><dd>3px @0.5</dd>
+  <dt>--emboss-dot-done</dt><dd>2.5px @0.3</dd>
+  <dt>--emboss-critical-color</dt><dd>#ef4444</dd>
+</dl>
+</div>
+</div>
+</body></html>

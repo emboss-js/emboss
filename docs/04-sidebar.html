@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · 04 Sidebar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--sf2:#fafbfc;--bd:#e5e7eb;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--pnk:#ec4899;--amb:#f59e0b;--red:#ef4444;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.sh{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}.sub{font-size:14px;color:var(--ink3);margin-bottom:32px}
+h2{font-size:18px;font-weight:700;margin:32px 0 16px;padding-top:24px;border-top:1px solid var(--bd2)}h2:first-of-type{border-top:none;padding-top:0}
+.note{font-size:12px;color:var(--ink3);margin-bottom:16px}
+.c{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:20px}
+.c h3{font-size:14px;font-weight:600;margin-bottom:12px}
+.sg{display:grid;grid-template-columns:130px 1fr;gap:6px 16px;font-size:12px;margin:12px 0}.sg dt{color:var(--ink3);font-weight:500}.sg dd{color:var(--ink);font-family:var(--m);font-size:11px}
+code{font-family:var(--m);font-size:11px;background:var(--sf2);padding:1px 6px;border-radius:4px}
+
+/* Sidebar mock */
+.sb-mock{border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;display:flex;height:320px;background:var(--sf2)}
+.sb-panel{background:var(--sf);border-right:1px solid var(--bd);transition:width .35s cubic-bezier(.4,0,.2,1);overflow:hidden;flex-shrink:0;position:relative}
+.sb-chart{flex:1;background:var(--sf2);padding:12px;position:relative}
+.sb-chart::after{content:'Chart area';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--ink4)}
+
+/* Sidebar content */
+.sb-row{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:11px;white-space:nowrap}
+.sb-phase{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--sf2);font-size:11px;font-weight:600;white-space:nowrap}
+.sb-pill{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sb-av{width:20px;height:20px;border-radius:50%;font-size:8px;font-weight:600;color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-toggle{position:absolute;right:-12px;top:50%;width:24px;height:24px;background:var(--sf);border:1px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--ink4);z-index:2;transform:translateY(-50%);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+/* Rail sidebar */
+.sb-rail-row{display:flex;align-items:center;justify-content:center;padding:8px 0;height:36px}
+</style>
+</head>
+<body>
+<div class="sh">
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><h1>Sidebar</h1><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:4px;background:#fef3c7;color:#92400e;position:relative;top:-2px">Organize Bundle</span></div>
+<p class="sub">Three states: Full (300px), Rail (48px), Hidden (0px). Animated transition between states.</p>
+
+<h2>State 1: Full (300px)</h2>
+<div class="c">
+<p class="note">Shows phase headers, task names, status dots, assignee avatars, milestone diamonds. Primary interaction surface.</p>
+<div class="sb-mock">
+  <div class="sb-panel" style="width:300px">
+    <div class="sb-toggle">‹</div>
+    <div class="sb-phase"><div class="sb-pill" style="background:var(--blu)"></div>Discovery<span style="color:var(--ink4);margin-left:auto">75%</span></div>
+    <div class="sb-row" style="padding-left:28px"><div class="sb-dot" style="background:var(--grn)"></div><span style="color:var(--ink4);text-decoration:line-through">Stakeholder interviews</span><div class="sb-av" style="background:#6366f1;margin-left:auto">AK</div></div>
+    <div class="sb-row" style="padding-left:28px"><div class="sb-dot" style="background:var(--blu)"></div>User research synthesis<div class="sb-av" style="background:#6366f1;margin-left:auto">AK</div></div>
+    <div class="sb-row" style="padding-left:28px"><div class="sb-dot" style="background:var(--pur)"></div>Requirements doc<div class="sb-av" style="background:#f59e0b;margin-left:auto">JS</div></div>
+    <div class="sb-row" style="padding-left:28px"><div style="width:8px;height:8px;transform:rotate(45deg);background:var(--blu);border-radius:1px;flex-shrink:0"></div>Design review gate</div>
+    <div class="sb-phase"><div class="sb-pill" style="background:var(--pur)"></div>Design<span style="color:var(--ink4);margin-left:auto">30%</span></div>
+    <div class="sb-row" style="padding-left:28px"><div class="sb-dot" style="background:var(--blu)"></div>Wireframes<div class="sb-av" style="background:#ec4899;margin-left:auto">ML</div></div>
+    <div class="sb-row" style="padding-left:28px"><div class="sb-dot" style="background:var(--pur)"></div>Visual design<div class="sb-av" style="background:#ec4899;margin-left:auto">ML</div></div>
+    <div class="sb-row" style="padding-left:28px"><div class="sb-dot" style="background:var(--pur)"></div>Prototype<div class="sb-av" style="background:#ec4899;margin-left:auto">ML</div></div>
+  </div>
+  <div class="sb-chart"></div>
+</div>
+<dl class="sg">
+  <dt>Width</dt><dd>300px (--emboss-sidebar-width)</dd>
+  <dt>Background</dt><dd>var(--sf) / white</dd>
+  <dt>Border</dt><dd>1px solid var(--bd) on right edge</dd>
+  <dt>Phase row bg</dt><dd>var(--sf2) / #fafbfc</dd>
+  <dt>Task indent</dt><dd>padding-left: 28px</dd>
+  <dt>Row height</dt><dd>~36px (6px padding + content)</dd>
+  <dt>Toggle button</dt><dd>24px circle, positioned at right edge</dd>
+</dl>
+</div>
+
+<h2>State 2: Rail (48px)</h2>
+<div class="c">
+<p class="note">Collapsed to icon rail. Phase color pills and task status dots only. Hover expands back to full.</p>
+<div class="sb-mock">
+  <div class="sb-panel" style="width:48px">
+    <div class="sb-toggle" style="right:-12px">›</div>
+    <div class="sb-rail-row" style="background:var(--sf2)"><div class="sb-pill" style="background:var(--blu);width:12px;height:12px;border-radius:3px"></div></div>
+    <div class="sb-rail-row"><div class="sb-dot" style="background:var(--grn)"></div></div>
+    <div class="sb-rail-row"><div class="sb-dot" style="background:var(--blu)"></div></div>
+    <div class="sb-rail-row"><div class="sb-dot" style="background:var(--pur)"></div></div>
+    <div class="sb-rail-row"><div style="width:8px;height:8px;transform:rotate(45deg);background:var(--blu);border-radius:1px"></div></div>
+    <div class="sb-rail-row" style="background:var(--sf2)"><div class="sb-pill" style="background:var(--pur);width:12px;height:12px;border-radius:3px"></div></div>
+    <div class="sb-rail-row"><div class="sb-dot" style="background:var(--blu)"></div></div>
+    <div class="sb-rail-row"><div class="sb-dot" style="background:var(--pur)"></div></div>
+    <div class="sb-rail-row"><div class="sb-dot" style="background:var(--pur)"></div></div>
+  </div>
+  <div class="sb-chart"></div>
+</div>
+<dl class="sg">
+  <dt>Width</dt><dd>48px</dd>
+  <dt>Phase indicator</dt><dd>12px × 12px color square, 3px radius</dd>
+  <dt>Task indicator</dt><dd>6px status dot (same as full mode)</dd>
+  <dt>Milestone</dt><dd>8px rotated diamond</dd>
+  <dt>Expand trigger</dt><dd>Click toggle or hover panel</dd>
+</dl>
+</div>
+
+<h2>State 3: Hidden (0px)</h2>
+<div class="c">
+<p class="note">Sidebar fully hidden. Chart fills entire width. A small tab at left edge allows re-opening.</p>
+<div class="sb-mock">
+  <div class="sb-panel" style="width:0px;border-right:none">
+  </div>
+  <div class="sb-chart" style="position:relative">
+    <div style="position:absolute;left:0;top:50%;transform:translateY(-50%);width:20px;height:48px;background:var(--sf);border:1px solid var(--bd);border-left:none;border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--ink4)">›</div>
+  </div>
+</div>
+<dl class="sg">
+  <dt>Width</dt><dd>0px</dd>
+  <dt>Reopen tab</dt><dd>20px × 48px, right-rounded, left edge</dd>
+  <dt>Chart width</dt><dd>100% of container</dd>
+</dl>
+</div>
+
+<h2>Transition</h2>
+<div class="c">
+<h3>Animated width change between states</h3>
+<dl class="sg">
+  <dt>Duration</dt><dd>0.35s</dd>
+  <dt>Easing</dt><dd>cubic-bezier(.4, 0, .2, 1)</dd>
+  <dt>Property</dt><dd>width</dd>
+  <dt>Content</dt><dd>Fades during transition (opacity 0→1)</dd>
+  <dt>Chart area</dt><dd>Expands/contracts to fill remaining space</dd>
+</dl>
+</div>
+
+<h2>Toggle Control</h2>
+<div class="c">
+<p class="note">Three ways to change sidebar state:</p>
+<dl class="sg">
+  <dt>Toggle button</dt><dd>24px circle on right edge of sidebar panel</dd>
+  <dt>Keyboard</dt><dd>[ key toggles through states (full → rail → hidden → full)</dd>
+  <dt>Drag edge</dt><dd>Future: drag sidebar border to resize freely</dd>
+</dl>
+<div style="display:flex;gap:12px;margin-top:16px">
+  <div style="width:24px;height:24px;background:var(--sf);border:1px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink4)">‹</div>
+  <span style="font-size:11px;color:var(--ink3);line-height:24px">Full → Rail</span>
+  <div style="width:24px;height:24px;background:var(--sf);border:1px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink4)">‹</div>
+  <span style="font-size:11px;color:var(--ink3);line-height:24px">Rail → Hidden</span>
+  <div style="width:20px;height:24px;background:var(--sf);border:1px solid var(--bd);border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink4)">›</div>
+  <span style="font-size:11px;color:var(--ink3);line-height:24px">Hidden → Full</span>
+</div>
+</div>
+
+<h2>CSS Custom Properties</h2>
+<div class="c">
+<dl class="sg">
+  <dt>--emboss-sidebar-width</dt><dd>300px (full state)</dd>
+  <dt>--emboss-sidebar-rail</dt><dd>48px (rail state)</dd>
+  <dt>--emboss-sidebar-bg</dt><dd>var(--sf) / white</dd>
+  <dt>--emboss-sidebar-border</dt><dd>1px solid var(--bd)</dd>
+  <dt>--emboss-sidebar-transition</dt><dd>0.35s cubic-bezier(.4,0,.2,1)</dd>
+</dl>
+</div>
+</div>
+</body></html>

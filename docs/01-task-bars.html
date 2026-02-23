@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · 01 Task Bars</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#374151;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--sf2:#fafbfc;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--pnk:#ec4899;--amb:#f59e0b;--red:#ef4444;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.sh{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+.hdr{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:4px;position:relative;top:-2px}
+.badge-core{background:#e8ecf1;color:var(--ink3)}
+.badge-free{background:#dcfce7;color:#15803d}
+.badge-paid{background:#fef3c7;color:#92400e}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:32px}
+h2{font-size:18px;font-weight:700;margin:32px 0 16px;padding-top:24px;border-top:1px solid var(--bd2)}h2:first-of-type{border-top:none;padding-top:0}
+.note{font-size:12px;color:var(--ink3);margin-bottom:16px}
+.c{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:20px}
+.c h3{font-size:14px;font-weight:600;margin-bottom:12px}
+.sg{display:grid;grid-template-columns:160px 1fr;gap:6px 16px;font-size:12px;margin:12px 0}.sg dt{color:var(--ink3);font-weight:500}.sg dd{color:var(--ink);font-family:var(--m);font-size:11px}
+.dr{display:flex;align-items:center;gap:16px;margin-bottom:14px}.dl{font-size:12px;color:var(--ink3);width:90px;flex-shrink:0;text-align:right;font-weight:500}
+code{font-family:var(--m);font-size:11px;background:var(--sf2);padding:1px 6px;border-radius:4px}
+.ann{position:absolute;font-size:9px;color:var(--pnk);font-weight:600;font-family:var(--m)}
+.bt{height:26px;border-radius:13px;background:#e8ecf1;position:relative;flex:1;max-width:400px}
+.bf{position:absolute;left:0;top:0;bottom:0;border-radius:13px;overflow:hidden}
+.bg{position:absolute;top:0;left:0;right:0;height:45%;border-radius:13px 13px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,.08) 60%,transparent 100%)}
+.bs{position:absolute;bottom:0;left:0;right:0;height:35%;border-radius:0 0 13px 13px;background:linear-gradient(0deg,rgba(0,0,0,.08) 0%,transparent 100%)}
+.mk{position:absolute;top:50%;width:12px;height:12px;background:#fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 1px 4px rgba(0,0,0,.2);z-index:2}
+.md{position:absolute;top:50%;left:50%;width:6px;height:6px;border-radius:50%;transform:translate(-50%,-50%)}
+.depd{position:absolute;top:50%;width:4px;height:4px;border-radius:50%;background:var(--ink4);transform:translateY(-50%);z-index:3;opacity:.7}
+/* Grayscale fills (CORE) */
+.ga{background:linear-gradient(90deg,#4b5563,#6b7280);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.gd{background:linear-gradient(90deg,#9ca3af,#a3a3a3)}
+.gu{background:linear-gradient(90deg,#9ca3af,#a3a3a3);opacity:.5}
+/* Vivid fills (TEMPLATE) */
+.fa{background:linear-gradient(90deg,#3b82f6,#06b6d4);box-shadow:0 2px 8px rgba(37,99,235,.2)}
+.fd{background:linear-gradient(90deg,#34d399,#06b6d4)}
+.fu{background:linear-gradient(90deg,#8b5cf6,#ec4899);opacity:.55}
+.fr{background:linear-gradient(90deg,#f59e0b,#ef4444);box-shadow:0 2px 8px rgba(245,158,11,.2)}
+.fb{background:linear-gradient(90deg,#ef4444,#dc2626);box-shadow:0 2px 8px rgba(239,68,68,.2)}
+.done{opacity:.45}
+.dh{position:absolute;top:50%;width:6px;height:18px;background:rgba(255,255,255,.9);border-radius:3px;transform:translateY(-50%);cursor:ew-resize;z-index:3;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tab-row{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--bd2)}.tab{padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s}.tab:hover{color:var(--ink3)}.tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none}.panel.on{display:block}
+</style>
+</head>
+<body>
+<div class="sh">
+<div class="hdr"><h1>Task Bars</h1><span class="badge badge-core">Core</span></div>
+<p class="sub">The primary visual element. Track-and-fill with glass treatment, progress marker. Core ships grayscale; Vivid template unlocks color.</p>
+
+<div class="tab-row">
+  <div class="tab on" onclick="sw(this,0)">Grayscale (Core)</div>
+  <div class="tab" onclick="sw(this,1)">Vivid (Paid Template)</div>
+</div>
+
+<div class="panel on" id="p0">
+
+<h2>Anatomy (Exploded View)</h2>
+<div class="c">
+<p class="note">Five layers stack: track → fill → glass → shadow → marker. Core ships in grayscale.</p>
+<div style="display:flex;flex-direction:column;gap:20px;margin-top:16px">
+  <div class="dr"><div class="dl">① Track</div><div style="height:26px;border-radius:13px;background:#e8ecf1;flex:1;max-width:400px;position:relative"><div class="ann" style="right:-85px;top:4px">26px × 13px r</div></div></div>
+  <div class="dr"><div class="dl">② Fill</div><div class="bt"><div class="bf ga" style="width:65%"></div></div></div>
+  <div class="dr"><div class="dl">③ Glass</div><div class="bt"><div class="bf ga" style="width:65%"><div class="bg"></div></div></div></div>
+  <div class="dr"><div class="dl">④ Shadow</div><div class="bt"><div class="bf ga" style="width:65%"><div class="bg"></div><div class="bs"></div></div></div></div>
+  <div class="dr"><div class="dl">⑤ Marker</div><div class="bt"><div class="bf ga" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:#4b5563"></div></div></div></div>
+</div>
+</div>
+
+<h2>Status Hierarchy (Grayscale)</h2>
+<div class="c">
+<p class="note">3 default statuses. Hierarchy through opacity/weight, not color. at-risk + blocked opt-in via statusMap config.</p>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+  <div class="dr"><div class="dl" style="font-weight:600">Active</div><div class="bt"><div class="bf ga" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:#4b5563"></div></div></div><code>#4b5563→#6b7280</code></div>
+  <div class="dr"><div class="dl">Upcoming</div><div class="bt"><div class="bf gu" style="width:100%"><div class="bg"></div></div></div><code>#9ca3af @50%</code></div>
+  <div class="dr"><div class="dl" style="opacity:.55">Done</div><div class="bt done"><div class="bf gd" style="width:100%"><div class="bg"></div><div class="bs"></div></div></div><code>#9ca3af @45%</code></div>
+</div>
+</div>
+
+<h2>Dependency Indicator Dots</h2>
+<div class="c">
+<p class="note">4px dots at bar edges. Left = incoming dep, right = outgoing. Brighten on hover when arrow appears.</p>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+  <div class="dr"><div class="dl">Outgoing</div><div class="bt"><div class="bf ga" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:#4b5563"></div></div><div class="depd" style="right:-2px"></div></div></div>
+  <div class="dr"><div class="dl">Incoming</div><div class="bt"><div class="bf ga" style="width:55%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:55%"><div class="md" style="background:#4b5563"></div></div><div class="depd" style="left:-2px"></div></div></div>
+  <div class="dr"><div class="dl">Both</div><div class="bt"><div class="bf ga" style="width:70%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:70%"><div class="md" style="background:#4b5563"></div></div><div class="depd" style="left:-2px"></div><div class="depd" style="right:-2px"></div></div></div>
+</div>
+</div>
+
+<h2>Progress Range</h2>
+<div class="c">
+<h3>Marker hides at 0% and 100%</h3>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+  <div class="dr"><div class="dl">0%</div><div class="bt"><div class="bf gu" style="width:100%"><div class="bg"></div></div></div></div>
+  <div class="dr"><div class="dl">15%</div><div class="bt"><div class="bf ga" style="width:15%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:15%"><div class="md" style="background:#4b5563"></div></div></div></div>
+  <div class="dr"><div class="dl">50%</div><div class="bt"><div class="bf ga" style="width:50%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:50%"><div class="md" style="background:#4b5563"></div></div></div></div>
+  <div class="dr"><div class="dl">85%</div><div class="bt"><div class="bf ga" style="width:85%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:85%"><div class="md" style="background:#4b5563"></div></div></div></div>
+  <div class="dr"><div class="dl">100%</div><div class="bt done"><div class="bf gd" style="width:100%"><div class="bg"></div><div class="bs"></div></div></div></div>
+</div>
+</div>
+
+<h2>Hover & Handles</h2>
+<div class="c">
+<p class="note">scaleY(1.08), brightness(1.04), shadow lift. Handles inset 4px from edges.</p>
+<div style="display:flex;flex-direction:column;gap:16px;margin-top:12px">
+  <div class="dr"><div class="dl">Default</div><div class="bt"><div class="bf ga" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:#4b5563"></div></div></div></div>
+  <div class="dr"><div class="dl">Hovered</div><div class="bt" style="transform:scaleY(1.08);filter:brightness(1.04);box-shadow:0 4px 16px rgba(0,0,0,.1)"><div class="bf ga" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:#4b5563"></div></div><div class="dh" style="left:4px"></div><div class="dh" style="left:calc(65% - 10px)"></div></div></div>
+</div>
+</div>
+
+</div>
+
+<div class="panel" id="p1">
+
+<h2>Vivid Status Gradients</h2>
+<div class="c">
+<p class="note">Hue-shifting gradients with color-matched shadows. <span class="badge badge-paid" style="font-size:9px">Vivid Template</span></p>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+  <div class="dr"><div class="dl"><span style="color:var(--blu)">●</span> Active</div><div class="bt"><div class="bf fa" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:var(--blu)"></div></div></div><code>#3b82f6→#06b6d4</code></div>
+  <div class="dr"><div class="dl"><span style="color:var(--grn)">●</span> Done</div><div class="bt done"><div class="bf fd" style="width:100%"><div class="bg"></div><div class="bs"></div></div></div><code>#34d399→#06b6d4 @45%</code></div>
+  <div class="dr"><div class="dl"><span style="color:var(--pur)">●</span> Upcoming</div><div class="bt"><div class="bf fu" style="width:100%"><div class="bg"></div></div></div><code>#8b5cf6→#ec4899 @55%</code></div>
+  <div class="dr"><div class="dl"><span style="color:var(--amb)">●</span> At Risk</div><div class="bt"><div class="bf fr" style="width:40%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:40%"><div class="md" style="background:var(--amb)"></div></div></div><code>#f59e0b→#ef4444</code></div>
+  <div class="dr"><div class="dl"><span style="color:var(--red)">●</span> Blocked</div><div class="bt"><div class="bf fb" style="width:25%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:25%"><div class="md" style="background:var(--red)"></div></div></div><code>#ef4444→#dc2626</code></div>
+</div>
+</div>
+
+<h2>Three-Tier Hierarchy (Vivid)</h2>
+<div class="c">
+<div style="display:flex;flex-direction:column;gap:12px;padding:16px;background:var(--sf2);border-radius:var(--rs)">
+  <div class="dr"><div class="dl" style="color:var(--blu);font-weight:600">Active</div><div class="bt"><div class="bf fa" style="width:65%"><div class="bg"></div><div class="bs"></div></div><div class="mk" style="left:65%"><div class="md" style="background:var(--blu)"></div></div></div></div>
+  <div class="dr"><div class="dl" style="color:var(--pur);font-weight:600">Upcoming</div><div class="bt"><div class="bf fu" style="width:100%"><div class="bg"></div></div></div></div>
+  <div class="dr"><div class="dl" style="color:var(--grn);font-weight:600">Done</div><div class="bt done"><div class="bf fd" style="width:100%"><div class="bg"></div><div class="bs"></div></div></div></div>
+</div>
+</div>
+
+</div>
+
+<h2>CSS Custom Properties</h2>
+<div class="c">
+<dl class="sg">
+  <dt>--emboss-bar-height</dt><dd>26px</dd>
+  <dt>--emboss-bar-radius</dt><dd>13px (half height = pill)</dd>
+  <dt>--emboss-track-color</dt><dd>#e8ecf1</dd>
+  <dt>--emboss-done-opacity</dt><dd>0.45</dd>
+  <dt>--emboss-upcoming-opacity</dt><dd>0.50 (core) / 0.55 (vivid)</dd>
+  <dt>--emboss-hover-scale</dt><dd>scaleY(1.08)</dd>
+  <dt>--emboss-dep-dot-size</dt><dd>4px</dd>
+  <dt>--emboss-dep-dot-opacity</dt><dd>0.7</dd>
+</dl>
+</div>
+</div>
+<script>function sw(el,i){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.getElementById('p'+i).classList.add('on')}</script>
+</body></html>

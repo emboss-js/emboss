@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · 02 Phase Rows</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--sf2:#fafbfc;--bd:#e5e7eb;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--pnk:#ec4899;--amb:#f59e0b;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.sh{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}.sub{font-size:14px;color:var(--ink3);margin-bottom:32px}
+h2{font-size:18px;font-weight:700;margin:32px 0 16px;padding-top:24px;border-top:1px solid var(--bd2)}h2:first-of-type{border-top:none;padding-top:0}
+.note{font-size:12px;color:var(--ink3);margin-bottom:16px}
+.c{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:20px}
+.c h3{font-size:14px;font-weight:600;margin-bottom:12px}
+.sg{display:grid;grid-template-columns:130px 1fr;gap:6px 16px;font-size:12px;margin:12px 0}.sg dt{color:var(--ink3);font-weight:500}.sg dd{color:var(--ink);font-family:var(--m);font-size:11px}
+code{font-family:var(--m);font-size:11px;background:var(--sf2);padding:1px 6px;border-radius:4px}
+
+/* Phase row */
+.phase-row{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--sf2);border-radius:var(--rs);margin-bottom:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.phase-row:hover{background:#f0f1f4;border-color:var(--bd)}
+.phase-chevron{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--ink4);transition:transform .25s cubic-bezier(.4,0,.2,1);flex-shrink:0}
+.phase-chevron.collapsed{transform:rotate(-90deg)}
+.phase-pill{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;color:white;flex-shrink:0}
+.phase-name{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.phase-meta{font-size:11px;color:var(--ink4);flex-shrink:0}
+.phase-progress{width:40px;height:4px;border-radius:2px;background:var(--bd);overflow:hidden;flex-shrink:0}
+.phase-progress-fill{height:100%;border-radius:2px}
+
+/* Inline edit */
+.phase-name-input{font-size:13px;font-weight:600;font-family:var(--f);border:1px solid var(--phase-color, var(--blu));border-radius:6px;padding:2px 6px;outline:none;background:transparent;color:var(--ink);width:160px;box-shadow:0 0 0 3px rgba(var(--phase-rgb, 59,130,246),.12)}
+
+/* Color picker */
+.color-picker{position:relative;display:inline-block}
+.color-grid{display:grid;grid-template-columns:repeat(6,28px);gap:4px;padding:12px;background:white;border:1px solid var(--bd);border-radius:var(--rs);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.color-dot{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.color-dot:hover{transform:scale(1.1);border-color:rgba(0,0,0,.15)}
+.color-dot.selected{border-color:var(--ink);box-shadow:0 0 0 2px white,0 0 0 4px var(--ink)}
+
+/* Task child rows */
+.task-row{display:flex;align-items:center;gap:10px;padding:8px 16px 8px 42px;margin-bottom:4px;border-radius:6px;transition:background .15s}
+.task-row:hover{background:var(--sf2)}
+.task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.task-name{font-size:12px;color:var(--ink);flex:1}
+.task-avatar{width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:600;color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="sh">
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px"><h1>Phase Rows</h1><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:4px;background:#fef3c7;color:#92400e;position:relative;top:-2px">Organize Bundle</span></div>
+<p class="sub">Grouping container in the sidebar. Colored pill, collapse chevron, inline editing, derived progress.</p>
+
+<h2>Anatomy</h2>
+<div class="c">
+<p class="note">A phase row contains: drag handle (hidden until hover), collapse chevron, color pill, phase name, derived progress bar, and task count meta.</p>
+<div style="margin-top:16px">
+  <div class="phase-row">
+    <div class="phase-chevron">▾</div>
+    <div class="phase-pill" style="background:var(--blu)">Discovery</div>
+    <div class="phase-name">Discovery</div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:75%;background:var(--blu)"></div></div>
+    <div class="phase-meta">4 tasks · 75%</div>
+  </div>
+</div>
+<dl class="sg">
+  <dt>Row padding</dt><dd>10px 16px</dd>
+  <dt>Row background</dt><dd>var(--sf2) / #fafbfc</dd>
+  <dt>Row hover</dt><dd>#f0f1f4 + border</dd>
+  <dt>Pill radius</dt><dd>6px</dd>
+  <dt>Pill padding</dt><dd>4px 12px</dd>
+  <dt>Pill font</dt><dd>12px / 600 / white</dd>
+  <dt>Name font</dt><dd>13px / 600</dd>
+  <dt>Progress bar</dt><dd>40px × 4px, 2px radius</dd>
+  <dt>Meta font</dt><dd>11px / var(--ink4)</dd>
+  <dt>Chevron size</dt><dd>16px, rotates -90° when collapsed</dd>
+  <dt>Chevron transition</dt><dd>0.25s cubic-bezier(.4,0,.2,1)</dd>
+</dl>
+</div>
+
+<h2>Phase Colors</h2>
+<div class="c">
+<p class="note">Six default phase colors. Each phase gets a pill + its tasks inherit the color for bar gradients.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+  <div class="phase-pill" style="background:#3b82f6">Discovery</div>
+  <div class="phase-pill" style="background:#8b5cf6">Design</div>
+  <div class="phase-pill" style="background:#10b981">Build</div>
+  <div class="phase-pill" style="background:#f59e0b">Test</div>
+  <div class="phase-pill" style="background:#ef4444">Launch</div>
+  <div class="phase-pill" style="background:#ec4899">Support</div>
+</div>
+</div>
+
+<h2>States</h2>
+<div class="c">
+<h3>Expanded (default)</h3>
+<div style="margin-top:12px">
+  <div class="phase-row">
+    <div class="phase-chevron">▾</div>
+    <div class="phase-pill" style="background:#3b82f6">Discovery</div>
+    <div class="phase-name">Discovery</div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:75%;background:#3b82f6"></div></div>
+    <div class="phase-meta">4 tasks · 75%</div>
+  </div>
+  <div class="task-row"><div class="task-dot" style="background:var(--grn)"></div><div class="task-name" style="text-decoration:line-through;color:var(--ink4)">Stakeholder interviews</div><div class="task-avatar" style="background:#6366f1">AK</div></div>
+  <div class="task-row"><div class="task-dot" style="background:var(--grn)"></div><div class="task-name" style="text-decoration:line-through;color:var(--ink4)">Competitive analysis</div><div class="task-avatar" style="background:#ec4899">ML</div></div>
+  <div class="task-row"><div class="task-dot" style="background:var(--blu)"></div><div class="task-name">User research synthesis</div><div class="task-avatar" style="background:#6366f1">AK</div></div>
+  <div class="task-row"><div class="task-dot" style="background:var(--pur)"></div><div class="task-name">Requirements document</div><div class="task-avatar" style="background:#f59e0b">JS</div></div>
+</div>
+</div>
+
+<div class="c">
+<h3>Collapsed</h3>
+<p class="note">Chevron rotates -90°. Children hidden. Phase row shows aggregate data.</p>
+<div style="margin-top:12px">
+  <div class="phase-row">
+    <div class="phase-chevron collapsed">▾</div>
+    <div class="phase-pill" style="background:#3b82f6">Discovery</div>
+    <div class="phase-name">Discovery</div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:75%;background:#3b82f6"></div></div>
+    <div class="phase-meta">4 tasks · 75%</div>
+  </div>
+</div>
+</div>
+
+<h2>Inline Editing</h2>
+<div class="c">
+<h3>Click name → text input</h3>
+<p class="note">Single click on phase name transforms it to an input. Enter or blur saves. Escape cancels.</p>
+<div style="margin-top:12px">
+  <div class="phase-row">
+    <div class="phase-chevron">▾</div>
+    <div class="phase-pill" style="background:#3b82f6">Discovery</div>
+    <input class="phase-name-input" value="Discovery" />
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:75%;background:#3b82f6"></div></div>
+    <div class="phase-meta">4 tasks · 75%</div>
+  </div>
+</div>
+<dl class="sg">
+  <dt>Trigger</dt><dd>Click on phase name text</dd>
+  <dt>Save</dt><dd>Enter key or blur (click away)</dd>
+  <dt>Cancel</dt><dd>Escape key — restores original</dd>
+  <dt>Input style</dt><dd>1px solid {phaseColor}, 6px radius, transparent bg</dd>
+  <dt>Focus ring</dt><dd>0 0 0 3px {phaseColor at 12% opacity}</dd>
+</dl>
+</div>
+
+<div class="c">
+<h3>Click color dot → palette popover</h3>
+<p class="note">Clicking the color pill opens a popover with preset colors. Click a color to apply. Click outside to dismiss.</p>
+<div style="margin-top:12px;display:flex;gap:24px;align-items:flex-start">
+  <div class="phase-pill" style="background:#3b82f6;cursor:pointer">Discovery</div>
+  <div class="color-grid">
+    <div class="color-dot selected" style="background:#3b82f6"></div>
+    <div class="color-dot" style="background:#8b5cf6"></div>
+    <div class="color-dot" style="background:#10b981"></div>
+    <div class="color-dot" style="background:#f59e0b"></div>
+    <div class="color-dot" style="background:#ef4444"></div>
+    <div class="color-dot" style="background:#ec4899"></div>
+    <div class="color-dot" style="background:#06b6d4"></div>
+    <div class="color-dot" style="background:#6366f1"></div>
+    <div class="color-dot" style="background:#14b8a6"></div>
+    <div class="color-dot" style="background:#a855f7"></div>
+    <div class="color-dot" style="background:#f97316"></div>
+    <div class="color-dot" style="background:#64748b"></div>
+  </div>
+</div>
+<dl class="sg">
+  <dt>Trigger</dt><dd>Click on phase color pill</dd>
+  <dt>Popover</dt><dd>12 preset colors, 6-column grid</dd>
+  <dt>Dot size</dt><dd>28px, 6px radius</dd>
+  <dt>Selected state</dt><dd>Double border ring (white + ink)</dd>
+  <dt>Dismiss</dt><dd>Click outside or select a color</dd>
+  <dt>Shadow</dt><dd>0 8px 24px rgba(0,0,0,.12)</dd>
+</dl>
+</div>
+
+<h2>Drag to Reorder</h2>
+<div class="c">
+<p class="note">Drag a phase row to reorder among other phases. During drag: row lifts with shadow, a drop indicator line appears between potential positions.</p>
+<div style="margin-top:12px">
+  <div class="phase-row" style="opacity:.5;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateY(-2px)">
+    <div class="phase-chevron collapsed">▾</div>
+    <div class="phase-pill" style="background:#8b5cf6">Design</div>
+    <div class="phase-name">Design</div>
+    <div class="phase-meta">3 tasks</div>
+  </div>
+  <div style="height:2px;background:var(--blu);border-radius:1px;margin:4px 0"></div>
+  <div class="phase-row">
+    <div class="phase-chevron collapsed">▾</div>
+    <div class="phase-pill" style="background:#10b981">Build</div>
+    <div class="phase-name">Build</div>
+    <div class="phase-meta">6 tasks</div>
+  </div>
+</div>
+<dl class="sg">
+  <dt>Drag trigger</dt><dd>Mousedown + 4px movement threshold</dd>
+  <dt>Dragging row</dt><dd>opacity: 0.5, shadow lift, translateY(-2px)</dd>
+  <dt>Drop indicator</dt><dd>2px height, var(--blu) color, between rows</dd>
+</dl>
+</div>
+
+<h2>CSS Custom Properties</h2>
+<div class="c">
+<dl class="sg">
+  <dt>--emboss-row-height</dt><dd>48px (full row including padding)</dd>
+  <dt>--emboss-phase-pill-radius</dt><dd>6px</dd>
+  <dt>--emboss-sidebar-width</dt><dd>300px</dd>
+  <dt>--emboss-phase-bg</dt><dd>var(--sf2) / #fafbfc</dd>
+  <dt>--emboss-phase-hover</dt><dd>#f0f1f4</dd>
+</dl>
+</div>
+</div>
+</body></html>

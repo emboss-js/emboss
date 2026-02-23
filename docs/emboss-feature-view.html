@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss — Core vs Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font:'DM Sans',-apple-system,sans-serif;--mono:'DM Mono',monospace;
+  --ink:#1a1d23;--ink2:#374151;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;
+  --bg:#f5f6f8;--sf:#fff;--sf2:#fafbfc;--bd2:#f0f1f4;--today:#ef4444;
+  --sidebar-w:280px;--row-h:44px;--bar-h:26px;--bar-r:13px;--day-w:32px;
+  --grid-op:0.04;--phase-bar-h:5px;--dot-sz:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.shell{max-width:1440px;margin:0 auto;padding:24px 16px}
+@media(min-width:768px){.shell{padding:32px 24px}}
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.top h1{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.top .sub{font-size:13px;color:var(--ink3);margin-top:2px}
+.mtog{display:flex;gap:0;background:var(--sf);border:1px solid var(--bd2);border-radius:10px;padding:3px}
+.mb{padding:10px 20px;border:none;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--ink4);transition:all .2s;line-height:1.3}
+.mb:hover{color:var(--ink3);background:var(--sf2)}
+.mb.on{color:var(--sf);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.mb.core.on{background:var(--ink3)}
+.mb.pro.on{background:linear-gradient(135deg,#6366f1,#3b82f6)}
+.mb small{display:block;font-size:10px;font-weight:400;opacity:.6;margin-top:1px}
+.gantt{background:var(--sf);border:1px solid var(--bd2);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.03),0 4px 24px rgba(0,0,0,.03)}
+.gi{display:flex;min-height:300px}
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;border-right:1px solid var(--bd2);overflow-y:auto;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.sidebar.hide{width:0;border-right:none;overflow:hidden}
+.sh2{height:48px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--bd2);position:sticky;top:0;background:var(--sf);z-index:5;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--ink4);white-space:nowrap}
+.sp{height:var(--row-h);display:flex;align-items:center;padding:0 14px;gap:8px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.03);transition:background .15s;user-select:none;overflow:hidden;white-space:nowrap}
+.sp:hover{background:rgba(0,0,0,.015)}
+.sp .chv{width:13px;height:13px;color:var(--ink5);transition:transform .25s;flex-shrink:0}
+.sp.shut .chv{transform:rotate(-90deg)}
+.sp .pill{width:5px;height:20px;border-radius:3px;flex-shrink:0}
+.sp .pn{font-size:12px;font-weight:600;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis}
+.sp .pc{font-size:9px;color:var(--ink5);background:var(--sf2);padding:1px 5px;border-radius:4px;flex-shrink:0}
+.sr{height:var(--row-h);display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(0,0,0,.02);transition:height .3s,opacity .25s;overflow:hidden;white-space:nowrap}
+.sr:hover{background:rgba(0,0,0,.012)}
+.sr.hid{height:0!important;opacity:0;border:none;pointer-events:none}
+.sr.d0{padding:0 14px 0 40px}.sr.d1{padding:0 14px 0 56px}
+.sr .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sr .tn{font-size:11.5px;color:var(--ink2);flex:1;overflow:hidden;text-overflow:ellipsis}
+.sr .av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:white;flex-shrink:0}
+.sr.dn .tn{text-decoration:line-through;color:var(--ink4)}.sr.dn .av{opacity:.45}.sr.dn .dot{opacity:.45}
+.sr .dia{width:9px;height:9px;transform:rotate(45deg);border-radius:1.5px;flex-shrink:0}
+.sr .mn{font-size:11.5px;font-weight:600;font-style:italic;color:var(--ink2)}.sr.dn .mn{color:var(--ink4)}
+.sr .sc{width:11px;height:11px;color:var(--ink5);cursor:pointer;transition:transform .2s;flex-shrink:0;margin-right:2px}
+.sr .sc.shut{transform:rotate(-90deg)}
+/* Rail mode */
+.sidebar.rail{width:48px;overflow:hidden}
+.rail .sh2{padding:0;justify-content:center}.rail .sh2 span{display:none}
+.rail .sp{padding:0;justify-content:center;gap:0}.rail .sp .chv,.rail .sp .pn,.rail .sp .pc{display:none}
+.rail .sp .pill{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.pill-lt{display:none;font-size:11px;font-weight:700;color:white}.rail .pill-lt{display:block}
+.rail .sr{padding:0;justify-content:center;gap:0}.rail .sr .tn,.rail .sr .av,.rail .sr .sc,.rail .sr .mn{display:none}
+.rail .sr .dot{width:8px;height:8px}.rail .sr .dia{width:8px;height:8px}
+.sbb{width:24px;height:24px;border:1px solid var(--bd2);border-radius:6px;background:var(--sf);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink4);font-size:11px;flex-shrink:0;transition:.15s}
+.sbb:hover{border-color:var(--ink5);color:var(--ink2)}
+/* Chart */
+.chart{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
+.chart::-webkit-scrollbar{height:5px}.chart::-webkit-scrollbar-track{background:transparent}.chart::-webkit-scrollbar-thumb{background:var(--ink5);border-radius:3px}
+.thead{height:48px;display:flex;border-bottom:1px solid var(--bd2);position:sticky;top:0;background:var(--sf);z-index:5}
+.tmo{display:flex;flex-direction:column;justify-content:center;padding:0 10px;border-right:1px solid var(--bd2)}
+.tmo .ml{font-size:11px;font-weight:600;color:var(--ink2)}.tmo .ms{font-size:9px;color:var(--ink4);margin-top:1px}
+.cb{position:relative}
+.gw{position:absolute;top:0;width:1px;background:var(--ink);opacity:var(--grid-op);pointer-events:none}
+.gm{position:absolute;top:0;width:1px;background:var(--ink);opacity:calc(var(--grid-op)*2.5);pointer-events:none}
+/* Today */
+.tc{position:absolute;top:0;pointer-events:none}
+.tglow{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(239,68,68,.04),transparent);z-index:1}
+.tline{position:absolute;top:0;bottom:0;left:50%;width:1.5px;background:var(--today);opacity:.5;transform:translateX(-50%);z-index:20}
+.tdot{position:absolute;top:-3px;left:50%;width:8px;height:8px;background:var(--today);border-radius:50%;transform:translate(-50%,-50%);z-index:25}
+.tring{position:absolute;top:-3px;left:50%;width:16px;height:16px;border-radius:50%;background:rgba(239,68,68,.15);z-index:24;animation:ring 2s ease-in-out infinite}
+@keyframes ring{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.15}50%{transform:translate(-50%,-50%) scale(1.6);opacity:.05}}
+.ttag{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:700;color:var(--today);letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;font-family:var(--mono);z-index:25}
+.cr{height:var(--row-h);position:relative;overflow:visible;transition:height .3s,opacity .25s}
+.cr.hid{height:0!important;opacity:0;pointer-events:none;overflow:hidden}
+/* Bars */
+.bar{position:absolute;top:50%;height:var(--bar-h);border-radius:var(--bar-r);transform:translateY(-50%);z-index:10;cursor:grab;background:#e8ecf1;overflow:visible;transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .25s,opacity .3s;animation:bi .35s cubic-bezier(.4,0,.2,1) both}
+.bar:hover{transform:translateY(-50%) translateY(-1px)}
+.bar.dn{opacity:.45}.bar.dn:hover{opacity:.65}
+.bar .fl{position:absolute;top:0;bottom:0;left:0;border-radius:var(--bar-r) 0 0 var(--bar-r);z-index:2;overflow:hidden}
+.bar .fl.full{border-radius:var(--bar-r)}
+.bar .fl::before{content:'';position:absolute;top:2px;left:4px;right:4px;height:40%;border-radius:var(--bar-r);background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.12) 50%,transparent 100%);z-index:3}
+.bar .fl::after{content:'';position:absolute;bottom:0;left:0;right:0;height:35%;border-radius:0 0 var(--bar-r) var(--bar-r);background:linear-gradient(0deg,rgba(0,0,0,.1) 0%,transparent 100%);z-index:3}
+/* Grayscale */
+.fl.ga{background:linear-gradient(90deg,#4b5563,#6b7280)}.fl.gd{background:linear-gradient(90deg,#9ca3af,#a3a3a3)}.fl.gu{background:linear-gradient(90deg,#9ca3af,#a3a3a3);opacity:.5}
+.bar.wga{box-shadow:0 2px 6px rgba(0,0,0,.06)}.bar:hover.wga{box-shadow:0 4px 12px rgba(0,0,0,.1)}
+/* Vivid */
+.fl.va{background:linear-gradient(90deg,#3b82f6,#06b6d4)}.fl.vd{background:linear-gradient(90deg,#34d399,#06b6d4)}.fl.vu{background:linear-gradient(90deg,#8b5cf6,#ec4899);opacity:.55}
+.bar.wva{box-shadow:0 2px 6px rgba(59,130,246,.25)}.bar:hover.wva{box-shadow:0 4px 16px rgba(59,130,246,.3)}
+.bar.wvd{box-shadow:0 2px 6px rgba(6,182,212,.15)}.bar.wvu{box-shadow:0 2px 6px rgba(139,92,246,.12)}
+/* Marker */
+.bar .mk{position:absolute;top:50%;z-index:5;width:var(--dot-sz);height:var(--dot-sz);border-radius:50%;transform:translate(-50%,-50%);background:white;box-shadow:0 1px 4px rgba(0,0,0,.2),0 0 0 2px rgba(255,255,255,.8);transition:transform .2s}
+.bar:hover .mk{transform:translate(-50%,-50%) scale(1.15)}
+.bar .mk::after{content:'';position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:50%}
+.mk.mg::after{background:#4b5563}.mk.mv::after{background:#06b6d4}
+/* Labels */
+.bar .lb{position:absolute;top:50%;transform:translateY(-50%);z-index:6;font-size:10px;font-weight:500;white-space:nowrap;pointer-events:none}
+.bar .lb.inf{left:10px;color:white;text-shadow:0 1px 2px rgba(0,0,0,.2)}.bar .lb.ont{left:10px;color:var(--ink3)}.bar .lb.out{color:var(--ink4)}
+/* Handles */
+.bar .dh{position:absolute;top:50%;width:3px;height:55%;border-radius:2px;background:rgba(255,255,255,.4);transform:translateY(-50%);opacity:0;transition:opacity .15s;z-index:6;cursor:ew-resize}
+.bar .dh.hl{left:4px}.bar .dh.hr{right:4px}.bar:hover .dh{opacity:1}
+/* Dep dots */
+.dd{position:absolute;top:50%;width:4px;height:4px;border-radius:50%;background:var(--ink4);transform:translateY(-50%);z-index:11;opacity:.7}
+/* Phase bar */
+.pb{position:absolute;top:50%;transform:translateY(-50%);height:var(--phase-bar-h);border-radius:calc(var(--phase-bar-h)/2);z-index:1;pointer-events:none;opacity:.25}
+/* Milestones */
+.mw{position:absolute;top:50%;transform:translateY(-50%);z-index:10;cursor:pointer;transition:transform .2s;animation:bi .35s ease both}
+.mw:hover{transform:translateY(-50%) scale(1.2)}.mw.dn{opacity:.45}.mw.dn:hover{opacity:.7}
+.mo{width:20px;height:20px;transform:rotate(45deg);border-radius:3px;position:relative;overflow:hidden;border:2.5px solid;background:var(--sf)}
+.mo::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,.25) 0%,transparent 100%);z-index:2}
+.mf{position:absolute;bottom:0;left:0;right:0;transition:height .4s}
+/* Deps SVG */
+svg.dep{position:absolute;top:0;left:0;pointer-events:none;z-index:15;overflow:visible}
+/* Tooltip */
+.tip{position:fixed;z-index:1000;pointer-events:none;background:var(--ink);color:white;border-radius:10px;padding:10px 14px;font-size:11px;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;max-width:260px}
+.tip.show{opacity:1;transform:translateY(0)}
+.tip .tt{font-weight:600;font-size:12px;margin-bottom:4px;white-space:normal}
+.tip .tr{display:flex;align-items:center;gap:6px;margin-top:3px;color:rgba(255,255,255,.7)}.tip .tr .td{width:6px;height:6px;border-radius:50%;flex-shrink:0}.tip .tr .tl{opacity:.5;min-width:48px}
+.tip .tbm{height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin-top:6px;overflow:hidden}.tip .tbf{height:100%;border-radius:2px}
+.tip .tph{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.tip .tdp{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;white-space:normal}
+@keyframes bi{from{opacity:0;transform:translateY(-50%) translateX(-6px)}to{opacity:1;transform:translateY(-50%)}}
+/* Notes */
+.notes{margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.nt{background:var(--sf);border:1px solid var(--bd2);border-radius:10px;padding:14px}
+.nt h3{font-size:12px;font-weight:600;margin-bottom:3px}.nt p{font-size:11.5px;color:var(--ink3);line-height:1.5}
+.nt .tag{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:3px;margin-right:4px}
+.tag-core{background:#e8ecf1;color:var(--ink3)}.tag-org{background:#fef3c7;color:#92400e}.tag-team{background:#ede9fe;color:#6d28d9}.tag-anlz{background:#dbeafe;color:#1d4ed8}.tag-free{background:#dcfce7;color:#15803d}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <div>
+      <h1>Emboss — Feature View</h1>
+      <p class="sub">Toggle between free core (grayscale, flat list) and the full Pro package (vivid, sidebar, phases, milestones, assignees).</p>
+    </div>
+    <div class="mtog">
+      <button class="mb core on" onclick="setM('core',this)">Core<small>Free · Grayscale</small></button>
+      <button class="mb pro" onclick="setM('pro',this)">Pro<small>All Bundles</small></button>
+    </div>
+  </div>
+  <div class="gantt" id="G"><div class="gi"><div class="sidebar hide" id="SB"></div><div class="chart" id="CH"></div></div></div>
+  <div class="notes" id="NT"></div>
+</div>
+<script>
+const PH=[
+  {id:'disc',name:'Discovery',color:'#6366f1',letter:'D',tasks:[
+    {id:'t1',name:'User research interviews',who:'GF',wc:'#6366f1',st:'done',s:0,d:8,pr:100},
+    {id:'t2',name:'Competitive analysis',who:'MF',wc:'#ec4899',st:'done',s:2,d:6,pr:100,deps:['t1']},
+    {id:'t3',name:'Requirements doc',who:'GF',wc:'#6366f1',st:'done',s:6,d:5,pr:100,deps:['t2'],
+      children:[{id:'t3a',name:'Functional requirements',who:'GF',wc:'#6366f1',st:'done',s:6,d:3,pr:100},{id:'t3b',name:'Technical constraints',who:'MF',wc:'#ec4899',st:'done',s:8,d:3,pr:100}]},
+    {id:'m1',type:'ms',name:'Discovery complete',s:11,deps:['t3'],msPr:100}
+  ]},
+  {id:'des',name:'Design',color:'#ec4899',letter:'De',tasks:[
+    {id:'t4',name:'Information architecture',who:'GF',wc:'#6366f1',st:'done',s:11,d:5,pr:100,deps:['m1']},
+    {id:'t5',name:'Visual design system',who:'MF',wc:'#ec4899',st:'active',s:13,d:10,pr:65,deps:['t4']},
+    {id:'t6',name:'Prototype & user testing',who:'GF',wc:'#6366f1',st:'active',s:18,d:8,pr:30,deps:['t5']},
+    {id:'t7',name:'Accessibility audit',who:'JL',wc:'#f59e0b',st:'upcoming',s:23,d:4,pr:0,deps:['t6']}
+  ]},
+  {id:'bld',name:'Build',color:'#3b82f6',letter:'B',tasks:[
+    {id:'t8',name:'Core engine integration',who:'MF',wc:'#ec4899',st:'active',s:20,d:12,pr:25,deps:['t5']},
+    {id:'t9',name:'Theme API & variables',who:'MF',wc:'#ec4899',st:'upcoming',s:25,d:8,pr:0,deps:['t8'],
+      children:[{id:'t9a',name:'CSS custom properties',who:'MF',wc:'#ec4899',st:'upcoming',s:25,d:4,pr:0},{id:'t9b',name:'Theme presets',who:'MF',wc:'#ec4899',st:'upcoming',s:29,d:4,pr:0}]},
+    {id:'t10',name:'Sidebar component',who:'JL',wc:'#f59e0b',st:'upcoming',s:28,d:7,pr:0,deps:['t8']},
+    {id:'t11',name:'Bar renderer',who:'MF',wc:'#ec4899',st:'upcoming',s:30,d:6,pr:0,deps:['t9']},
+    {id:'m2',type:'ms',name:'Beta release',s:36,deps:['t11'],msPr:15}
+  ]},
+  {id:'lnch',name:'Launch',color:'#10b981',letter:'L',tasks:[
+    {id:'t12',name:'Documentation site',who:'GF',wc:'#6366f1',st:'upcoming',s:34,d:7,pr:0,deps:['t10']},
+    {id:'t13',name:'Premium themes',who:'MF',wc:'#ec4899',st:'upcoming',s:36,d:8,pr:0,deps:['m2']},
+    {id:'t14',name:'Product Hunt prep',who:'GF',wc:'#6366f1',st:'upcoming',s:40,d:4,pr:0,deps:['t13']},
+    {id:'m3',type:'ms',name:'Public launch',s:44,deps:['t14'],msPr:0}
+  ]}
+];
+const TOD=21,TOT=48;
+const MO=[{l:'February',s:'2026',d:10},{l:'March',s:'',d:13},{l:'April',s:'',d:13},{l:'May',s:'',d:12}];
+let mode='core',pShut={},sShut={},isRail=false;
+
+function gv(v){return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(v))}
+function stL(s){return{done:'Done',active:'In progress',upcoming:'Upcoming'}[s]||''}
+function dtS(day){const b=new Date(2026,1,2),x=new Date(b);x.setDate(x.getDate()+day);return x.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+
+function fCls(st){return mode==='pro'?{done:'vd',active:'va',upcoming:'vu'}[st]||'ga':{done:'gd',active:'ga',upcoming:'gu'}[st]||'ga'}
+function wCls(st){return mode==='pro'?{done:'wvd',active:'wva',upcoming:'wvu'}[st]||'wga':'wga'}
+function mCls(){return mode==='pro'?'mv':'mg'}
+function stC(st){return mode==='pro'?{done:'#34d399',active:'#3b82f6',upcoming:'#8b5cf6'}[st]||'#999':{done:'#9ca3af',active:'#4b5563',upcoming:'#9ca3af'}[st]||'#999'}
+function dotC(st){return mode==='pro'?{done:'#10b981',active:'#3b82f6',upcoming:'#8b5cf6'}[st]||'#ccc':{done:'#9ca3af',active:'#4b5563',upcoming:'#9ca3af'}[st]||'#ccc'}
+
+// Dep index
+function depIdx(){
+  const h={};
+  PH.forEach(p=>p.tasks.forEach(t=>{
+    if(t.deps) t.deps.forEach(d=>{if(!h[t.id])h[t.id]={i:0,o:0};h[t.id].i=1;if(!h[d])h[d]={i:0,o:0};h[d].o=1});
+    if(t.children) t.children.forEach(c=>{if(c.deps) c.deps.forEach(d=>{if(!h[c.id])h[c.id]={i:0,o:0};h[c.id].i=1;if(!h[d])h[d]={i:0,o:0};h[d].o=1})});
+  }));return h;
+}
+
+function flat(){
+  const r=[],pro=mode==='pro';
+  PH.forEach(p=>{
+    if(pro){r.push({type:'phase',phase:p});if(pShut[p.id])return}
+    p.tasks.forEach(t=>{
+      if(t.type==='ms'){if(pro)r.push({type:'ms',task:t,phase:p,depth:0});return}
+      r.push({type:'task',task:t,phase:p,depth:0});
+      if(pro&&t.children&&!sShut[t.id]) t.children.forEach(c=>r.push({type:'task',task:c,phase:p,depth:1}));
+    });
+  });return r;
+}
+function allT(){const a=[];PH.forEach(p=>p.tasks.forEach(t=>{a.push(t);if(t.children)t.children.forEach(c=>a.push(c))}));return a}
+
+// Lookup for tooltips
+function buildLU(){const m={};PH.forEach(p=>{p.tasks.forEach(t=>{m[t.id]={...t,pN:p.name,pC:p.color};if(t.children)t.children.forEach(c=>m[c.id]={...c,pN:p.name,pC:p.color})})});return m}
+const LU=buildLU();
+
+function render(){
+  const d=gv('--day-w'),rh=gv('--row-h'),tw=TOT*d,rows=flat(),h=rows.length*rh;
+  const rm={};rows.forEach((r,i)=>{if(r.task)rm[r.task.id]=i});
+  const di=depIdx(),pro=mode==='pro';
+
+  // SIDEBAR
+  const sb=document.getElementById('SB');
+  if(pro){
+    sb.classList.remove('hide');
+    let s=`<div class="sh2"><span>Tasks</span><button class="sbb" onclick="tSB()">${isRail?'▶':'◀'}</button></div>`;
+    rows.forEach(r=>{
+      if(r.type==='phase'){const p=r.phase,sh=pShut[p.id];s+=`<div class="sp ${sh?'shut':''}" onclick="tP('${p.id}')"><svg class="chv" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 3l4 4-4 4"/></svg><div class="pill" style="background:${p.color}"><span class="pill-lt">${p.letter}</span></div><span class="pn">${p.name}</span><span class="pc">${p.tasks.filter(t=>t.type!=='ms').length}</span></div>`}
+      else if(r.type==='ms'){const t=r.task,dn=(t.msPr||0)>=100;s+=`<div class="sr d0 ${dn?'dn':''}" data-t="${t.id}"><div class="dia" style="background:${r.phase.color}${dn?'80':''}"></div><span class="mn">${t.name}</span></div>`}
+      else{const t=r.task,dn=t.st==='done',hk=t.children&&t.children.length>0;
+        let ch='';if(hk)ch=`<svg class="sc ${sShut[t.id]?'shut':''}" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" onclick="event.stopPropagation();tS('${t.id}')"><path d="M4 2.5l3.5 3.5-3.5 3.5"/></svg>`;
+        s+=`<div class="sr d${r.depth} ${dn?'dn':''}" data-t="${t.id}">${ch}<div class="dot" style="background:${dotC(t.st)}"></div><span class="tn">${t.name}</span><div class="av" style="background:${t.wc}">${t.who}</div></div>`}
+    });sb.innerHTML=s;
+    if(isRail) sb.classList.add('rail'); else sb.classList.remove('rail');
+  } else {sb.classList.add('hide');sb.innerHTML=''}
+
+  // HEADER
+  let th='<div class="thead">';
+  MO.forEach(m=>th+=`<div class="tmo" style="width:${m.d*d}px"><span class="ml">${m.l}</span>${m.s?`<span class="ms">${m.s}</span>`:''}</div>`);
+  th+='</div>';
+
+  // BODY
+  let cb='';
+  for(let i=7;i<TOT;i+=7)cb+=`<div class="gw" style="left:${i*d}px;height:${h}px"></div>`;
+  let mo=0;MO.forEach((m,i)=>{if(i>0)cb+=`<div class="gm" style="left:${mo*d}px;height:${h}px"></div>`;mo+=m.d});
+  cb+=`<div class="tc" style="left:${TOD*d-d/2}px;width:${d}px;height:${h}px"><div class="tglow"></div><div class="tline"></div><div class="tring"></div><div class="tdot"></div><div class="ttag">Today</div></div>`;
+
+  let dl=0;
+  rows.forEach(r=>{
+    if(r.type==='phase'){
+      const p=r.phase,ps=Math.min(...p.tasks.map(t=>t.s)),pe=Math.max(...p.tasks.map(t=>t.type==='ms'?t.s:t.s+t.d));
+      cb+=`<div class="cr" style="width:${tw}px"><div class="pb" style="left:${ps*d}px;width:${(pe-ps)*d}px;background:${p.color}"></div></div>`;
+    } else if(r.type==='ms'){
+      const t=r.task,dn=(t.msPr||0)>=100,mc=r.phase.color;
+      cb+=`<div class="cr" style="width:${tw}px"><div class="mw ${dn?'dn':''}" data-t="${t.id}" style="left:${t.s*d-10}px;animation-delay:${dl}s"><div class="mo" style="border-color:${mc}"><div class="mf" style="height:${t.msPr||0}%;background:${mc}"></div></div></div></div>`;
+    } else {
+      const t=r.task,bw=t.d*d,si=bw>80,em=t.pr===0,fu=t.pr>=100,up=t.st==='upcoming';
+      const fw=fu?bw:(em?0:Math.max(14,bw*(t.pr/100)));
+      const sm=!em&&!fu,us=up&&em;
+      let lb='';
+      if(si&&t.pr>0)lb=`<span class="lb inf">${t.name}${t.pr<100?' · '+t.pr+'%':''}</span>`;
+      else if(si&&em&&up)lb=`<span class="lb inf" style="color:rgba(255,255,255,.65)">${t.name}</span>`;
+      else if(si&&em)lb=`<span class="lb ont">${t.name}</span>`;
+      else lb=`<span class="lb out" style="left:${bw+6}px">${t.name}${t.pr>0&&t.pr<100?' · '+t.pr+'%':''}</span>`;
+
+      let fh='';
+      if(us)fh=`<div class="fl ${fCls('upcoming')} full" style="width:${bw}px"></div>`;
+      else if(!em)fh=`<div class="fl ${fCls(t.st)} ${fu?'full':''}" style="width:${fw}px"></div>`;
+
+      const dd=di[t.id]||{};
+      let dots='';if(dd.i)dots+=`<div class="dd" style="left:-2px"></div>`;if(dd.o)dots+=`<div class="dd" style="right:-2px"></div>`;
+
+      cb+=`<div class="cr" style="width:${tw}px"><div class="bar ${wCls(t.st)} ${t.st==='done'?'dn':''}" data-t="${t.id}" style="left:${t.s*d}px;width:${bw}px;animation-delay:${dl}s">${fh}${sm?`<div class="mk ${mCls()}" style="left:${fw}px"></div>`:''}${lb}<div class="dh hl"></div><div class="dh hr"></div>${dots}</div></div>`;
+    }
+    dl+=.02;
+  });
+
+  document.getElementById('CH').innerHTML=th+`<div class="cb">${cb}</div>`;
+
+  // DEPS SVG — bottom-to-top arrows
+  const AT=allT();
+  let svg=`<svg class="dep" width="${tw}" height="${h}" style="width:${tw}px;height:${h}px">`;
+  AT.forEach(task=>{
+    if(!task.deps)return;
+    task.deps.forEach(depId=>{
+      const fi=rm[depId],ti=rm[task.id];if(fi===undefined||ti===undefined)return;
+      const from=AT.find(t=>t.id===depId);if(!from)return;
+      // Bottom-center of source
+      const fMid=from.type==='ms'?(from.s+.5)*d:(from.s+from.d/2)*d;
+      const fy=(fi+1)*rh; // bottom of row
+      // Top-center of target
+      const tMid=task.type==='ms'?(task.s+.5)*d:(task.s+task.d/2)*d;
+      const ty=ti*rh; // top of row
+      // Determine style by status
+      const fromDone=from.st==='done'||(from.msPr||0)>=100;
+      const toDone=task.st==='done'||(task.msPr||0)>=100;
+      const toUp=task.st==='upcoming';
+      let stroke,sw,dash,op,dr;
+      if(fromDone&&toDone){stroke='#d1d5db';sw=1;dash='';op=.25;dr=2.5} // completed
+      else if(toUp){stroke='#9ca3af';sw=1;dash='stroke-dasharray="4 3"';op=.35;dr=3} // future
+      else{stroke='#6b7280';sw=1;dash='';op=.5;dr=3.5} // active
+      const cy1=fy,cy2=ty;
+      const cp1y=fy+(ty-fy)*.35, cp2y=fy+(ty-fy)*.65;
+      svg+=`<path d="M${fMid},${fy} C${fMid},${cp1y} ${tMid},${cp2y} ${tMid},${ty}" fill="none" stroke="${stroke}" stroke-width="${sw}" ${dash} opacity="${op}"/>`;
+      svg+=`<circle cx="${fMid}" cy="${fy}" r="${dr}" fill="${stroke}" opacity="${op+.2}"/>`;
+      svg+=`<circle cx="${tMid}" cy="${ty}" r="${dr}" fill="${stroke}" opacity="${op+.2}"/>`;
+    });
+  });
+  svg+='</svg>';
+  document.querySelector('.cb').insertAdjacentHTML('beforeend',svg);
+
+  // NOTES
+  renderNotes();
+}
+
+function renderNotes(){
+  const n=document.getElementById('NT');
+  if(mode==='core'){
+    n.innerHTML=`
+      <div class="nt"><h3><span class="tag tag-core">Core</span> Grayscale Bars</h3><p>Glass treatment with grayscale gradients. Active bars dark, upcoming softened, done faded. Beautiful without color — hierarchy through opacity and weight.</p></div>
+      <div class="nt"><h3><span class="tag tag-core">Core</span> Drag to Reschedule</h3><p>Hover reveals handles inset 4px from edges. Grab bar body to move, handles to resize. Ghost bar shows original position.</p></div>
+      <div class="nt"><h3><span class="tag tag-free">Free Ext</span> Today Marker</h3><p>1.5px red line above bars (z-index 20). Centered 8px dot with 16px pulsing ring. Column glow at lowest z-index.</p></div>
+      <div class="nt"><h3><span class="tag tag-free">Free Ext</span> Dependency Dots</h3><p>4px dots on bar edges — left for incoming, right for outgoing. Arrows route bottom-to-top: solid for active, dashed for future, faded for done.</p></div>
+      <div class="nt"><h3><span class="tag tag-free">Free Ext</span> Hover Tooltips</h3><p>Dark card shows task name, status, date range, mini progress bar. Follows cursor with boundary detection.</p></div>
+      <div class="nt"><h3><span class="tag tag-core">Core</span> View Modes</h3><p>Day, Week, Month, Year + custom. Dark mode theme included. CSS custom properties for full control.</p></div>`;
+  } else {
+    n.innerHTML=`
+      <div class="nt"><h3><span class="tag tag-org">Organize</span> Sidebar + Phases</h3><p>Collapsible phase groups with colored pills. Chevron toggle, derived progress, inline name editing with phase-colored focus ring.</p></div>
+      <div class="nt"><h3><span class="tag tag-org">Organize</span> Milestones</h3><p>Diamond markers with bottom-to-top progress fill. Phase-colored border, glass highlight. Hover scale 1.2×.</p></div>
+      <div class="nt"><h3><span class="tag tag-team">Team</span> Assignees</h3><p>Color-coded avatar circles in sidebar rows. Auto-palette based on initials. Swimlane/resource view for who-does-what.</p></div>
+      <div class="nt"><h3><span class="tag tag-anlz">Analyze</span> Critical Path</h3><p>Toggle highlights the longest dependency chain. Critical arrows go solid red 1.5px, non-critical fades to 15% opacity.</p></div>
+      <div class="nt"><h3>Vivid Template</h3><p>Hue-shifting gradients: blue→cyan active, emerald→teal done, purple→pink upcoming. Color-matched shadows. At-risk amber→orange, blocked red→rose.</p></div>
+      <div class="nt"><h3>Subtask Nesting</h3><p>One level deep. Collapsible chevrons. Child rows indented 62px. Progress rolls up to parent.</p></div>`;
+  }
+}
+
+function tP(id){pShut[id]=!pShut[id];render()}
+function tS(id){sShut[id]=!sShut[id];render()}
+function tSB(){isRail=!isRail;document.getElementById('SB').classList.toggle('rail',isRail);setTimeout(render,50)}
+function setM(m,btn){mode=m;isRail=false;document.querySelectorAll('.mb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render()}
+
+render();
+
+// ═══ TOOLTIP ═══
+const tipEl=document.createElement('div');tipEl.className='tip';document.body.appendChild(tipEl);
+let tipT=null;
+function showTip(e,html){clearTimeout(tipT);tipEl.innerHTML=html;tipEl.classList.add('show');const r=tipEl.getBoundingClientRect();let x=e.clientX+12,y=e.clientY-r.height-8;if(y<4)y=e.clientY+16;if(x+r.width>window.innerWidth-8)x=e.clientX-r.width-12;tipEl.style.left=x+'px';tipEl.style.top=y+'px'}
+function hideTip(){tipT=setTimeout(()=>tipEl.classList.remove('show'),80)}
+
+function taskTip(id){const t=LU[id]||{};const s=dtS(t.s||0),e=dtS((t.s||0)+(t.d||0));const dn=(t.deps||[]).map(i=>{const x=LU[i];return x?x.name:i}).join(', ');
+  return `<div class="tph">${t.pN||''}</div><div class="tt">${t.name||id}</div><div class="tr"><span class="tl">Status</span><span class="td" style="background:${stC(t.st)}"></span>${stL(t.st||'upcoming')}</div><div class="tr"><span class="tl">Dates</span>${s} → ${e}</div>${t.who?`<div class="tr"><span class="tl">Owner</span>${t.who}</div>`:''}${t.pr!==undefined?`<div class="tbm"><div class="tbf" style="width:${t.pr}%;background:${stC(t.st)}"></div></div>`:''}${dn?`<div class="tdp">→ ${dn}</div>`:''}`}
+function msTip(id){const t=LU[id]||{};const dt=dtS(t.s||0);const pr=t.msPr||0;const dn=(t.deps||[]).map(i=>{const x=LU[i];return x?x.name:i}).join(', ');
+  return `<div class="tph">${t.pN||''}</div><div class="tt">◆ ${t.name||id}</div><div class="tr"><span class="tl">Date</span>${dt}</div><div class="tr"><span class="tl">Progress</span>${pr}%</div>${pr>0&&pr<100?`<div class="tbm"><div class="tbf" style="width:${pr}%;background:${t.pC||'#6366f1'}"></div></div>`:''}${dn?`<div class="tdp">→ ${dn}</div>`:''}`}
+
+document.getElementById('CH').addEventListener('mousemove',function(e){const b=e.target.closest('.bar'),m=e.target.closest('.mw');if(b&&b.dataset.t)showTip(e,taskTip(b.dataset.t));else if(m&&m.dataset.t)showTip(e,msTip(m.dataset.t));else hideTip()});
+document.getElementById('CH').addEventListener('mouseleave',hideTip);
+document.getElementById('SB').addEventListener('mousemove',function(e){const r=e.target.closest('.sr');if(r&&r.dataset.t){const d=LU[r.dataset.t];if(d){if(d.type==='ms')showTip(e,msTip(r.dataset.t));else showTip(e,taskTip(r.dataset.t))}}else hideTip()});
+document.getElementById('SB').addEventListener('mouseleave',hideTip);
+</script>
+</body>
+</html>

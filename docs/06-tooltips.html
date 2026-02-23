@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · 06 Tooltips</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#3d424f;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--pnk:#ec4899;--amb:#f59e0b;--red:#ef4444;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;}
+.shell{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:32px;}
+h2{font-size:18px;font-weight:700;margin-top:40px;margin-bottom:4px;letter-spacing:-.2px;}
+h2 .n{color:var(--ink4);font-weight:400;margin-right:6px;}
+.desc{font-size:13px;color:var(--ink3);margin-bottom:16px;}
+.card{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:16px;}
+.sr{display:flex;gap:8px;align-items:baseline;padding:5px 0;font-size:12px;border-bottom:1px solid var(--bd2);}.sr:last-child{border:none;}
+.sl{font-weight:600;color:var(--ink);min-width:150px;flex-shrink:0;}
+.sv{color:var(--ink2);font-family:var(--m);font-size:11px;}
+.sn{color:var(--ink4);font-size:11px;margin-left:auto;flex-shrink:0;}
+.demo{background:#f0f2f5;border-radius:var(--rs);padding:40px 24px;margin:16px 0;display:flex;gap:32px;align-items:flex-start;justify-content:center;flex-wrap:wrap;}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px;margin-left:8px;background:#ecfdf5;color:var(--grn);}
+/* tooltip styles */
+.tt{background:var(--ink);border-radius:10px;padding:14px 16px;width:240px;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+.tt-phase{font-size:9px;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink4);margin-bottom:4px;}
+.tt-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.tt-status{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.tt-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.tt-meta{font-size:11px;color:var(--ink4);margin-bottom:4px;}
+.tt-prog-track{height:4px;border-radius:2px;background:rgba(255,255,255,.1);margin:10px 0 4px;}
+.tt-prog-fill{height:4px;border-radius:2px;}
+.tt-prog-text{font-size:10px;color:var(--ink4);}
+.tt-dep{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);}
+.tt-dep-label{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink4);margin-bottom:4px;}
+.tt-dep-item{font-size:10px;color:var(--ink5);padding:1px 0;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1>Tooltips</h1><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:4px;background:#dcfce7;color:#15803d;margin-left:12px;position:relative;top:-2px">Free Extension</span>
+<p class="sub">Dark tooltip cards on bar/milestone hover. Shows phase, name, status, dates, owner, progress, and dependency chain.</p>
+
+<!-- ═══ TASK TOOLTIP ═══ -->
+<h2><span class="n">1</span>Task Tooltip</h2>
+<p class="desc">Shown on hover over any task bar in the chart area.</p>
+
+<div class="card">
+<div class="demo">
+
+  <!-- Active task -->
+  <div>
+    <div style="font-size:10px;color:var(--ink4);margin-bottom:8px;text-align:center;">Active task</div>
+    <div class="tt">
+      <div class="tt-phase">Discovery</div>
+      <div class="tt-name">User research interviews</div>
+      <div class="tt-status">
+        <div class="tt-dot" style="background:var(--blu);"></div>
+        <span style="font-size:11px;color:var(--ink5);">Active</span>
+      </div>
+      <div class="tt-meta">Feb 3 → Feb 14 · 12 days</div>
+      <div class="tt-meta">Owner: Sarah K.</div>
+      <div class="tt-prog-track"><div class="tt-prog-fill" style="width:65%;background:linear-gradient(90deg,#3b82f6,#06b6d4);"></div></div>
+      <div class="tt-prog-text">65% complete</div>
+      <div class="tt-dep">
+        <div class="tt-dep-label">Depends on</div>
+        <div class="tt-dep-item">→ Competitive analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done task -->
+  <div>
+    <div style="font-size:10px;color:var(--ink4);margin-bottom:8px;text-align:center;">Done task</div>
+    <div class="tt">
+      <div class="tt-phase">Discovery</div>
+      <div class="tt-name">Stakeholder interviews</div>
+      <div class="tt-status">
+        <div class="tt-dot" style="background:var(--grn);"></div>
+        <span style="font-size:11px;color:var(--ink5);">Done</span>
+      </div>
+      <div class="tt-meta">Jan 27 → Feb 3 · 8 days</div>
+      <div class="tt-meta">Owner: Alex K.</div>
+      <div class="tt-prog-track"><div class="tt-prog-fill" style="width:100%;background:linear-gradient(90deg,#34d399,#06b6d4);"></div></div>
+      <div class="tt-prog-text">Complete</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ MILESTONE TOOLTIP ═══ -->
+<h2><span class="n">2</span>Milestone Tooltip</h2>
+<p class="desc">Shown on hover over milestone diamonds. Shows date instead of date range.</p>
+
+<div class="card">
+<div class="demo">
+
+  <div>
+    <div style="font-size:10px;color:var(--ink4);margin-bottom:8px;text-align:center;">Milestone — in progress</div>
+    <div class="tt">
+      <div class="tt-phase">Discovery</div>
+      <div class="tt-name">
+        <span style="display:inline-block;width:8px;height:8px;background:#8b5cf6;transform:rotate(45deg);border-radius:1px;flex-shrink:0;"></span>
+        Research complete
+      </div>
+      <div class="tt-meta">Due: Feb 14, 2026</div>
+      <div class="tt-prog-track"><div class="tt-prog-fill" style="width:75%;background:linear-gradient(90deg,#8b5cf6,#a78bfa);"></div></div>
+      <div class="tt-prog-text">75% complete</div>
+      <div class="tt-dep">
+        <div class="tt-dep-label">Depends on</div>
+        <div class="tt-dep-item">→ User research interviews</div>
+        <div class="tt-dep-item">→ Competitive analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size:10px;color:var(--ink4);margin-bottom:8px;text-align:center;">Milestone — upcoming</div>
+    <div class="tt">
+      <div class="tt-phase">Design</div>
+      <div class="tt-name">
+        <span style="display:inline-block;width:8px;height:8px;background:#10b981;transform:rotate(45deg);border-radius:1px;flex-shrink:0;"></span>
+        Design review
+      </div>
+      <div class="tt-meta">Due: Mar 7, 2026</div>
+      <div class="tt-prog-track"><div class="tt-prog-fill" style="width:0%;"></div></div>
+      <div class="tt-prog-text">Not started</div>
+      <div class="tt-dep">
+        <div class="tt-dep-label">Depends on</div>
+        <div class="tt-dep-item">→ Wireframes v2</div>
+        <div class="tt-dep-item">→ Component library</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ CONTENT RULES ═══ -->
+<h2><span class="n">3</span>Content Rules</h2>
+<p class="desc">What shows in the tooltip and when.</p>
+
+<div class="card">
+  <div class="sr"><span class="sl">Phase name</span><span class="sv">Always shown</span><span class="sn">9px uppercase, --ink4</span></div>
+  <div class="sr"><span class="sl">Task/Milestone name</span><span class="sv">Always shown</span><span class="sn">13px bold, #fff</span></div>
+  <div class="sr"><span class="sl">Milestone icon</span><span class="sv">Small diamond before name</span><span class="sn">Only on milestones</span></div>
+  <div class="sr"><span class="sl">Status dot + label</span><span class="sv">Tasks only</span><span class="sn">Uses status color</span></div>
+  <div class="sr"><span class="sl">Date range</span><span class="sv">Tasks: "Feb 3 → Feb 14 · 12 days"</span></div>
+  <div class="sr"><span class="sl">Date (milestone)</span><span class="sv">"Due: Feb 14, 2026"</span></div>
+  <div class="sr"><span class="sl">Owner</span><span class="sv">Shown if assignee exists</span><span class="sn">"Owner: Name"</span></div>
+  <div class="sr"><span class="sl">Progress bar</span><span class="sv">Always shown, uses status gradient</span></div>
+  <div class="sr"><span class="sl">Progress text</span><span class="sv">"65% complete" or "Complete" or "Not started"</span></div>
+  <div class="sr"><span class="sl">Dependencies</span><span class="sv">Only if task has dependencies</span><span class="sn">Shows parent names with → prefix</span></div>
+</div>
+
+<!-- ═══ MEASUREMENTS ═══ -->
+<h2><span class="n">4</span>Measurements</h2>
+
+<div class="card">
+  <div class="sr"><span class="sl">Background</span><span class="sv">var(--ink) — #1a1d23</span></div>
+  <div class="sr"><span class="sl">Border radius</span><span class="sv">10px</span></div>
+  <div class="sr"><span class="sl">Padding</span><span class="sv">14px 16px</span></div>
+  <div class="sr"><span class="sl">Width</span><span class="sv">240px (fixed)</span></div>
+  <div class="sr"><span class="sl">Shadow</span><span class="sv">0 8px 24px rgba(0,0,0,.25)</span></div>
+  <div class="sr"><span class="sl">Phase name</span><span class="sv">9px uppercase, letter-spacing 0.8px, --ink4</span></div>
+  <div class="sr"><span class="sl">Task name</span><span class="sv">13px weight 600, #fff</span></div>
+  <div class="sr"><span class="sl">Status dot</span><span class="sv">6px circle, status color</span></div>
+  <div class="sr"><span class="sl">Meta text</span><span class="sv">11px, --ink4</span></div>
+  <div class="sr"><span class="sl">Mini progress track</span><span class="sv">4px h, 2px radius, rgba(255,255,255,.1)</span></div>
+  <div class="sr"><span class="sl">Mini progress fill</span><span class="sv">Status gradient</span></div>
+  <div class="sr"><span class="sl">Progress label</span><span class="sv">10px, --ink4</span></div>
+  <div class="sr"><span class="sl">Dependency divider</span><span class="sv">1px solid rgba(255,255,255,.08)</span></div>
+  <div class="sr"><span class="sl">Dependency label</span><span class="sv">9px uppercase, --ink4</span></div>
+  <div class="sr"><span class="sl">Dependency items</span><span class="sv">10px, --ink5, "→ " prefix</span></div>
+</div>
+
+<!-- ═══ POSITIONING ═══ -->
+<h2><span class="n">5</span>Positioning & Animation</h2>
+
+<div class="card">
+  <div class="sr"><span class="sl">Position</span><span class="sv">16px below cursor, 8px right of cursor</span></div>
+  <div class="sr"><span class="sl">Follow cursor</span><span class="sv">Yes — tracks mouse movement</span></div>
+  <div class="sr"><span class="sl">Boundary — bottom</span><span class="sv">Flips above cursor if &lt;260px from bottom</span></div>
+  <div class="sr"><span class="sl">Boundary — right</span><span class="sv">Shifts left if tooltip would overflow container</span></div>
+  <div class="sr"><span class="sl">Appear delay</span><span class="sv">200ms hover before showing</span><span class="sn">Prevents flicker</span></div>
+  <div class="sr"><span class="sl">Fade in</span><span class="sv">opacity 0→1, translateY(4px→0), 0.15s ease</span></div>
+  <div class="sr"><span class="sl">Fade out delay</span><span class="sv">80ms before starting fade</span><span class="sn">Smooth bar-to-bar</span></div>
+  <div class="sr"><span class="sl">Fade out</span><span class="sv">opacity 1→0, 0.1s ease</span></div>
+  <div class="sr"><span class="sl">Z-index</span><span class="sv">1000</span></div>
+  <div class="sr"><span class="sl">Pointer events</span><span class="sv">none</span><span class="sn">Doesn't block interaction</span></div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss — Revised Feature Model (Tiptap-Style)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#3d424f;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--amb:#f59e0b;--red:#ef4444;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.7;}
+.shell{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:32px;}
+h2{font-size:17px;font-weight:700;margin-top:36px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+h2 .desc{font-weight:400;color:var(--ink3);font-size:13px;}
+p.note{font-size:13px;color:var(--ink3);margin-bottom:16px;}
+.card{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:20px 24px;margin-bottom:12px;}
+.card h3{font-size:14px;font-weight:700;margin-bottom:2px;}
+.card p{font-size:13px;color:var(--ink2);}
+.callout{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:16px 20px;margin:20px 0;font-size:13px;color:#92400e;line-height:1.7;}
+.callout strong{color:#78350f;}
+
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;vertical-align:middle;}
+.tag-core{background:#dbeafe;color:#1e40af;}
+.tag-free-ext{background:#d1fae5;color:#065f46;}
+.tag-paid-ext{background:#fce7f3;color:#9d174d;}
+.tag-template{background:#e0e7ff;color:#3730a3;}
+
+.tier{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.tier-item{background:var(--sf);border:1px solid var(--bd2);border-radius:8px;padding:14px 16px;}
+.tier-item .name{font-size:13px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+.tier-item .why{font-size:11px;color:var(--ink3);line-height:1.5;}
+
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;}
+.col-item{background:var(--sf);border:1px solid var(--bd2);border-radius:8px;padding:14px 16px;}
+.col-item .name{font-size:13px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+.col-item .why{font-size:11px;color:var(--ink3);line-height:1.5;}
+
+.divider{height:1px;background:var(--bd2);margin:32px 0;}
+
+.summary-dark{background:var(--ink);border-radius:var(--r);padding:24px;color:#fff;margin-top:32px;}
+.summary-dark h3{font-size:15px;font-weight:700;margin-bottom:16px;}
+.sum-row{display:flex;gap:12px;margin-bottom:8px;font-size:13px;align-items:baseline;}
+.sum-label{color:var(--ink4);min-width:160px;flex-shrink:0;}
+.sum-val{color:#fff;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1>Emboss — Revised Feature Model</h1>
+<p class="sub">Tiptap-style extension architecture. Core is minimal. Everything else is opt-in extensions — some free, some paid.</p>
+
+<!-- ═══ LESSON FROM TIPTAP ═══ -->
+<div class="callout">
+  <strong>Key lesson from Tiptap:</strong> They started by selling individual Pro extensions. Realized "these smaller pieces weren't where our value was. They were common needs, but not really our moat." They open-sourced 10 formerly paid extensions and shifted to selling complete feature bundles (collaboration, AI, documents) that solve whole problems.
+  <br><br>
+  <strong>For Emboss:</strong> The core is the redesigned Frappe engine with grayscale + dark themes. Everything else — sidebar, phases, milestones, tooltips, assignees — is an extension you import separately. Free extensions ship in the same package. Paid extensions require a license. The developer chooses what to install. Nothing is bundled by default except the bars.
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ CORE ═══ -->
+<h2><span class="tag tag-core">Core</span> Emboss Core — What you get on npm install</h2>
+<p class="note">The Frappe MIT engine, redesigned. This is the base. Grayscale + dark. Beautiful but minimal.</p>
+
+<div class="tier">
+  <div class="tier-item">
+    <div class="name">Task bars with progress</div>
+    <div class="why">Glass track/fill/marker in grayscale. The Emboss signature look. Frappe MIT underneath.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Dependency arrows</div>
+    <div class="why">Status-based (solid/dashed/faded), bottom-to-top routing. Redesigned from Frappe's arrows.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Drag to change dates</div>
+    <div class="why">Hover handles, ghost bar, date tooltip. Redesigned from Frappe's drag.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Drag to change progress</div>
+    <div class="why">Percentage tooltip during drag. Frappe MIT.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">View modes</div>
+    <div class="why">Day, Week, Month, Year + custom. Frappe MIT with cleaner headers.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">CSS theming API</div>
+    <div class="why">Expanded token set. Frappe MIT approach.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Grayscale theme (light)</div>
+    <div class="why">Default. Beautiful design system in neutral tones.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Dark mode theme</div>
+    <div class="why">Inverted grayscale. Two themes out of the box.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Holiday/weekend handling</div>
+    <div class="why">Frappe MIT ignore_periods + visual column dimming.</div>
+  </div>
+  <div class="tier-item">
+    <div class="name">Done/active/upcoming styling</div>
+    <div class="why">Grayscale hierarchy: done = faded, active = full, upcoming = lighter. Core design insight.</div>
+  </div>
+</div>
+
+<p class="note">This is what Emboss looks like with zero extensions. A flat list of beautifully designed grayscale bars with dependencies, drag, and view modes. Already better than Frappe visually.</p>
+
+<div class="divider"></div>
+
+<!-- ═══ FREE EXTENSIONS ═══ -->
+<h2><span class="tag tag-free-ext">Free Ext</span> Free Extensions — opt-in, ships in same package</h2>
+<p class="note">New features not in Frappe. Free because they build trust, drive adoption, and make the ecosystem rich. Developer adds them with <code>import { Sidebar } from '@emboss/core'</code>.</p>
+
+<div class="callout">
+  <strong>Strategic question:</strong> Which of these are free vs paid? The principle: give away enough to make people love Emboss and trust the quality. Don't give away so much that there's no reason to buy. Each one below has a case for free or paid — let's decide.
+</div>
+
+<div class="three-col">
+  <div class="col-item">
+    <div class="name"><span class="tag tag-free-ext">Free</span></div>
+    <div class="name" style="margin-top:6px;">Today marker</div>
+    <div class="why">Visual line + pulsing dot. Standard in every serious Gantt tool. Not having it looks broken. Trust builder.</div>
+  </div>
+  <div class="col-item">
+    <div class="name"><span class="tag tag-free-ext">Free</span></div>
+    <div class="name" style="margin-top:6px;">Dependency dots</div>
+    <div class="why">Tiny dots on bar edges signaling "has dependency." Solves discoverability. Goes with core arrows — feels incomplete without it.</div>
+  </div>
+  <div class="col-item">
+    <div class="name"><span class="tag tag-free-ext">Free</span></div>
+    <div class="name" style="margin-top:6px;">Hover tooltips</div>
+    <div class="why">Replaces Frappe's click popup with hover. Dark card showing task details. Frappe had a popup — this is the redesigned version. Feels like it belongs in core.</div>
+  </div>
+</div>
+
+<p class="note" style="margin-top:8px;">These three feel obviously free — they're either standard Gantt features or direct improvements on Frappe's existing functionality.</p>
+
+<div class="divider"></div>
+
+<!-- ═══ THE GRAY ZONE ═══ -->
+<h2>🤔 The Gray Zone — Could Go Either Way</h2>
+<p class="note">These are NOT in Frappe. They're real new work. The question: which ones build enough trust to justify giving away, and which ones are clearly "you're paying for our thinking"?</p>
+
+<div class="tier">
+  <div class="tier-item" style="border-left:3px solid var(--amb);">
+    <div class="name">Sidebar</div>
+    <div class="why"><strong>Case for free:</strong> Without it, Emboss is just bars with labels on them (like Frappe). The sidebar makes it feel like a real tool. Adoption driver.<br><strong>Case for paid:</strong> It's significant new UI work. Three states (full/rail/hidden), resize, transitions. Not in Frappe at all.</div>
+  </div>
+  <div class="tier-item" style="border-left:3px solid var(--amb);">
+    <div class="name">Phase grouping</div>
+    <div class="why"><strong>Case for free:</strong> Flat task lists are unusable past 10 items. Phases make Emboss viable for real projects. People won't adopt without this.<br><strong>Case for paid:</strong> It's a complete data model addition. Collapsible rows, derived progress, color system. Frappe is flat.</div>
+  </div>
+  <div class="tier-item" style="border-left:3px solid var(--amb);">
+    <div class="name">Inline name editing</div>
+    <div class="why"><strong>Case for free:</strong> Basic quality-of-life. Click to edit text is expected in 2026.<br><strong>Case for paid:</strong> Frappe has no editing of names at all. This is new functionality with keyboard handling, phase-colored borders, save/cancel.</div>
+  </div>
+  <div class="tier-item" style="border-left:3px solid var(--amb);">
+    <div class="name">Milestones (as first-class type)</div>
+    <div class="why"><strong>Case for free:</strong> Frappe has milestones (via custom_class). We're improving them with diamond shapes and progress fill. Could argue it's a redesign of existing.<br><strong>Case for paid:</strong> Our milestones are fundamentally different — distinct data type with progress fill, phase coloring. Much more than a CSS class.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ PROPOSAL ═══ -->
+<h2>Proposed Split</h2>
+<p class="note">Here's one way to draw the line. Open for discussion.</p>
+
+<div class="card" style="border-left:3px solid var(--grn);">
+  <h3>Option A — Generous free (more Tiptap-like)</h3>
+  <p>
+    <strong>Free extensions:</strong> Today marker, dependency dots, hover tooltips, sidebar (basic — full + hidden only, no rail), milestones (diamond shape, no progress fill)
+    <br><br>
+    <strong>Paid extensions:</strong> Phase grouping + collapsing, inline editing, sidebar rail mode + resize, milestone progress fill, assignees, subtasks, critical path, export, swimlanes, baseline
+    <br><br>
+    <strong>Paid templates:</strong> Vivid, Presentation, Dense, Minimal
+    <br><br>
+    <em>Logic: Free gets you a beautiful Gantt with basic sidebar and diamonds. Paid unlocks the organizational layer (phases) and the polish details (milestone fill, rail mode, editing).</em>
+  </p>
+</div>
+
+<div class="card" style="border-left:3px solid var(--blu);margin-top:16px;">
+  <h3>Option B — Strategic free (tighter)</h3>
+  <p>
+    <strong>Free extensions:</strong> Today marker, dependency dots, hover tooltips
+    <br><br>
+    <strong>Paid extensions:</strong> Sidebar (all modes), phase grouping + collapsing, milestones (full), inline editing, assignees, subtasks, critical path, export, swimlanes, baseline
+    <br><br>
+    <strong>Paid templates:</strong> Vivid, Presentation, Dense, Minimal
+    <br><br>
+    <em>Logic: Free core is already dramatically better than Frappe — beautiful grayscale bars with smart arrows and tooltips. Everything structural (sidebar, phases, milestones) is paid. More revenue potential but smaller free tier.</em>
+  </p>
+</div>
+
+<div class="card" style="border-left:3px solid var(--pur);margin-top:16px;">
+  <h3>Option C — Somewhere in between</h3>
+  <p>
+    <strong>Free extensions:</strong> Today marker, dependency dots, hover tooltips, sidebar (full + hidden), phase grouping (basic — group headers, no collapsing)
+    <br><br>
+    <strong>Paid extensions:</strong> Phase collapsing, sidebar rail + resize, milestones (full with progress), inline editing, assignees, subtasks, critical path, export, swimlanes, baseline
+    <br><br>
+    <strong>Paid templates:</strong> Vivid, Presentation, Dense, Minimal
+    <br><br>
+    <em>Logic: Free gives you organized tasks with a sidebar — usable for real projects. Paid adds the polish and power features. Phases exist free but collapsing is paid. Sidebar works but doesn't have the fancy rail mode.</em>
+  </p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ TIPTAP LESSON ═══ -->
+<div class="callout" style="background:#f0f9ff;border-color:#bae6fd;color:#0c4a6e;">
+  <strong>Tiptap's lesson for us:</strong> They originally sold individual extensions and realized it wasn't their moat. They shifted to selling complete feature bundles that solve whole problems.
+  <br><br>
+  For Emboss, this might mean: don't sell sidebar for $49 and phases for $49 separately. Instead, sell <strong>bundles</strong>:
+  <br><br>
+  • <strong>Organization Bundle</strong> ($79): Sidebar (all modes) + phase grouping + collapsing + milestones + inline editing<br>
+  • <strong>People Bundle</strong> ($49): Assignees + swimlane/resource view<br>
+  • <strong>Analysis Bundle</strong> ($79): Critical path + baseline comparison + export<br>
+  • <strong>Subtask Pack</strong> ($49): Nesting + collapsible children<br>
+  • <strong>Design Templates</strong> ($49 each / $99 all): Vivid, Presentation, Dense, Minimal<br>
+  • <strong>Pro Bundle</strong> ($199): Everything
+  <br><br>
+  This way people buy solutions, not features.
+</div>
+
+<!-- ═══ PRICING SUMMARY ═══ -->
+<div class="summary-dark">
+  <h3>Pricing (if we go with bundles)</h3>
+  <div class="sum-row"><span class="sum-label">Emboss Core</span><span class="sum-val">Free / MIT — bars, arrows, drag, view modes, grayscale + dark</span></div>
+  <div class="sum-row"><span class="sum-label">Free extensions</span><span class="sum-val">Today marker, dependency dots, hover tooltips (+ maybe basic sidebar/phases — TBD)</span></div>
+  <div style="height:12px;"></div>
+  <div class="sum-row"><span class="sum-label">Organization Bundle</span><span class="sum-val">$79 — Sidebar, phases, collapsing, milestones, inline editing</span></div>
+  <div class="sum-row"><span class="sum-label">People Bundle</span><span class="sum-val">$49 — Assignees, swimlanes</span></div>
+  <div class="sum-row"><span class="sum-label">Analysis Bundle</span><span class="sum-val">$79 — Critical path, baseline, export</span></div>
+  <div class="sum-row"><span class="sum-label">Subtask Pack</span><span class="sum-val">$49 — Nesting, collapsible children</span></div>
+  <div class="sum-row"><span class="sum-label">Template Pack</span><span class="sum-val">$49 each / $99 all — Vivid, Presentation, Dense, Minimal</span></div>
+  <div style="height:8px;border-top:1px solid rgba(255,255,255,.1);margin-top:8px;padding-top:8px;"></div>
+  <div class="sum-row"><span class="sum-label">Pro Bundle</span><span class="sum-val">$199 — Everything (all bundles + all templates)</span></div>
+  <div style="height:12px;"></div>
+  <div style="font-size:11px;color:var(--ink4);">Per-project license, unlimited developers. Soft enforcement (console warning, never breaks).</div>
+</div>
+
+</div>
+</body>
+</html>

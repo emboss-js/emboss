@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · Design Review — Decisions from Screenshot Review</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#3d424f;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--bd:#e5e7eb;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--red:#ef4444;--amb:#f59e0b;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.7;}
+.shell{max-width:860px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:36px;}
+.decision{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:20px 24px;margin-bottom:16px;}
+.decision h3{font-size:15px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:8px;}
+.decision .q{font-size:13px;color:var(--ink3);margin-bottom:10px;font-style:italic;}
+.decision .a{font-size:13px;color:var(--ink2);line-height:1.8;}
+.decision .a strong{color:var(--ink);font-weight:600;}
+.num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:var(--ink);color:#fff;font-size:10px;font-weight:700;flex-shrink:0;}
+.tag{display:inline-block;font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;}
+.tag-change{background:#fef3c7;color:#92400e;}
+.tag-new{background:#dbeafe;color:#1e40af;}
+.tag-confirm{background:#d1fae5;color:#065f46;}
+.divider{height:1px;background:var(--bd2);margin:32px 0 24px;}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);margin-bottom:12px;}
+
+/* updated arrow demo */
+.arrow-demo{background:#f0f2f5;border-radius:var(--rs);padding:32px 20px;margin:12px 0;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1>Design Review Decisions</h1>
+<p class="sub">Feedback from screenshot review, Feb 23 2026. Updates to component guides and spec.</p>
+
+<!-- ═══ ASSIGNEE AVATARS ═══ -->
+<div class="section-label">Data & Features</div>
+
+<div class="decision">
+  <h3><span class="num">1</span> Assignee Avatars <span class="tag tag-confirm">Free</span></h3>
+  <div class="q">"We didn't talk about this user assignment element. That should be a premium feature, right?"</div>
+  <div class="a">
+    <strong>Decision: Free.</strong> Assignees are core task metadata — hiding them behind a paywall makes the free tier feel crippled. Falls under Principle 2: "if required for readability → free."
+    <br><br>
+    <strong>Avatar colors:</strong> Assignee-specific, not phase-colored. Each person gets a consistent color across the entire chart so you can visually scan "where is Sarah's work." Auto-assigned from a palette of 8–10 distinct colors. The colors rotate and stick per user.
+    <br><br>
+    <strong>Rendering:</strong> 22px circle, 2px lighter tint background, 9px bold initials in the assignee color. Appears at the right edge of the sidebar task row.
+  </div>
+</div>
+
+<div class="decision">
+  <h3><span class="num">2</span> Status Enum — At-Risk / Blocked <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"Where did the at risk states come from? Are those in the system?"</div>
+  <div class="a">
+    <strong>Decision: Three default statuses, rest opt-in.</strong>
+    <br><br>
+    The library ships with <strong>3 built-in statuses</strong>: <code>done</code>, <code>active</code>, <code>upcoming</code>. These get automatic visual treatments (colors, opacity, gradients).
+    <br><br>
+    <code>at-risk</code> and <code>blocked</code> are available via config but not shown by default. The host app (Leantime) maps its own internal statuses to the library's visual treatments. If Leantime has a "stuck" status, it can map that → <code>blocked</code> visuals.
+    <br><br>
+    <strong>Updated spec:</strong> Remove at-risk and blocked from default examples. Show them only in a "Custom Status Mapping" section.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ FREE VS PAID ═══ -->
+<div class="section-label">Free vs Paid Model</div>
+
+<div class="decision">
+  <h3><span class="num">3</span> Vibrant Free, Not Grayscale <span class="tag tag-confirm">Confirmed</span></h3>
+  <div class="q">"Are we doing a grayscale version for the free and then selling colored versions?"</div>
+  <div class="a">
+    <strong>Decision: Free is the full vibrant design.</strong> No degradation. No "unlock the colors." Nobody evaluates ugly software and thinks "this will be good once I pay."
+    <br><br>
+    Premium templates are <strong>alternative complete design systems</strong> — different spacing, typography, radius, animations, label treatments. The Presentation theme looks different from Working View. The Dense theme packs more information. The Dark theme inverts everything. None of them are "the same thing but prettier."
+    <br><br>
+    The free Working View should be the best Gantt anyone has ever seen out of a free library. That's the adoption engine.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ INPUTS ═══ -->
+<div class="section-label">Inline Editing</div>
+
+<div class="decision">
+  <h3><span class="num">4</span> Input Styling — Phase-Colored Border <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"Should the inputs have similar rounding? Big plus on the colored outline to match the block. It's not written."</div>
+  <div class="a">
+    <strong>Decision: Yes.</strong> When clicking a phase name to edit, the input border color matches the phase color (not always --blu). This creates a visual thread from the color dot to the editing state.
+    <br><br>
+    <strong>Input specs (updated):</strong>
+    <br>• Border: <code>1px solid {phaseColor}</code>
+    <br>• Focus ring: <code>0 0 0 3px {phaseColor at 12% opacity}</code>
+    <br>• Border radius: <code>6px</code> (consistent with system rounding, not as round as pills)
+    <br>• Font: Same as phase name (13px, weight 600)
+    <br>• Background: transparent (text floats in place)
+    <br>• Trigger: single click on name text
+    <br>• Save: Enter key or blur (click away)
+    <br>• Cancel: Escape key → restores original
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ ARROWS ═══ -->
+<div class="section-label">Dependency Arrows — Redesign</div>
+
+<div class="decision">
+  <h3><span class="num">5</span> Arrow Visibility — Darker Dots <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"The dots need to be darker, they aren't visible now."</div>
+  <div class="a">
+    <strong>Decision:</strong> Connection dots increase from <code>opacity 0.4</code> to <code>opacity 0.7</code>. Dots grow from 2.5px to 3.5px radius. Color stays --ink4 (#9ca3af) but the higher opacity makes them clearly visible against the light background.
+  </div>
+</div>
+
+<div class="decision">
+  <h3><span class="num">6</span> Dashed vs Solid — Status-Based Arrow Style <span class="tag tag-new">New</span></h3>
+  <div class="q">"Maybe it's a dash when it hasn't started yet, and then solid lines when they are in active work?"</div>
+  <div class="a">
+    <strong>Decision: Yes — arrows reflect dependency status.</strong>
+    <br><br>
+    <strong>Active dependency</strong> (source is done or active, target is active):
+    <br>• Solid line, no dash
+    <br>• 1px stroke, --ink3 (#6b7280), opacity 0.5
+    <br>• Connection dot 3.5px, opacity 0.7
+    <br><br>
+    <strong>Future dependency</strong> (target is upcoming):
+    <br>• Dashed line, stroke-dasharray 4 3
+    <br>• 1px stroke, --ink4 (#9ca3af), opacity 0.35
+    <br>• Connection dot 3px, opacity 0.5
+    <br><br>
+    <strong>Completed dependency</strong> (both are done):
+    <br>• Solid line, very faded
+    <br>• 1px stroke, --ink5 (#d1d5db), opacity 0.25
+    <br>• Dot 2.5px, nearly invisible
+    <br><br>
+    This creates a natural hierarchy: active connections are clear, future ones are suggested, completed ones fade away.
+  </div>
+</div>
+
+<div class="decision">
+  <h3><span class="num">7</span> Arrow Routing — Bottom-to-Top Instead of End-to-Start <span class="tag tag-new">New</span></h3>
+  <div class="q">"The multi-row curves get really messy, especially if they are totally separated work groups."</div>
+  <div class="a">
+    <strong>Decision: Arrows exit from bottom-center of source bar, enter top-center of target bar.</strong>
+    <br><br>
+    Why this is better:
+    <br>• Arrows always flow <strong>downward</strong>, matching natural reading direction
+    <br>• No horizontal spaghetti crossing unrelated rows
+    <br>• Works cleanly even when source and target are far apart vertically
+    <br>• No collision with bar content (labels sit on bars, arrows go between them)
+    <br><br>
+    <strong>Path routing:</strong>
+    <br>• Exit: bottom-center of source bar
+    <br>• Curve: vertical S-curve with control points offset proportional to row distance
+    <br>• Enter: top-center of target bar
+    <br>• For adjacent rows: nearly straight vertical drop
+    <br>• For distant rows: gentle S-curve with wider spread
+
+    <div class="arrow-demo">
+      <svg width="100%" height="200" viewBox="0 0 500 200" fill="none" style="max-width:100%;">
+        <!-- Source bar -->
+        <rect x="80" y="20" width="160" height="26" rx="13" fill="#e8ecf1"/>
+        <rect x="80" y="20" width="104" height="26" rx="13" fill="url(#bg1)"/>
+        <text x="100" y="37" font-family="DM Sans" font-size="10" fill="#fff" font-weight="600">Research</text>
+
+        <!-- Target bar (adjacent) -->
+        <rect x="140" y="80" width="180" height="26" rx="13" fill="#e8ecf1"/>
+        <rect x="140" y="80" width="72" height="26" rx="13" fill="url(#bg1)"/>
+        <text x="150" y="97" font-family="DM Sans" font-size="10" fill="#fff" font-weight="600">Wireframes</text>
+
+        <!-- Target bar (distant) -->
+        <rect x="240" y="160" width="160" height="26" rx="13" fill="#e8ecf1"/>
+        <rect x="240" y="160" width="160" height="26" rx="13" fill="url(#bg2)" opacity=".55"/>
+        <text x="280" y="177" font-family="DM Sans" font-size="10" fill="#fff" font-weight="500">Build</text>
+
+        <!-- Arrow 1: adjacent rows — bottom-center to top-center -->
+        <path d="M160 46 C 160 60, 230 66, 230 80" stroke="#6b7280" stroke-width="1" opacity="0.5" fill="none"/>
+        <circle cx="160" cy="46" r="3.5" fill="#6b7280" opacity="0.7"/>
+        <circle cx="230" cy="80" r="3.5" fill="#6b7280" opacity="0.7"/>
+
+        <!-- Arrow 2: distant rows — S-curve -->
+        <path d="M230 106 C 230 130, 320 135, 320 160" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3" opacity="0.35" fill="none"/>
+        <circle cx="230" cy="106" r="3" fill="#9ca3af" opacity="0.5"/>
+        <circle cx="320" cy="160" r="3" fill="#9ca3af" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="175" y="60" font-family="DM Sans" font-size="9" fill="#6b7280">solid (active)</text>
+        <text x="255" y="140" font-family="DM Sans" font-size="9" fill="#9ca3af">dashed (future)</text>
+
+        <defs>
+          <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+          <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <strong>Alternative considered:</strong> Show arrows only on hover (like Linear). Keep in view as a future toggle option, but default to always-visible with the bottom-to-top routing. Users who want clean views can collapse to "no arrows" mode.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ TODAY MARKER ═══ -->
+<div class="section-label">Today Marker</div>
+
+<div class="decision">
+  <h3><span class="num">8</span> Z-Index — Above Everything <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"The today marker should sit on top of the milestones, not behind it."</div>
+  <div class="a">
+    <strong>Decision:</strong> Today marker line and dot render above bars and milestones. It's the most important temporal reference — nothing should occlude it.
+    <br><br>
+    Updated z-index stack:
+    <br>• Column glow: z-index 1 (lowest, behind everything)
+    <br>• Grid lines: z-index 2
+    <br>• Bars and milestones: z-index 10
+    <br>• Dependency arrows: z-index 15
+    <br>• <strong>Today line: z-index 20</strong>
+    <br>• <strong>Today dot: z-index 25</strong>
+    <br>• Tooltips: z-index 1000
+  </div>
+</div>
+
+<div class="decision">
+  <h3><span class="num">9</span> Pulsing Dot — Centered + Ring <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"The blinky dot needs to be centered to the line."</div>
+  <div class="a">
+    <strong>Decision:</strong> Dot is precisely centered on the line (transform: translate(-50%, -50%) from line's top position). Added an outer ring for more presence.
+    <br><br>
+    Updated dot spec:
+    <br>• Inner dot: 8px, solid --red, no animation
+    <br>• Outer ring: 16px, --red at 15% opacity, pulses scale(1) → scale(1.6) over 2s
+    <br>• Ring provides presence without garish blinking of the dot itself
+    <br>• Both centered on line top position
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ DRAG DROP ═══ -->
+<div class="section-label">Drag & Drop</div>
+
+<div class="decision">
+  <h3><span class="num">10</span> Resize Handle Color — Status-Matched <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"Does the resize mode match the color of the milestone itself?"</div>
+  <div class="a">
+    <strong>Decision:</strong> Yes. When actively dragging a resize handle, the handle border matches the bar's status color (not always blue). The active handle gets: <code>border: 1.5px solid {statusColor}</code>.
+    <br><br>
+    Default (hover, not dragging): white handle, neutral shadow.
+    <br>Active (dragging): white handle + colored border matching bar.
+  </div>
+</div>
+
+<div class="decision">
+  <h3><span class="num">11</span> Hover Handles — Inset from Edge <span class="tag tag-change">Changed</span></h3>
+  <div class="q">"Can the hover handles come in a little bit? They are too on the edge."</div>
+  <div class="a">
+    <strong>Decision:</strong> Handles inset <strong>4px</strong> from bar edges. This creates a visible gap between the handle and the bar's rounded ends, making handles clearly grabbable without visually merging.
+    <br><br>
+    Updated positioning:
+    <br>• Left handle: <code>left: 4px</code> (was -1px)
+    <br>• Right handle: <code>right: 4px</code> from track end (was flush)
+    <br>• Handles sit inside the bar shape, not overlapping edges
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ TOOLTIPS ═══ -->
+<div class="section-label">Tooltips</div>
+
+<div class="decision">
+  <h3><span class="num">12</span> Tooltip File — Rebuilt <span class="tag tag-change">Fixed</span></h3>
+  <div class="q">"The tooltips page doesn't show anything."</div>
+  <div class="a">
+    <strong>Fixed.</strong> The HTML broke during creation — the file was truncated mid-tag. Rebuilt as <code>06-tooltips-fixed.html</code> with properly rendered task and milestone tooltip mockups, full measurement specs, content rules, and positioning/animation details.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══ SUMMARY ═══ -->
+<div style="background:var(--ink);border-radius:var(--r);padding:20px 24px;color:#fff;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:8px;">Summary of Changes</div>
+  <div style="font-size:12px;color:var(--ink5);line-height:2;">
+    ✓ Assignee avatars → free (assignee-specific colors, not phase colors)<br>
+    ✓ Status enum → 3 defaults (done/active/upcoming), at-risk/blocked opt-in<br>
+    ✓ Free tier → full vibrant, premium = alternative design systems<br>
+    ✓ Inline edit inputs → phase-colored border + focus ring, 6px radius<br>
+    ✓ Arrow dots → darker (opacity 0.7, size 3.5px)<br>
+    ✓ Arrow style → solid when active, dashed when future, faded when done<br>
+    ✓ Arrow routing → bottom-to-top (not end-to-start) for cleaner flow<br>
+    ✓ Today marker → z-index above bars/milestones<br>
+    ✓ Today dot → centered on line, outer ring pulse instead of dot pulse<br>
+    ✓ Resize handles → status-colored border when active<br>
+    ✓ Hover handles → inset 4px from bar edges<br>
+    ✓ Tooltips file → rebuilt with proper rendering
+  </div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gantt Library — Interactive Spec</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#3d424f;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--sf2:#fafbfc;--bd:#e5e7eb;--bd2:#f0f1f4;--grn:#10b981;--grn-bg:#ecfdf5;--blu:#3b82f6;--blu-bg:#eff6ff;--pur:#8b5cf6;--pur-bg:#f5f3ff;--pnk:#ec4899;--pnk-bg:#fdf2f8;--amb:#f59e0b;--red:#ef4444;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.sh{max-width:1100px;margin:0 auto;padding:24px 16px 80px}@media(min-width:768px){.sh{padding:40px 32px 100px}}
+.hero{text-align:center;margin-bottom:48px;padding:40px 20px}.hero h1{font-size:clamp(24px,4vw,36px);font-weight:700;letter-spacing:-.5px;margin-bottom:8px}.hero .sub{font-size:15px;color:var(--ink3);max-width:600px;margin:0 auto 20px}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.bdg{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}.bdg.f{background:var(--grn-bg);color:var(--grn)}.bdg.p{background:var(--pnk-bg);color:var(--pnk)}.bdg.m{background:var(--blu-bg);color:var(--blu)}
+.nav{display:flex;gap:4px;background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:4px;margin-bottom:32px;overflow-x:auto;position:sticky;top:12px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.nb{padding:8px 16px;border:none;border-radius:var(--rs);font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;background:0 0;color:var(--ink3);transition:.2s;white-space:nowrap}.nb:hover{color:var(--ink2);background:var(--sf2)}.nb.on{background:var(--ink);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.sec{display:none;animation:fi .3s ease}.sec.show{display:block}@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.st{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:6px}.ss{font-size:14px;color:var(--ink3);margin-bottom:24px}
+.c{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:20px;margin-bottom:16px;transition:box-shadow .2s}.c:hover{box-shadow:0 4px 16px rgba(0,0,0,.05)}.c h3{font-size:15px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}.c p{font-size:13px;color:var(--ink3);line-height:1.6}
+.g2{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:640px){.g2{grid-template-columns:1fr 1fr}}.g3{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:640px){.g3{grid-template-columns:1fr 1fr 1fr}}.g4{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:768px){.g4{grid-template-columns:repeat(4,1fr)}}
+.ly{display:flex;align-items:stretch;margin-bottom:2px;border-radius:var(--rs);overflow:hidden}.ly-n{width:48px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}.ly-b{flex:1;padding:14px 16px}.ly-b h4{font-size:13px;font-weight:600;margin-bottom:2px}.ly-b p{font-size:12px;color:var(--ink3)}.ly-b code{font-family:var(--m);font-size:11px;background:rgba(0,0,0,.04);padding:1px 5px;border-radius:3px}
+.l1 .ly-n{background:var(--blu)}.l1 .ly-b{background:var(--blu-bg)}.l2 .ly-n{background:var(--grn)}.l2 .ly-b{background:var(--grn-bg)}.l3 .ly-n{background:var(--pur)}.l3 .ly-b{background:var(--pur-bg)}.l4 .ly-n{background:var(--pnk)}.l4 .ly-b{background:var(--pnk-bg)}
+.eb{display:inline-block;background:var(--sf2);border:2px solid var(--bd);border-radius:var(--rs);padding:16px;min-width:160px;vertical-align:top;margin:8px}.eb.pe{border-color:var(--pnk);border-style:dashed}.eb h4{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ef{font-size:11px;color:var(--ink3);padding:2px 0;font-family:var(--m)}.ef .t{color:var(--ink4);font-size:10px;float:right}.ef.rq::before{content:'•';color:var(--blu);margin-right:4px}.ef.op::before{content:'○';color:var(--ink5);margin-right:4px}.dv{font-size:10px;color:var(--pur);font-style:italic;margin-top:6px;padding-top:6px;border-top:1px dashed var(--bd)}
+table.mx{width:100%;border-collapse:collapse;font-size:12px;background:var(--sf);border-radius:var(--r);overflow:hidden;border:1px solid var(--bd2)}.mx th{background:var(--sf2);font-weight:600;text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);border-bottom:1px solid var(--bd)}.mx td{padding:10px 14px;border-bottom:1px solid var(--bd2)}.mx tr:last-child td{border-bottom:none}.ft{font-weight:500;color:var(--ink)}.ck{color:var(--grn);font-weight:700;font-size:14px}.lk{color:var(--pnk)}.da{color:var(--ink5)}
+.fl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:16px;background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);margin-bottom:24px}.fs{padding:8px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);font-size:11px;font-weight:500;color:var(--ink2);text-align:center;min-width:80px}.fs.hi{background:var(--grn-bg);border-color:var(--grn);color:var(--grn)}.fa{color:var(--ink5);font-size:16px;flex-shrink:0}
+.cb{background:#1e1e2e;color:#cdd6f4;border-radius:var(--rs);padding:16px;font-family:var(--m);font-size:12px;line-height:1.7;overflow-x:auto;margin:12px 0;white-space:pre}.cm{color:#6c7086}.kw{color:#89b4fa}.sv{color:#a6e3a1}
+.tg{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}.tf{background:var(--grn-bg);color:var(--grn)}.tp{background:var(--pnk-bg);color:var(--pnk)}
+.pc{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;text-align:center}.pc.ft2{border-color:var(--ink);box-shadow:0 4px 20px rgba(0,0,0,.08);position:relative}.pc .tier{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:4px}.pc .amt{font-size:32px;font-weight:700;margin-bottom:2px}.pc .amt small{font-size:14px;font-weight:400;color:var(--ink4)}.pc .dsc{font-size:12px;color:var(--ink3);margin-bottom:16px}.pc ul{list-style:none;text-align:left;font-size:12px;color:var(--ink2)}.pc li{padding:4px 0;display:flex;align-items:flex-start;gap:6px}.pc li::before{content:'✓';color:var(--grn);font-weight:700;flex-shrink:0}.pop{position:absolute;top:-10px;right:-10px;background:var(--pnk);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:12px}
+.dl{padding:12px 0;border-bottom:1px solid var(--bd2)}.dl:last-child{border-bottom:none}.dl-l{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px}.dl-v{font-size:12px;color:var(--ink2)}.dl-w{font-size:11px;color:var(--ink4);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="sh">
+
+<div class="hero">
+  <h1>Gantt Library Spec</h1>
+  <p class="sub">Product & technical specification. Interactive companion to the full Markdown spec.</p>
+  <div class="badges"><span class="bdg m">MIT Core</span><span class="bdg f">Beautiful Free Defaults</span><span class="bdg p">Premium Design Systems</span></div>
+</div>
+
+<div class="nav" id="nav">
+  <button class="nb on" onclick="show('arch',this)">Architecture</button>
+  <button class="nb" onclick="show('data',this)">Data Model</button>
+  <button class="nb" onclick="show('split',this)">Free vs Paid</button>
+  <button class="nb" onclick="show('delivery',this)">Delivery</button>
+  <button class="nb" onclick="show('design',this)">Design</button>
+  <button class="nb" onclick="show('pricing',this)">Pricing</button>
+  <button class="nb" onclick="show('roadmap',this)">Roadmap</button>
+  <button class="nb" onclick="show('log',this)">Decisions</button>
+</div>
+
+<!-- ═══ ARCHITECTURE ═══ -->
+<div class="sec show" id="s-arch">
+  <h2 class="st">Architecture</h2>
+  <p class="ss">Four layers, one npm package. Premium features are license-gated, not hidden.</p>
+  <div class="ly l1"><div class="ly-n">1</div><div class="ly-b"><h4>Engine — Frappe v1 Mechanics</h4><p>SVG rendering, date math, drag-drop. Proven mechanics, new paint job.</p></div></div>
+  <div class="ly l2"><div class="ly-n">2</div><div class="ly-b"><h4>Design System — Beautiful Defaults</h4><p>Glass bars, hue-shift gradients, phase grouping, tooltips, animations. The <code>Working View</code> ships free.</p></div></div>
+  <div class="ly l3"><div class="ly-n">3</div><div class="ly-b"><h4>Theming API — CSS Custom Properties</h4><p>Override <code>--gantt-*</code> variables for colors, spacing, radii. Extension points for renderers.</p></div></div>
+  <div class="ly l4"><div class="ly-n">4</div><div class="ly-b"><h4>Premium Layer — Templates + Components</h4><p>Glass, Presentation, Dense, Dark, Minimal templates. Subtasks, Critical Path, Export components.</p></div></div>
+
+  <div class="c" style="margin-top:24px">
+    <h3>📦 Single Package</h3>
+    <p>One npm package ships everything. Premium modules produce a build-time <code>console.warn</code> without a valid license key. Nothing breaks.</p>
+    <div class="cb"><span class="cm">// Free — just works</span>
+<span class="kw">import</span> { GanttChart } <span class="kw">from</span> <span class="sv">'@gantt-lib/core'</span>
+
+<span class="cm">// Premium — add license key</span>
+<span class="kw">import</span> { glassTheme } <span class="kw">from</span> <span class="sv">'@gantt-lib/core/themes/glass'</span>
+<span class="kw">const</span> chart = <span class="kw">new</span> GanttChart({
+  theme: glassTheme,
+  licenseKey: <span class="sv">'GANTT-XXXX-XXXX-XXXX'</span>
+})</div>
+  </div>
+</div>
+
+<!-- ═══ DATA MODEL ═══ -->
+<div class="sec" id="s-data">
+  <h2 class="st">Data Model</h2>
+  <p class="ss">Phase → Task + Milestone → Subtask (premium). One hierarchy, four entities.</p>
+  <div style="background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:24px;overflow-x:auto">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center">
+      <div class="eb"><h4><span style="color:var(--pur)">◆</span> Phase</h4><div class="ef rq">id <span class="t">string</span></div><div class="ef rq">name <span class="t">string</span></div><div class="ef rq">color <span class="t">hex</span></div><div class="ef rq">sortOrder <span class="t">number</span></div><div class="ef op">collapsed <span class="t">bool</span></div><div class="dv">↳ dateRange — derived<br>↳ progress — derived</div></div>
+      <div class="eb"><h4><span style="color:var(--blu)">■</span> Task</h4><div class="ef rq">id <span class="t">string</span></div><div class="ef rq">name <span class="t">string</span></div><div class="ef rq">phaseId <span class="t">string</span></div><div class="ef rq">start <span class="t">date</span></div><div class="ef rq">duration <span class="t">days</span></div><div class="ef rq">progress <span class="t">0–100</span></div><div class="ef rq">status <span class="t">enum</span></div><div class="ef op">assignee <span class="t">string</span></div><div class="ef op">dependencies <span class="t">id[]</span></div></div>
+      <div class="eb"><h4><span style="color:var(--grn)">◇</span> Milestone</h4><div class="ef rq">id <span class="t">string</span></div><div class="ef rq">name <span class="t">string</span></div><div class="ef rq">phaseId <span class="t">string</span></div><div class="ef rq">date <span class="t">date</span></div><div class="ef op">progress <span class="t">0–100</span></div><div class="ef op">dependencies <span class="t">id[]</span></div></div>
+      <div class="eb pe"><h4><span style="color:var(--pnk)">□</span> Subtask <span class="tg tp">Premium</span></h4><div class="ef rq">id <span class="t">string</span></div><div class="ef rq">name <span class="t">string</span></div><div class="ef rq">parentId <span class="t">string</span></div><div class="ef rq">start <span class="t">date</span></div><div class="ef rq">duration <span class="t">days</span></div><div class="ef rq">progress <span class="t">0–100</span></div><div class="ef rq">status <span class="t">enum</span></div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="c"><h3>Phase Inline Editing (v1)</h3><p><strong>Click name</strong> → text input · <strong>Click color dot</strong> → palette popover · <strong>Drag row</strong> → reorder. No modal (future additive).</p></div>
+    <div class="c"><h3>Status Enum</h3><p><span style="color:var(--grn)">●</span> done · <span style="color:var(--blu)">●</span> active · <span style="color:var(--pur)">●</span> upcoming · <span style="color:var(--amb)">●</span> at-risk · <span style="color:var(--red)">●</span> blocked</p></div>
+  </div>
+</div>
+
+<!-- ═══ FREE VS PAID ═══ -->
+<div class="sec" id="s-split">
+  <h2 class="st">Free vs. Premium</h2>
+  <p class="ss">Free = complete and beautiful. Premium = depth and variation.</p>
+  <div class="g2" style="margin-bottom:24px">
+    <div class="c" style="border-left:3px solid var(--grn)"><h3><span class="tg tf">Free</span> Principles</h3><p>If Frappe v1 does it → styled version is free. If required for readability → free. One gorgeous Working View.</p></div>
+    <div class="c" style="border-left:3px solid var(--pnk)"><h3><span class="tg tp">Premium</span> Principles</h3><p>Design variations → premium. New algorithms → premium. Hierarchy beyond one level → premium.</p></div>
+  </div>
+  <table class="mx">
+    <thead><tr><th>Feature</th><th>Free</th><th>Paid</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="ft">Glass bars + status gradients</td><td class="ck">✓</td><td class="da">—</td><td>Hue-shift, marker dots</td></tr>
+      <tr><td class="ft">Phase grouping + collapse</td><td class="ck">✓</td><td class="da">—</td><td>Core readability</td></tr>
+      <tr><td class="ft">Collapsible sidebar (3 states)</td><td class="ck">✓</td><td class="da">—</td><td>Full → rail → hidden</td></tr>
+      <tr><td class="ft">Milestone diamonds + fill</td><td class="ck">✓</td><td class="da">—</td><td>Bottom-to-top progress</td></tr>
+      <tr><td class="ft">Dependency arrows</td><td class="ck">✓</td><td class="da">—</td><td>Curved bezier, dashed</td></tr>
+      <tr><td class="ft">Drag-drop (move + resize)</td><td class="ck">✓</td><td class="da">—</td><td>Enhanced Frappe v1</td></tr>
+      <tr><td class="ft">Hover tooltips</td><td class="ck">✓</td><td class="da">—</td><td>Tasks + milestones</td></tr>
+      <tr><td class="ft">Today marker + animations</td><td class="ck">✓</td><td class="da">—</td><td>Pulsing, staggered</td></tr>
+      <tr><td class="ft">CSS theming API</td><td class="ck">✓</td><td class="da">—</td><td>--gantt-* variables</td></tr>
+      <tr><td class="ft">Zoom levels (Q/M/W/D)</td><td class="ck">✓</td><td class="da">—</td><td>Quarterly → daily</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Presentation template</td><td class="da">—</td><td class="lk">🔑</td><td>Breathable, stakeholder</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Dense template</td><td class="da">—</td><td class="lk">🔑</td><td>PM power view</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Glass / Vivid template</td><td class="da">—</td><td class="lk">🔑</td><td>Dimensional, rich</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Dark / Minimal templates</td><td class="da">—</td><td class="lk">🔑</td><td>Night + editorial</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Subtask nesting</td><td class="da">—</td><td class="lk">🔑</td><td>Multi-level hierarchy</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Critical path</td><td class="da">—</td><td class="lk">🔑</td><td>Longest chain highlight</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Export PDF / PNG</td><td class="da">—</td><td class="lk">🔑</td><td>Print-optimized</td></tr>
+      <tr style="background:var(--pnk-bg)"><td class="ft">Swimlane + Baseline</td><td class="da">—</td><td class="lk">🔑</td><td>Resource + comparison</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ DELIVERY ═══ -->
+<div class="sec" id="s-delivery">
+  <h2 class="st">Premium Delivery</h2>
+  <p class="ss">Single package, license key, soft enforcement, zero infrastructure.</p>
+  <div class="c" style="margin-bottom:24px"><h3>🔑 Purchase Flow</h3>
+    <div class="fl">
+      <div class="fs">Find on<br><small>GitHub/npm</small></div><div class="fa">→</div>
+      <div class="fs">Use free<br><small>Works great</small></div><div class="fa">→</div>
+      <div class="fs">Want more<br><small>Visit site</small></div><div class="fa">→</div>
+      <div class="fs hi">Buy once<br><small>$49–199</small></div><div class="fa">→</div>
+      <div class="fs">Get key<br><small>Email</small></div><div class="fa">→</div>
+      <div class="fs">1 line<br><small>Config</small></div><div class="fa">→</div>
+      <div class="fs hi">Active ✓</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="c"><h3>🔔 Soft Enforcement</h3><p>Build-time <code>console.warn</code> if premium used without key. Nothing breaks. No phone-home. No activation server.</p></div>
+    <div class="c"><h3>📋 Per-Project License</h3><p>One purchase = one project, unlimited devs. Second project needs second license.</p></div>
+    <div class="c"><h3>⬆️ npm Updates</h3><p>Standard <code>npm update</code>. Single package = automatic updates. Semver protects against breaks.</p></div>
+    <div class="c"><h3>💳 Payment</h3><p>TBD: Lemon Squeezy / Gumroad / Paddle. One-time, global tax, key gen, email delivery.</p></div>
+  </div>
+</div>
+
+<!-- ═══ DESIGN ═══ -->
+<div class="sec" id="s-design">
+  <h2 class="st">Design System</h2>
+  <p class="ss">Six qualities that make it feel designed, not generated.</p>
+  <div class="g2">
+    <div class="c"><h3>1. Negative Space</h3><p>Row height, grid opacity, padding shift between modes. Space communicates hierarchy.</p><span class="tg tf">Free</span></div>
+    <div class="c"><h3>2. Sidebar as Surface</h3><p>Phase pills, status dots, avatars, indent, chevrons. Same design weight as chart.</p><span class="tg tf">Free</span></div>
+    <div class="c"><h3>3. Transitions</h3><p>Bars scale on hover. Today pulses. Staggered entrance. Software that feels alive.</p><span class="tg tf">Free</span></div>
+    <div class="c"><h3>4. Density Modes</h3><p>Each template shifts entire design language — spacing, type, radius, animation, labels.</p><span class="tg tp">Premium</span></div>
+    <div class="c"><h3>5. Color Depth</h3><p>Phase on pills + gradients. Status dots. Done fading. Today glow. Multi-level color meaning.</p><span class="tg tf">Free</span></div>
+    <div class="c"><h3>6. Polish Details</h3><p>Glass highlight. Color shadows. Diamond glow. Dashed curves. Container gradient.</p><span class="tg tf">Free</span></div>
+  </div>
+
+  <div class="c" style="margin-top:16px">
+    <h3>Bar Rendering (Working View)</h3>
+    <p style="margin-bottom:12px"><strong>Track:</strong> #e8ecf1 neutral gray · <strong>Fill:</strong> Hue-shift gradient · <strong>Glass:</strong> White band upper 40% · <strong>Marker:</strong> 12px dot at progress · <strong>Done:</strong> 45% opacity</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:11px;color:var(--ink3);width:70px;text-align:right">Active 65%</span><div style="height:26px;border-radius:13px;background:#e8ecf1;position:relative;flex:1;max-width:280px"><div style="position:absolute;left:0;top:0;bottom:0;width:65%;border-radius:13px;background:linear-gradient(90deg,#3b82f6,#06b6d4);box-shadow:0 2px 8px rgba(37,99,235,.2)"></div><div style="position:absolute;left:65%;top:50%;width:12px;height:12px;background:#fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 1px 4px rgba(0,0,0,.2)"><div style="position:absolute;top:50%;left:50%;width:6px;height:6px;border-radius:50%;background:#3b82f6;transform:translate(-50%,-50%)"></div></div></div></div>
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:11px;color:var(--ink3);width:70px;text-align:right">Done 100%</span><div style="height:26px;border-radius:13px;background:#e8ecf1;position:relative;flex:1;max-width:280px;opacity:.45"><div style="position:absolute;left:0;top:0;bottom:0;width:100%;border-radius:13px;background:linear-gradient(90deg,#34d399,#06b6d4)"></div></div></div>
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:11px;color:var(--ink3);width:70px;text-align:right">Upcoming 0%</span><div style="height:26px;border-radius:13px;background:#e8ecf1;position:relative;flex:1;max-width:280px"><div style="position:absolute;left:0;top:0;bottom:0;width:100%;border-radius:13px;background:linear-gradient(90deg,#8b5cf6,#ec4899);opacity:.55"></div></div></div>
+    </div>
+  </div>
+
+  <div class="c" style="margin-top:16px">
+    <h3>CSS Custom Properties</h3>
+    <div class="cb"><span class="cm">/* Override any of these to theme */</span>
+--gantt-font-body: <span class="sv">'DM Sans'</span>, sans-serif;
+--gantt-ink: <span class="sv">#1a1d23</span>;
+--gantt-surface: <span class="sv">#ffffff</span>;
+--gantt-done: <span class="sv">#10b981</span>;
+--gantt-active: <span class="sv">#3b82f6</span>;
+--gantt-upcoming: <span class="sv">#8b5cf6</span>;
+--gantt-at-risk: <span class="sv">#f59e0b</span>;
+--gantt-blocked: <span class="sv">#ef4444</span>;
+--gantt-row-height: <span class="sv">48px</span>;
+--gantt-bar-height: <span class="sv">26px</span>;
+--gantt-bar-radius: <span class="sv">13px</span>;
+--gantt-sidebar-width: <span class="sv">300px</span>;
+--gantt-grid-opacity: <span class="sv">0.04</span>;
+--gantt-today-color: <span class="sv">#ef4444</span>;</div>
+  </div>
+</div>
+
+<!-- ═══ PRICING ═══ -->
+<div class="sec" id="s-pricing">
+  <h2 class="st">Pricing</h2>
+  <p class="ss">One-time purchase. Per-project. No subscription. DHTMLX charges $1,169–$11,199 for less.</p>
+  <div class="g4">
+    <div class="pc"><div class="tier">Core</div><div class="amt">Free</div><div class="dsc">MIT licensed</div><ul><li>Beautiful Working View</li><li>Phase grouping</li><li>Drag-drop</li><li>Dependencies</li><li>Tooltips</li><li>CSS theming API</li></ul></div>
+    <div class="pc"><div class="tier">Templates</div><div class="amt">$49<small> each</small></div><div class="dsc">or $99 for all 5</div><ul><li>Glass / Vivid</li><li>Presentation</li><li>Dense</li><li>Dark</li><li>Minimal</li></ul></div>
+    <div class="pc"><div class="tier">Components</div><div class="amt">$99<small> each</small></div><div class="dsc">or $149 for all</div><ul><li>Subtask nesting</li><li>Critical path</li><li>PDF/PNG export</li><li>Swimlane view</li><li>Baseline comparison</li></ul></div>
+    <div class="pc ft2"><div class="pop">Best value</div><div class="tier">Pro Bundle</div><div class="amt">$199</div><div class="dsc">Everything included</div><ul><li>All 5 templates</li><li>All 5 components</li><li>Future updates</li><li>Priority support</li></ul></div>
+  </div>
+</div>
+
+<!-- ═══ ROADMAP ═══ -->
+<div class="sec" id="s-roadmap">
+  <h2 class="st">Roadmap</h2>
+  <p class="ss">Three phases. Ship core first, then premium, then sustain.</p>
+  <div style="position:relative;padding-left:28px;margin:16px 0">
+    <div style="position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:var(--bd);border-radius:1px"></div>
+
+    <div style="position:relative;padding:14px 0"><div style="position:absolute;left:-24px;top:20px;width:10px;height:10px;border-radius:50%;background:var(--blu);border:2px solid var(--blu)"></div><div style="font-size:11px;color:var(--ink4);font-weight:500">Months 1–3</div><h4 style="font-size:13px;font-weight:600">Phase 1: Core Library</h4><p style="font-size:12px;color:var(--ink3)">Fork Frappe v1, build design system, phase grouping, sidebar, glass bars, milestones, dependencies, tooltips, drag-drop, theming API. Ship to npm. Integrate with Leantime.</p></div>
+
+    <div style="position:relative;padding:14px 0"><div style="position:absolute;left:-24px;top:20px;width:10px;height:10px;border-radius:50%;border:2px solid var(--ink5)"></div><div style="font-size:11px;color:var(--ink4);font-weight:500">Months 3–6</div><h4 style="font-size:13px;font-weight:600">Phase 2: Premium & Launch</h4><p style="font-size:12px;color:var(--ink3)">Build all templates + components. License system. Static website with live demos. Payment integration. Documentation. Product Hunt / HN launch.</p></div>
+
+    <div style="position:relative;padding:14px 0"><div style="position:absolute;left:-24px;top:20px;width:10px;height:10px;border-radius:50%;border:2px solid var(--ink5)"></div><div style="font-size:11px;color:var(--ink4);font-weight:500">Ongoing</div><h4 style="font-size:13px;font-weight:600">Phase 3: Sustain</h4><p style="font-size:12px;color:var(--ink3)">Community PRs, bug fixes. ~1 new template or component per quarter. Target $5–10K/month revenue covering part-time maintenance for Gloria + Marcel.</p></div>
+  </div>
+</div>
+
+<!-- ═══ DECISIONS ═══ -->
+<div class="sec" id="s-log">
+  <h2 class="st">Decision Log</h2>
+  <p class="ss">Key decisions made during spec development, with rationale.</p>
+  <div class="c">
+    <div class="dl"><div class="dl-l">Premium delivery</div><div class="dl-v">Single package + license key</div><div class="dl-w">Zero infra, easiest updates, simplest to maintain</div></div>
+    <div class="dl"><div class="dl-l">License enforcement</div><div class="dl-v">Soft (build-time console.warn)</div><div class="dl-w">No support tickets from broken licenses, no phone-home</div></div>
+    <div class="dl"><div class="dl-l">License scope</div><div class="dl-v">Per-project, unlimited devs</div><div class="dl-w">Matches how teams actually work</div></div>
+    <div class="dl"><div class="dl-l">Phase editing</div><div class="dl-v">Inline only (v1)</div><div class="dl-w">AI-friendly, additive path to modal later</div></div>
+    <div class="dl"><div class="dl-l">Phase data</div><div class="dl-v">Name, color, sort — dates/progress derived</div><div class="dl-w">Lightweight, no sync issues</div></div>
+    <div class="dl"><div class="dl-l">Subtasks</div><div class="dl-v">Premium component</div><div class="dl-w">Real engineering value, most libraries don't offer it</div></div>
+    <div class="dl"><div class="dl-l">Critical path</div><div class="dl-v">Premium component</div><div class="dl-w">Algorithmic complexity, enterprise feature</div></div>
+    <div class="dl"><div class="dl-l">Working View</div><div class="dl-v">Free, complete, beautiful</div><div class="dl-w">Drives adoption — must be obviously better than alternatives</div></div>
+    <div class="dl"><div class="dl-l">Density templates</div><div class="dl-v">Premium (each = complete design system)</div><div class="dl-w">Significant design work per template, revenue driver</div></div>
+    <div class="dl"><div class="dl-l">Bar design</div><div class="dl-v">Track + fill + glass + marker dot</div><div class="dl-w">7 iterations to get right (v1–v7)</div></div>
+    <div class="dl"><div class="dl-l">Update mechanism</div><div class="dl-v">Standard npm update</div><div class="dl-w">Hybrid .tgz reduces update likelihood — bad for support</div></div>
+  </div>
+
+  <div class="c" style="margin-top:16px">
+    <h3>Open Questions</h3>
+    <p>
+      ☐ Library name (npm package, GitHub repo, domain)<br>
+      ☐ Payment platform (Lemon Squeezy vs Gumroad vs Paddle)<br>
+      ☐ Leantime data model mapping for phases<br>
+      ☐ Swimlane / resource view scope<br>
+      ☐ Baseline comparison scope<br>
+      ☐ Free density toggle (comfortable/compact) vs all-premium
+    </p>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('show'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('show');
+  btn.classList.add('on');
+}
+</script>
+</body>
+</html>

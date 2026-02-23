@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss — Feature Audit: Frappe vs New</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#3d424f;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--amb:#f59e0b;--red:#ef4444;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;}
+.shell{max-width:960px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:32px;}
+h2{font-size:17px;font-weight:700;margin-top:36px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.note{font-size:12px;color:var(--ink3);margin-bottom:20px;padding:12px 16px;background:var(--sf);border:1px solid var(--bd2);border-radius:8px;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:24px;}
+thead th{text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink4);border-bottom:2px solid var(--bd2);font-weight:600;}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--bd2);vertical-align:top;}
+tbody tr:last-child td{border:none;}
+.feat{font-weight:600;color:var(--ink);}
+.from{font-family:var(--m);font-size:11px;color:var(--ink3);}
+.improve{font-size:12px;color:var(--ink2);line-height:1.6;}
+
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;vertical-align:middle;}
+.tag-mit{background:#fef3c7;color:#92400e;}
+.tag-new{background:#dbeafe;color:#1e40af;}
+.tag-free{background:#d1fae5;color:#065f46;}
+.tag-paid{background:#fce7f3;color:#9d174d;}
+.tag-redesign{background:#e0e7ff;color:#3730a3;}
+
+.divider{height:1px;background:var(--bd2);margin:32px 0;}
+
+.summary{background:var(--ink);border-radius:var(--r);padding:20px 24px;color:#fff;margin-top:32px;}
+.summary h3{font-size:14px;font-weight:700;margin-bottom:12px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.summary-box{background:rgba(255,255,255,.06);border-radius:8px;padding:12px 16px;}
+.summary-box .label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink4);margin-bottom:4px;}
+.summary-box .val{font-size:20px;font-weight:700;}
+.summary-box .desc{font-size:11px;color:var(--ink5);margin-top:4px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1>Emboss — Feature Audit</h1>
+<p class="sub">What comes from Frappe MIT (can't sell), what's new design work (free), and what's genuinely new functionality (premium).</p>
+
+<div class="note">
+  <strong>Principle:</strong> Frappe is MIT. Anything that exists in Frappe v1 — even if we redesign it — ships free. We are not selling Frappe's work. We are selling <em>new features</em> that don't exist in Frappe, and <em>complete design systems</em> (premium templates) that represent original design work.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="tag tag-mit">MIT</span> Already in Frappe — We Redesign, Ships Free</h2>
+<p style="font-size:13px;color:var(--ink3);margin-bottom:16px;">These features exist in Frappe v1. Emboss improves the design and UX but the underlying capability is MIT. Cannot charge for these.</p>
+
+<table>
+<thead><tr><th style="width:200px;">Feature</th><th style="width:120px;">In Frappe As</th><th>What Emboss Improves</th></tr></thead>
+<tbody>
+  <tr>
+    <td class="feat">Task bars with progress</td>
+    <td class="from">Flat colored bars</td>
+    <td class="improve">Glass treatment, track/fill model, progress marker dot, grayscale design system. Same underlying data: id, name, start, end, progress.</td>
+  </tr>
+  <tr>
+    <td class="feat">Dependency arrows</td>
+    <td class="from">Simple curved arrows, always visible</td>
+    <td class="improve">Status-based styling (solid/dashed/faded). Bottom-to-top routing instead of end-to-start. Dependency dots on bars for discoverability. Show on hover option.</td>
+  </tr>
+  <tr>
+    <td class="feat">Drag to change dates</td>
+    <td class="from">Drag bar to move</td>
+    <td class="improve">Visible hover handles (inset 4px), ghost bar showing original position, date tooltip during drag, snap-to-grid feedback.</td>
+  </tr>
+  <tr>
+    <td class="feat">Drag to change progress</td>
+    <td class="from">Drag progress handle</td>
+    <td class="improve">Better handle visibility. Percentage tooltip during drag.</td>
+  </tr>
+  <tr>
+    <td class="feat">Click popup</td>
+    <td class="from">Click → popup card with title, dates, actions</td>
+    <td class="improve">Redesigned as hover tooltip (dark card, status dot, mini progress bar, dependency list). Click popup still available via config.</td>
+  </tr>
+  <tr>
+    <td class="feat">View modes</td>
+    <td class="from">Day, Week, Month, Year + custom</td>
+    <td class="improve">Same functionality. Cleaner header typography.</td>
+  </tr>
+  <tr>
+    <td class="feat">Today navigation</td>
+    <td class="from">"Scroll to today" button</td>
+    <td class="improve">Visual today marker line + pulsing dot + column glow. Button still available.</td>
+  </tr>
+  <tr>
+    <td class="feat">CSS theming</td>
+    <td class="from">CSS custom properties for colors</td>
+    <td class="improve">Expanded token set. But same approach — CSS vars.</td>
+  </tr>
+  <tr>
+    <td class="feat">Holiday/weekend handling</td>
+    <td class="from">ignore_periods config</td>
+    <td class="improve">Same functionality. Visual column dimming for non-working days.</td>
+  </tr>
+  <tr>
+    <td class="feat">Move dependencies on drag</td>
+    <td class="from">move_dependencies option</td>
+    <td class="improve">Same. Better visual feedback during cascade.</td>
+  </tr>
+  <tr>
+    <td class="feat">Milestones</td>
+    <td class="from">custom_class 'bar-milestone' (hacky)</td>
+    <td class="improve">First-class milestone type with diamond shape, progress fill, phase coloring. But the concept exists in Frappe.</td>
+  </tr>
+  <tr>
+    <td class="feat">Bar styling/classes</td>
+    <td class="from">custom_class per task</td>
+    <td class="improve">Status-based automatic styling (done/active/upcoming) instead of manual classes.</td>
+  </tr>
+</tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="tag tag-new">New</span> Not in Frappe — New in Emboss, Ships Free</h2>
+<p style="font-size:13px;color:var(--ink3);margin-bottom:16px;">These features do NOT exist in Frappe v1. They're new Emboss work. We're giving them away free because they make the core experience good enough to drive adoption.</p>
+
+<table>
+<thead><tr><th style="width:200px;">Feature</th><th>Why It's Free</th></tr></thead>
+<tbody>
+  <tr>
+    <td class="feat">Sidebar</td>
+    <td class="improve">Frappe has no sidebar at all — labels sit on bars. The sidebar (task list panel) is fundamental to usability. Three states: full/rail/hidden. This is core UX, not a luxury.</td>
+  </tr>
+  <tr>
+    <td class="feat">Phase grouping</td>
+    <td class="improve">Frappe is a flat task list. Grouping tasks into phases (collapsible rows with derived progress) is basic organization. Without it the chart is just a flat list of bars.</td>
+  </tr>
+  <tr>
+    <td class="feat">Collapsible phases</td>
+    <td class="improve">Goes with phase grouping. Chevron to expand/collapse. Essential for any project with more than 10 tasks.</td>
+  </tr>
+  <tr>
+    <td class="feat">Done/active/upcoming status styling</td>
+    <td class="improve">Frappe treats all bars the same visually. Status-based opacity/styling hierarchy is the core design insight of Emboss. In grayscale: done = faded, active = full, upcoming = lighter. This is the design thinking people are adopting Emboss for.</td>
+  </tr>
+  <tr>
+    <td class="feat">Today marker (visual line)</td>
+    <td class="improve">Frappe has a button to scroll to today. The visual line with pulsing dot is new. Standard in most serious Gantt tools.</td>
+  </tr>
+  <tr>
+    <td class="feat">Dependency dots on bars</td>
+    <td class="improve">New. Small dots on bar edges that signal "this has dependencies — hover to see." Solves the discoverability problem with hover-only arrows.</td>
+  </tr>
+  <tr>
+    <td class="feat">Inline name editing</td>
+    <td class="improve">Frappe has no way to edit task names in the chart. Click-to-edit with phase-colored border is new.</td>
+  </tr>
+  <tr>
+    <td class="feat">Grayscale theme (light)</td>
+    <td class="improve">The default beautiful design system. This is Emboss's free identity — the thoughtful grayscale with glass treatment, spacing, transitions.</td>
+  </tr>
+  <tr>
+    <td class="feat">Dark mode theme</td>
+    <td class="improve">Frappe has no dark mode. Two free themes (light grayscale + dark) covers the two most common preferences.</td>
+  </tr>
+</tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2><span class="tag tag-paid">Premium</span> Not in Frappe — New in Emboss, Paid</h2>
+<p style="font-size:13px;color:var(--ink3);margin-bottom:16px;">Genuinely new features and complete design systems that go well beyond standard Gantt functionality.</p>
+
+<table>
+<thead><tr><th style="width:200px;">Feature</th><th style="width:80px;">Type</th><th>Why It's Premium</th></tr></thead>
+<tbody>
+  <tr>
+    <td class="feat">Vivid color theme</td>
+    <td><span class="tag tag-paid">Template</span></td>
+    <td class="improve">Hue-shifting gradients, status-specific color palettes, phase-colored milestones. Complete color design system. Original design work.</td>
+  </tr>
+  <tr>
+    <td class="feat">Presentation theme</td>
+    <td><span class="tag tag-paid">Template</span></td>
+    <td class="improve">Optimized for slides/screenshots. Larger text, more whitespace, bolder shapes. Different design system.</td>
+  </tr>
+  <tr>
+    <td class="feat">Dense theme</td>
+    <td><span class="tag tag-paid">Template</span></td>
+    <td class="improve">Information-heavy, compact rows, smaller bars, tighter spacing. For power users managing 50+ tasks.</td>
+  </tr>
+  <tr>
+    <td class="feat">Minimal theme</td>
+    <td><span class="tag tag-paid">Template</span></td>
+    <td class="improve">Stripped back, typographic, ultra-clean. Different aesthetic entirely.</td>
+  </tr>
+  <tr>
+    <td class="feat">Assignee avatars</td>
+    <td><span class="tag tag-paid">Component</span></td>
+    <td class="improve">Not in Frappe. Not a standard Gantt feature. Colored avatar circles with auto-palette, shown in sidebar. Enhancement, not core.</td>
+  </tr>
+  <tr>
+    <td class="feat">Subtask nesting</td>
+    <td><span class="tag tag-paid">Component</span></td>
+    <td class="improve">Not in Frappe. Tasks within tasks, one level deep. Collapsible. Requires significant new rendering logic.</td>
+  </tr>
+  <tr>
+    <td class="feat">Critical path</td>
+    <td><span class="tag tag-paid">Component</span></td>
+    <td class="improve">Not in Frappe. Calculates and highlights the longest dependency chain. Toggle on/off. Real algorithmic work.</td>
+  </tr>
+  <tr>
+    <td class="feat">Export PDF/PNG</td>
+    <td><span class="tag tag-paid">Component</span></td>
+    <td class="improve">Not in Frappe. Renders chart to downloadable image or PDF. Handles pagination for long timelines.</td>
+  </tr>
+  <tr>
+    <td class="feat">Swimlane / Resource view</td>
+    <td><span class="tag tag-paid">Component</span></td>
+    <td class="improve">Not in Frappe. Reorganize chart by person/resource instead of timeline. Entirely new view mode.</td>
+  </tr>
+  <tr>
+    <td class="feat">Baseline comparison</td>
+    <td><span class="tag tag-paid">Component</span></td>
+    <td class="improve">Not in Frappe. Shows original plan vs current schedule as overlay. Requires storing and rendering two timelines.</td>
+  </tr>
+</tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>The Honest Question</h2>
+
+<div class="note" style="border-left:3px solid var(--amb);padding-left:20px;">
+  <strong>Are we actually selling enough new stuff?</strong><br><br>
+  The free tier includes everything Frappe has (redesigned) plus sidebar, phases, collapsing, status styling, today marker, dependency dots, inline editing, grayscale + dark themes. That's a LOT of free.<br><br>
+  Premium is: 4 color/design templates + 6 feature components.<br><br>
+  <strong>Templates ($49 each, $99 all):</strong> Vivid, Presentation, Dense, Minimal<br>
+  <strong>Components ($99 each, $149 all):</strong> Assignees, Subtasks, Critical Path, Export, Swimlanes, Baseline<br>
+  <strong>Pro Bundle ($199):</strong> Everything<br><br>
+  The question: is the design thinking in the free tier so good that people don't need premium? Or does the free tier make people trust the quality enough to buy premium for their specific needs?<br><br>
+  I think it's the latter. The free tier is the marketing. The templates are for teams who want polished visuals without doing design work. The components are for teams who need specific PM features.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div class="summary">
+  <h3>Count</h3>
+  <div class="summary-grid">
+    <div class="summary-box">
+      <div class="label">Frappe MIT (redesigned)</div>
+      <div class="val">12</div>
+      <div class="desc">Features that exist in Frappe. Improved design, ships free. Cannot charge.</div>
+    </div>
+    <div class="summary-box">
+      <div class="label">New — Free</div>
+      <div class="val">9</div>
+      <div class="desc">New features not in Frappe. Given free to drive adoption and make the core great.</div>
+    </div>
+    <div class="summary-box">
+      <div class="label">New — Premium</div>
+      <div class="val">10</div>
+      <div class="desc">4 design templates + 6 feature components. All genuinely new work. This is the revenue.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

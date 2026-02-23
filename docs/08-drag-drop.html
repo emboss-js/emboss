@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss · 08 Drag & Drop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1d23;--ink2:#3d424f;--ink3:#6b7280;--ink4:#9ca3af;--ink5:#d1d5db;--bg:#f5f6f8;--sf:#fff;--bd2:#f0f1f4;--grn:#10b981;--blu:#3b82f6;--pur:#8b5cf6;--f:'DM Sans',system-ui,sans-serif;--m:'DM Mono',monospace;--r:12px;--rs:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;}
+.shell{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.sub{font-size:14px;color:var(--ink3);margin-bottom:32px;}
+h2{font-size:18px;font-weight:700;margin-top:40px;margin-bottom:4px;letter-spacing:-.2px;}
+h2 .n{color:var(--ink4);font-weight:400;margin-right:6px;}
+.desc{font-size:13px;color:var(--ink3);margin-bottom:16px;}
+.card{background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);padding:24px;margin-bottom:16px;}
+.sr{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:12px;border-bottom:1px solid var(--bd2);}.sr:last-child{border:none;}
+.sl{font-weight:600;color:var(--ink);min-width:140px;flex-shrink:0;}
+.sv{color:var(--ink2);font-family:var(--m);font-size:11px;}
+.sn{color:var(--ink4);font-size:11px;margin-left:auto;}
+.demo{background:#f0f2f5;border-radius:var(--rs);padding:32px 24px;margin:16px 0;display:flex;flex-direction:column;gap:16px;align-items:center;}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px;margin-left:8px;background:#ecfdf5;color:#10b981;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<h1>Drag & Drop</h1><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:4px;background:#e8ecf1;color:#6b7280;margin-left:12px;position:relative;top:-2px">Core</span>
+<p class="sub">Two modes: move (reschedule) and resize (change duration). Handles appear on hover. Ghost shows original position.</p>
+
+<!-- ═══ HOVER HANDLES ═══ -->
+<h2><span class="n">1</span>Hover Handles</h2>
+<p class="desc">When hovering a bar, drag handles appear on left and right edges. These allow resizing.</p>
+
+<div class="card">
+<div class="demo">
+  <div style="width:100%;max-width:400px;">
+
+    <!-- Default (no hover) -->
+    <div style="font-size:11px;color:var(--ink4);margin-bottom:6px;">Default — no handles</div>
+    <div style="height:26px;border-radius:13px;background:#e8ecf1;position:relative;margin-bottom:20px;">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:65%;border-radius:13px;background:linear-gradient(90deg,#3b82f6,#06b6d4);box-shadow:0 2px 8px rgba(59,130,246,.2);"></div>
+    </div>
+
+    <!-- Hovered (handles visible) -->
+    <div style="font-size:11px;color:var(--ink4);margin-bottom:6px;">Hovered — handles appear</div>
+    <div style="height:26px;border-radius:13px;background:#e8ecf1;position:relative;transform:scaleY(1.08);filter:brightness(1.05);">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:65%;border-radius:13px;background:linear-gradient(90deg,#3b82f6,#06b6d4);box-shadow:0 4px 16px rgba(59,130,246,.3);"></div>
+      <!-- Left handle -->
+      <div style="position:absolute;left:4px;top:50%;transform:translateY(-50%);width:6px;height:18px;background:rgba(255,255,255,.9);border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:ew-resize;z-index:3;"></div>
+      <!-- Right handle (on fill edge) -->
+      <div style="position:absolute;left:calc(65% - 5px);top:50%;transform:translateY(-50%);width:6px;height:18px;background:rgba(255,255,255,.9);border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.15);cursor:ew-resize;z-index:3;"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="card">
+  <div class="sr"><span class="sl">Handle size</span><span class="sv">6×18px, radius 3px</span></div>
+  <div class="sr"><span class="sl">Handle color</span><span class="sv">rgba(255,255,255,.9)</span></div>
+  <div class="sr"><span class="sl">Handle shadow</span><span class="sv">0 1px 3px rgba(0,0,0,.15)</span></div>
+  <div class="sr"><span class="sl">Left handle</span><span class="sv">Inset 4px from bar left edge</span><span class="sn">Resizes start date</span></div>
+  <div class="sr"><span class="sl">Right handle</span><span class="sv">Inset 4px from fill right edge</span><span class="sn">Resizes duration</span></div>
+  <div class="sr"><span class="sl">Cursor</span><span class="sv">ew-resize (on handles), grab (on bar body)</span></div>
+  <div class="sr"><span class="sl">Appear animation</span><span class="sv">opacity 0→1, 0.15s ease</span></div>
+</div>
+
+<!-- ═══ MOVE MODE ═══ -->
+<h2><span class="n">2</span>Move Mode (Reschedule)</h2>
+<p class="desc">Dragging the bar body moves the task to a new date. Ghost shows original position.</p>
+
+<div class="card">
+<div class="demo">
+  <div style="width:100%;max-width:400px;">
+    <div style="font-size:11px;color:var(--ink4);margin-bottom:6px;">During drag — ghost + active bar</div>
+    <div style="position:relative;height:50px;">
+      <!-- Ghost (original position) -->
+      <div style="position:absolute;left:0;top:12px;height:26px;border-radius:13px;width:65%;border:1.5px dashed var(--ink5);background:transparent;"></div>
+      <!-- Active bar (being dragged) -->
+      <div style="position:absolute;left:80px;top:8px;height:26px;border-radius:13px;background:linear-gradient(90deg,#3b82f6,#06b6d4);width:calc(65% - 0px);box-shadow:0 8px 24px rgba(59,130,246,.25);opacity:.9;cursor:grabbing;transform:scaleY(1.04);">
+      </div>
+      <!-- Arrow showing movement -->
+      <svg style="position:absolute;left:50px;top:0;" width="30" height="50" viewBox="0 0 30 50"><path d="M5 25 L25 25" stroke="var(--ink5)" stroke-width="1" stroke-dasharray="2 2"/><polygon points="23,22 23,28 28,25" fill="var(--ink5)"/></svg>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="card">
+  <div class="sr"><span class="sl">Ghost bar</span><span class="sv">1.5px dashed border, --ink5, no fill</span><span class="sn">Shows original position</span></div>
+  <div class="sr"><span class="sl">Active bar</span><span class="sv">opacity 0.9, scaleY(1.04)</span></div>
+  <div class="sr"><span class="sl">Active shadow</span><span class="sv">0 8px 24px statusColor/0.25</span><span class="sn">Deeper than hover</span></div>
+  <div class="sr"><span class="sl">Cursor</span><span class="sv">grabbing</span></div>
+  <div class="sr"><span class="sl">Snap</span><span class="sv">Snaps to day grid boundaries</span></div>
+  <div class="sr"><span class="sl">Date tooltip</span><span class="sv">Small label above bar shows new date range</span></div>
+</div>
+
+<!-- ═══ RESIZE MODE ═══ -->
+<h2><span class="n">3</span>Resize Mode (Change Duration)</h2>
+<p class="desc">Dragging a handle changes start date (left) or duration (right). Bar stretches in real time.</p>
+
+<div class="card">
+<div class="demo">
+  <div style="width:100%;max-width:400px;">
+    <div style="font-size:11px;color:var(--ink4);margin-bottom:6px;">Resizing right handle — extending duration</div>
+    <div style="position:relative;height:50px;">
+      <!-- Original outline -->
+      <div style="position:absolute;left:0;top:12px;height:26px;border-radius:13px;width:50%;border:1.5px dashed var(--ink5);background:transparent;"></div>
+      <!-- Extended bar -->
+      <div style="position:absolute;left:0;top:12px;height:26px;border-radius:13px;background:#e8ecf1;width:70%;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:71%;border-radius:13px;background:linear-gradient(90deg,#3b82f6,#06b6d4);box-shadow:0 2px 8px rgba(59,130,246,.2);"></div>
+        <!-- Active handle -->
+        <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:6px;height:18px;background:#fff;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.2);border:1px solid var(--blu);cursor:ew-resize;z-index:3;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="card">
+  <div class="sr"><span class="sl">Active handle</span><span class="sv">1.5px border in bar's status color (not always blue)</span></div>
+  <div class="sr"><span class="sl">Bar response</span><span class="sv">Track width changes in real time</span></div>
+  <div class="sr"><span class="sl">Snap</span><span class="sv">Snaps to day boundaries</span></div>
+  <div class="sr"><span class="sl">Minimum width</span><span class="sv">1 day (prevents zero-width bars)</span></div>
+  <div class="sr"><span class="sl">Duration tooltip</span><span class="sv">Shows "+2 days" or "−1 day" relative change</span></div>
+</div>
+
+<!-- ═══ DATE SNAP TOOLTIP ═══ -->
+<h2><span class="n">4</span>Snap Feedback</h2>
+
+<div class="card">
+<div class="demo">
+  <div style="width:100%;max-width:400px;">
+    <div style="position:relative;height:60px;">
+      <!-- Bar being dragged -->
+      <div style="position:absolute;left:60px;top:20px;height:26px;border-radius:13px;background:#e8ecf1;width:50%;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:65%;border-radius:13px;background:linear-gradient(90deg,#3b82f6,#06b6d4);box-shadow:0 4px 16px rgba(59,130,246,.2);"></div>
+      </div>
+      <!-- Date label -->
+      <div style="position:absolute;left:60px;top:2px;background:var(--ink);color:#fff;font-size:10px;font-family:var(--m);padding:2px 8px;border-radius:4px;white-space:nowrap;">Feb 10 → Feb 22</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="card">
+  <div class="sr"><span class="sl">Move tooltip</span><span class="sv">"Feb 10 → Feb 22" — new date range</span></div>
+  <div class="sr"><span class="sl">Resize tooltip</span><span class="sv">"+2 days" — relative change</span></div>
+  <div class="sr"><span class="sl">Tooltip style</span><span class="sv">var(--ink) bg, white text, 10px mono, 4px radius</span></div>
+  <div class="sr"><span class="sl">Tooltip position</span><span class="sv">Above bar, left-aligned with bar start</span></div>
+  <div class="sr"><span class="sl">Grid snap visual</span><span class="sv">Target column briefly highlights on snap</span></div>
+  <div class="sr"><span class="sl">Snap highlight</span><span class="sv">Column bg rgba(59,130,246,.04), 0.15s fade</span></div>
+</div>
+
+</div>
+</body>
+</html>
