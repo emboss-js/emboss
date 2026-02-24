@@ -241,13 +241,92 @@ function renderMilestoneCell(row: Row, state: EmbossState): HTMLElement {
   return el
 }
 
-// ─── Renderer map ───────────────────────────────────────────────────────────
+// ─── Rail cell renderers (collapsed sidebar) ────────────────────────────────
+// Minimal centered indicators: phase pill w/ first letter, dots, diamonds.
+
+function renderRailPhaseCell(row: Row, state: EmbossState): HTMLElement {
+  const el = document.createElement('div')
+  el.className = 'emboss-sidebar-cell emboss-sidebar-rail-cell emboss-sidebar-phase'
+  el.dataset.id = row.id
+  el.style.height = `${state.scale.rowHeight}px`
+
+  const pill = document.createElement('span')
+  pill.className = 'emboss-rail-pill'
+  pill.textContent = row.name.charAt(0).toUpperCase()
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) pill.style.background = c
+  }
+
+  el.appendChild(pill)
+  return el
+}
+
+function renderRailTaskCell(row: Row, state: EmbossState): HTMLElement {
+  const el = document.createElement('div')
+  el.className = 'emboss-sidebar-cell emboss-sidebar-rail-cell emboss-sidebar-task'
+  el.dataset.id = row.id
+  el.style.height = `${state.scale.rowHeight}px`
+
+  const dot = document.createElement('span')
+  dot.className = 'emboss-sidebar-dot'
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) dot.style.background = c
+  }
+
+  el.appendChild(dot)
+  return el
+}
+
+function renderRailSubtaskCell(row: Row, state: EmbossState): HTMLElement {
+  const el = document.createElement('div')
+  el.className = 'emboss-sidebar-cell emboss-sidebar-rail-cell emboss-sidebar-subtask'
+  el.dataset.id = row.id
+  el.style.height = `${state.scale.rowHeight}px`
+
+  const dot = document.createElement('span')
+  dot.className = 'emboss-sidebar-dot emboss-sidebar-dot-sm'
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) dot.style.background = c
+  }
+
+  el.appendChild(dot)
+  return el
+}
+
+function renderRailMilestoneCell(row: Row, state: EmbossState): HTMLElement {
+  const el = document.createElement('div')
+  el.className = 'emboss-sidebar-cell emboss-sidebar-rail-cell emboss-sidebar-milestone'
+  el.dataset.id = row.id
+  el.style.height = `${state.scale.rowHeight}px`
+
+  const diamond = document.createElement('span')
+  diamond.className = 'emboss-sidebar-diamond'
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) diamond.style.borderColor = c
+  }
+
+  el.appendChild(diamond)
+  return el
+}
+
+// ─── Renderer maps ──────────────────────────────────────────────────────────
 
 const cellRenderers: Record<string, SidebarRenderer> = {
   task: renderTaskCell,
   phase: renderPhaseCell,
   subtask: renderSubtaskCell,
   milestone: renderMilestoneCell,
+}
+
+const railRenderers: Record<string, SidebarRenderer> = {
+  task: renderRailTaskCell,
+  phase: renderRailPhaseCell,
+  subtask: renderRailSubtaskCell,
+  milestone: renderRailMilestoneCell,
 }
 
 // ─── Extension ──────────────────────────────────────────────────────────────
@@ -271,6 +350,7 @@ export const sidebar: EmbossExtension = {
     let isNewRow = false // true when editingRowId was just created via "+"
     let isDragging = false
     let containerRef: HTMLElement | null = null
+    let sidebarCollapsed = false
 
     // ── Close helpers ──
     function closeAddMenu() {
@@ -604,6 +684,7 @@ export const sidebar: EmbossExtension = {
     emboss.on('afterRender', (container: HTMLElement, scale: Scale, state: EmbossState) => {
       containerRef = container
       _isVivid = container.classList.contains('emboss-vivid')
+      container.classList.toggle('emboss-sidebar-collapsed', sidebarCollapsed)
 
       // ── First render: create sidebar DOM and wire delegated listeners ──
       if (!sidebarHeaderEl) {
@@ -627,6 +708,12 @@ export const sidebar: EmbossExtension = {
         // ── DELEGATED: header click ──
         sidebarHeaderEl.addEventListener('click', (e: MouseEvent) => {
           const target = e.target as HTMLElement
+          if (target.closest('.emboss-sidebar-collapse')) {
+            sidebarCollapsed = !sidebarCollapsed
+            container.classList.toggle('emboss-sidebar-collapsed', sidebarCollapsed)
+            emboss.render()
+            return
+          }
           if (target.closest('.emboss-sidebar-add-btn')) {
             openAddMenu(target.closest('.emboss-sidebar-add-btn') as HTMLElement)
           }
@@ -1006,6 +1093,7 @@ export const sidebar: EmbossExtension = {
 
       // ── Populate sidebar header ──
       sidebarHeaderEl.innerHTML = ''
+
       const label = document.createElement('span')
       label.className = 'emboss-sidebar-header-label'
       label.textContent = 'Tasks'
@@ -1016,15 +1104,21 @@ export const sidebar: EmbossExtension = {
       addBtn.textContent = '+'
       sidebarHeaderEl.appendChild(addBtn)
 
+      const collapseBtn = document.createElement('button')
+      collapseBtn.className = 'emboss-sidebar-collapse'
+      collapseBtn.textContent = sidebarCollapsed ? '\u25B6' : '\u25C0'
+      sidebarHeaderEl.appendChild(collapseBtn)
+
       // ── Render cells ──
       // If user is actively typing in an input, don't destroy it
       const activeInput = sidebarBodyEl!.querySelector('.emboss-sidebar-edit-input')
       if (activeInput || isDragging) return
 
       const visibleRows = state.rows.filter(r => !r.hidden)
+      const renderers = sidebarCollapsed ? railRenderers : cellRenderers
       const fragment = document.createDocumentFragment()
       for (const row of visibleRows) {
-        const renderer = cellRenderers[row.type]
+        const renderer = renderers[row.type]
         const cell = renderer ? renderer(row, state) : renderTaskCell(row, state)
         if (cell) fragment.appendChild(cell)
       }
@@ -1503,5 +1597,90 @@ export const sidebar: EmbossExtension = {
   background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 100%);
   pointer-events: none;
 }
+
+/* ─── Collapse button ──────────────────────────────────────────────────── */
+
+.emboss-sidebar-collapse {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--emboss-ink-4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.emboss-sidebar-collapse:hover {
+  background: var(--emboss-surface-2);
+  color: var(--emboss-ink-2);
+}
+
+/* ─── Sidebar rail mode (collapsed) ───────────────────────────────────── */
+
+.emboss.emboss-has-sidebar {
+  transition: grid-template-columns 0.2s ease;
+}
+.emboss-sidebar {
+  transition: width 0.2s ease;
+}
+
+.emboss-sidebar-collapsed.emboss-has-sidebar {
+  grid-template-columns: 48px 1fr;
+}
+.emboss-sidebar-collapsed .emboss-sidebar-header-label,
+.emboss-sidebar-collapsed .emboss-sidebar-add-btn { display: none; }
+.emboss-sidebar-collapsed .emboss-sidebar { width: 48px; }
+.emboss-sidebar-collapsed .emboss-sidebar-header { padding: 0; justify-content: center; }
+
+/* Rail cells: center content, no padding */
+.emboss-sidebar-rail-cell {
+  justify-content: center;
+  padding: 0 !important;
+  gap: 0;
+}
+
+/* Rail phase pill — 30×30 rounded square with first letter */
+.emboss-rail-pill {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  background: var(--emboss-ink-3);
+  flex-shrink: 0;
+}
+
+/* Rail milestone diamond: 8×8 */
+.emboss-sidebar-rail-cell .emboss-sidebar-diamond {
+  width: 8px;
+  height: 8px;
+}
+
+/* Dense mode rail — 36px, smaller pills */
+.emboss-sidebar-collapsed.emboss-dense.emboss-has-sidebar {
+  grid-template-columns: 36px 1fr;
+}
+.emboss-sidebar-collapsed.emboss-dense .emboss-sidebar { width: 36px; }
+.emboss-sidebar-collapsed.emboss-dense .emboss-rail-pill {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+
+/* Presentation mode rail — 48px */
+.emboss-sidebar-collapsed.emboss-presentation.emboss-has-sidebar {
+  grid-template-columns: 48px 1fr;
+}
+.emboss-sidebar-collapsed.emboss-presentation .emboss-sidebar { width: 48px; }
 `,
 }
