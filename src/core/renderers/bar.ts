@@ -10,7 +10,7 @@
 import type { Row, Scale, EmbossState } from '../types'
 
 export function renderBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
-  if (row.type === 'phase') return renderPhaseBar(row, scale)
+  if (row.type === 'phase') return renderPhaseBar(row, scale, state)
   return renderTaskBar(row, scale, state)
 }
 
@@ -87,17 +87,24 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState): HTMLElement 
   return bar
 }
 
-function renderPhaseBar(row: Row, scale: Scale): HTMLElement {
+const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
+
+function renderPhaseBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
   const left = row.start * scale.dayWidth
   const width = Math.max(row.duration * scale.dayWidth, 20)
   const barTop = Math.round((scale.rowHeight - 5) / 2)
-  const color = row.phaseColor || 'var(--emboss-ink-3)'
+  const phaseIdx = state.rows.filter(r => r.type === 'phase').findIndex(r => r.id === row.id)
+  const idx = phaseIdx >= 0 ? phaseIdx : 0
+  const color = row.phaseColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar emboss-bar-phase'
   bar.dataset.id = row.id
   bar.dataset.type = 'phase'
-  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:5px;border-radius:3px;background:${color};`
+  bar.dataset.phaseIdx = String(idx % 5)
+  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:5px;border-radius:3px;`
+  bar.style.setProperty('--phase-c', color)
+  if (row.phaseColor) bar.dataset.colorSet = ''
 
   // Phase label — below the thin bar
   const label = document.createElement('div')
@@ -294,10 +301,26 @@ export const BAR_STYLES = `
   right: 4px;
 }
 
-/* Phase bar — 5px height, phase color, no interaction */
+/* Phase index → gray mapping (grayscale theme) */
+[data-phase-idx] { --phase-gray: var(--emboss-ink-3); }
+[data-phase-idx="0"] { --phase-gray: #4b5563; }
+[data-phase-idx="1"] { --phase-gray: #6b7280; }
+[data-phase-idx="2"] { --phase-gray: #9ca3af; }
+[data-phase-idx="3"] { --phase-gray: #374151; }
+[data-phase-idx="4"] { --phase-gray: #d1d5db; }
+
+/* Phase bar — 5px height, no interaction */
 .emboss-bar-phase {
   pointer-events: none;
   opacity: 0.4;
+  background: var(--phase-gray);
+}
+.emboss-vivid .emboss-bar-phase {
+  background: var(--phase-c);
+}
+/* User-picked color overrides in any theme */
+.emboss-bar-phase[data-color-set] {
+  background: var(--phase-c);
 }
 
 /* Phase label — below the thin bar, left-aligned */

@@ -127,8 +127,8 @@ describe('Color picker on phase pills', () => {
   it('clicking swatch changes phase color', () => {
     const chart = makeChart()
     ;(document.querySelector('.emboss-sidebar-pill') as HTMLElement).click()
-    ;(document.querySelector('.emboss-color-swatch[data-color="#ef4444"]') as HTMLElement).click()
-    expect(chart.state.rows.find(r => r.id === 'p1')!.phaseColor).toBe('#ef4444')
+    ;(document.querySelector('.emboss-color-swatch[data-color="#6b7280"]') as HTMLElement).click()
+    expect(chart.state.rows.find(r => r.id === 'p1')!.phaseColor).toBe('#6b7280')
     expect(document.querySelector('.emboss-color-picker')).toBeFalsy()
     chart.destroy()
   })

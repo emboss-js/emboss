@@ -47,12 +47,12 @@
     import { sidebar, milestones } from '../src/extensions/paid/organize/index.ts'
 
     const rows = [
-      { id: 'p1', type: 'phase', name: 'Design Phase', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], phaseColor: '#6366f1', children: ['t1','t2','t3','m1'] },
+      { id: 'p1', type: 'phase', name: 'Design Phase', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], children: ['t1','t2','t3','m1'] },
       { id: 't1', type: 'task', name: 'Wireframes', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 0, duration: 7, progress: 100, status: 'done', dependencies: [] },
       { id: 't2', type: 'task', name: 'Visual Design', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 5, duration: 10, progress: 60, status: 'active', dependencies: ['t1'] },
       { id: 't3', type: 'task', name: 'Prototyping', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 12, duration: 8, progress: 25, status: 'active', dependencies: ['t2'] },
       { id: 'm1', type: 'milestone', name: 'Design Review', depth: 1, parentId: 'p1', collapsed: false, hidden: false, start: 19, duration: 0, progress: 0, status: 'upcoming', dependencies: ['t2', 't3'] },
-      { id: 'p2', type: 'phase', name: 'Development', depth: 0, parentId: null, collapsed: false, hidden: false, start: 15, duration: 30, progress: 10, status: 'active', dependencies: [], phaseColor: '#8b5cf6', children: ['t4','t5','t6','t7'] },
+      { id: 'p2', type: 'phase', name: 'Development', depth: 0, parentId: null, collapsed: false, hidden: false, start: 15, duration: 30, progress: 10, status: 'active', dependencies: [], children: ['t4','t5','t6','t7'] },
       { id: 't4', type: 'task', name: 'Frontend Setup', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 15, duration: 5, progress: 80, status: 'active', dependencies: [] },
       { id: 't5', type: 'task', name: 'API Integration', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 20, duration: 12, progress: 0, status: 'upcoming', dependencies: ['t4'] },
       { id: 't6', type: 'task', name: 'Database Schema', depth: 1, parentId: 'p2', collapsed: false, hidden: false, start: 18, duration: 8, progress: 40, status: 'active', dependencies: [] },

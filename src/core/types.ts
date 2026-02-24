@@ -132,6 +132,7 @@ export interface EmbossInstance {
   use(extension: EmbossExtension): void
   remove(name: string): void
   on(event: string, handler: (...args: any[]) => void): void
+  emit(event: string, ...args: any[]): void | false
   render(): void
   destroy(): void
 }

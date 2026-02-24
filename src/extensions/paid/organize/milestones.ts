@@ -14,29 +14,35 @@
 
 import type { Row, Scale, EmbossState, EmbossExtension } from '../../../core/types'
 
-function renderMilestoneBar(row: Row, scale: Scale, _state: EmbossState): HTMLElement {
+function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
   const x = row.start * scale.dayWidth
   const centerY = Math.round(scale.rowHeight / 2)
   const size = 20
   const half = size / 2
-  const color = row.phaseColor || 'var(--emboss-ink-3)'
+  const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
+  const parentPhase = row.parentId ? state.rows.find(r => r.id === row.parentId && r.type === 'phase') : null
+  const phaseIdx = parentPhase ? state.rows.filter(r => r.type === 'phase').indexOf(parentPhase) : 0
+  const idx = phaseIdx >= 0 ? phaseIdx : 0
+  const userColor = parentPhase?.phaseColor
+  const color = userColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
 
   const wrapper = document.createElement('div')
   wrapper.className = 'emboss-milestone'
   wrapper.dataset.id = row.id
   wrapper.dataset.status = row.status
+  wrapper.dataset.phaseIdx = String(idx % 5)
   wrapper.style.cssText = `left:${x - half}px;top:${centerY - half}px;width:${size}px;height:${size}px;`
+  wrapper.style.setProperty('--phase-c', color)
+  if (userColor) wrapper.dataset.colorSet = ''
 
   const diamond = document.createElement('div')
   diamond.className = 'emboss-milestone-diamond'
-  diamond.style.borderColor = color
 
   // Progress fill — clips from bottom
   if (row.progress > 0) {
     const fill = document.createElement('div')
     fill.className = 'emboss-milestone-fill'
     fill.style.height = `${row.progress}%`
-    fill.style.background = color
     diamond.appendChild(fill)
   }
 
@@ -73,11 +79,15 @@ export const milestones: EmbossExtension = {
   height: 100%;
   box-sizing: border-box;
   transform: rotate(45deg);
-  border: 2.5px solid var(--emboss-ink-3);
+  border: 2.5px solid var(--phase-gray, var(--emboss-ink-3));
   border-radius: 3px;
   background: var(--emboss-surface);
   overflow: hidden;
   transition: transform 0.15s;
+}
+.emboss-vivid .emboss-milestone-diamond,
+[data-color-set] .emboss-milestone-diamond {
+  border-color: var(--phase-c);
 }
 .emboss-milestone:hover .emboss-milestone-diamond {
   transform: rotate(45deg) scale(1.2);
@@ -100,6 +110,11 @@ export const milestones: EmbossExtension = {
   left: 0;
   right: 0;
   opacity: 0.6;
+  background: var(--phase-gray, var(--emboss-ink-3));
+}
+.emboss-vivid .emboss-milestone-fill,
+[data-color-set] .emboss-milestone-fill {
+  background: var(--phase-c);
 }
 /* Done state */
 .emboss-milestone[data-status="done"] {
