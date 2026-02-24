@@ -20,11 +20,15 @@ function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState): HTMLEle
   const size = 20
   const half = size / 2
   const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
+  const GRAY_LIGHT = ['#4b5563', '#6b7280', '#9ca3af', '#374151', '#d1d5db']
+  const GRAY_DARK = ['#d1d5db', '#9ca3af', '#6b7280', '#e5e7eb', '#a3a3a3']
   const parentPhase = row.parentId ? state.rows.find(r => r.id === row.parentId && r.type === 'phase') : null
   const phaseIdx = parentPhase ? state.rows.filter(r => r.type === 'phase').indexOf(parentPhase) : 0
   const idx = phaseIdx >= 0 ? phaseIdx : 0
   const userColor = parentPhase?.phaseColor
-  const color = userColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
+  const vividColor = userColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
+  const grays = state.theme === 'dark' ? GRAY_DARK : GRAY_LIGHT
+  const grayColor = grays[idx % grays.length]
 
   const wrapper = document.createElement('div')
   wrapper.className = 'emboss-milestone'
@@ -32,7 +36,8 @@ function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState): HTMLEle
   wrapper.dataset.status = row.status
   wrapper.dataset.phaseIdx = String(idx % 5)
   wrapper.style.cssText = `left:${x - half}px;top:${centerY - half}px;width:${size}px;height:${size}px;`
-  wrapper.style.setProperty('--phase-c', color)
+  wrapper.style.setProperty('--phase-c', vividColor)
+  wrapper.style.setProperty('--phase-gray', grayColor)
   if (userColor) wrapper.dataset.colorSet = ''
 
   const diamond = document.createElement('div')

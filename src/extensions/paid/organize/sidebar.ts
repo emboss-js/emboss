@@ -25,12 +25,6 @@ import type { Row, EmbossState, EmbossExtension, Scale, SidebarRenderer } from '
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function statusColor(status: string): string {
-  if (status === 'active') return 'var(--emboss-ink-3)'
-  if (status === 'done') return 'var(--emboss-ink-4)'
-  return 'var(--emboss-ink-5)'
-}
-
 const VIVID_SWATCHES = [
   '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b',
   '#10b981', '#ef4444', '#06b6d4', '#f97316',
@@ -41,18 +35,52 @@ const GRAYSCALE_SWATCHES = [
   '#1f2937', '#525252', '#78716c', '#a3a3a3',
 ]
 
+// ─── Phase color resolution ─────────────────────────────────────────────────
+
+function resolvePhaseColor(row: Row, rows: Row[]): { color: string; idx: number; userSet: boolean } {
+  let phase: Row | undefined
+
+  if (row.type === 'phase') {
+    phase = row
+  } else if (row.parentId) {
+    const parent = rows.find(r => r.id === row.parentId)
+    if (parent?.type === 'phase') {
+      phase = parent
+    } else if (parent?.parentId) {
+      phase = rows.find(r => r.id === parent.parentId && r.type === 'phase')
+    }
+  }
+
+  if (!phase) return { color: VIVID_SWATCHES[0], idx: 0, userSet: false }
+
+  const phaseIdx = rows.filter(r => r.type === 'phase').indexOf(phase)
+  const idx = phaseIdx >= 0 ? phaseIdx : 0
+  return {
+    color: phase.phaseColor || VIVID_SWATCHES[idx % VIVID_SWATCHES.length],
+    idx,
+    userSet: !!phase.phaseColor,
+  }
+}
+
+function applyPhaseVars(el: HTMLElement, pc: { color: string; idx: number; userSet: boolean }) {
+  el.dataset.phaseIdx = String(pc.idx % 5)
+  el.style.setProperty('--phase-c', pc.color)
+  if (pc.userSet) el.dataset.colorSet = ''
+}
+
 // ─── Cell renderers ─────────────────────────────────────────────────────────
 
 function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
+  const pc = resolvePhaseColor(row, state.rows)
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-task'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${48 + row.depth * 16}px`
+  applyPhaseVars(el, pc)
 
   const dot = document.createElement('span')
   dot.className = 'emboss-sidebar-dot'
-  dot.style.background = statusColor(row.status)
 
   const name = document.createElement('span')
   name.className = 'emboss-sidebar-name'
@@ -71,18 +99,14 @@ function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
 function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   const collapsed = state.collapsed[row.id]
   const count = row.children ? row.children.length : 0
-  const phaseIdx = state.rows.filter(r => r.type === 'phase').findIndex(r => r.id === row.id)
-  const idx = phaseIdx >= 0 ? phaseIdx : 0
-  const color = row.phaseColor || VIVID_SWATCHES[idx % VIVID_SWATCHES.length]
+  const pc = resolvePhaseColor(row, state.rows)
 
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-phase'
   el.dataset.id = row.id
-  el.dataset.phaseIdx = String(idx % 5)
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${16 + row.depth * 16}px`
-  el.style.setProperty('--phase-c', color)
-  if (row.phaseColor) el.dataset.colorSet = ''
+  applyPhaseVars(el, pc)
 
   const chevron = document.createElement('span')
   chevron.className = 'emboss-sidebar-chevron'
@@ -113,15 +137,16 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
 }
 
 function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
+  const pc = resolvePhaseColor(row, state.rows)
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-subtask'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${48 + row.depth * 16}px`
+  applyPhaseVars(el, pc)
 
   const dot = document.createElement('span')
   dot.className = 'emboss-sidebar-dot emboss-sidebar-dot-sm'
-  dot.style.background = statusColor(row.status)
 
   const name = document.createElement('span')
   name.className = 'emboss-sidebar-name'
@@ -138,11 +163,13 @@ function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
 }
 
 function renderMilestoneCell(row: Row, state: EmbossState): HTMLElement {
+  const pc = resolvePhaseColor(row, state.rows)
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-milestone'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${48 + row.depth * 16}px`
+  applyPhaseVars(el, pc)
 
   const diamond = document.createElement('span')
   diamond.className = 'emboss-sidebar-diamond'
@@ -292,7 +319,7 @@ export const sidebar: EmbossExtension = {
           progress: 0, status: 'upcoming', dependencies: [],
         }
         if (phase?.children) phase.children.push(id)
-        const lastChild = phase ? findLastChild(phase.id) : null
+        const lastChild = phase ? findLastDescendant(phase.id) : null
         emboss.addRow(newRow, lastChild || phase?.id)
       } else {
         const newRow: Row = {
@@ -302,16 +329,27 @@ export const sidebar: EmbossExtension = {
           progress: 0, status: 'upcoming', dependencies: [],
         }
         if (phase?.children) phase.children.push(id)
-        const lastChild = phase ? findLastChild(phase.id) : null
+        const lastChild = phase ? findLastDescendant(phase.id) : null
         emboss.addRow(newRow, lastChild || phase?.id)
       }
     }
 
-    function findLastChild(phaseId: string): string | null {
+    function findLastDescendant(parentId: string): string | null {
       const rows = emboss.state.rows
+      const parentIdx = rows.findIndex(r => r.id === parentId)
+      if (parentIdx === -1) return null
+
+      // Walk forward — a contiguous run of descendants has parentId in our subtree
+      const subtree = new Set([parentId])
       let lastId: string | null = null
-      for (const r of rows) {
-        if (r.parentId === phaseId) lastId = r.id
+      for (let i = parentIdx + 1; i < rows.length; i++) {
+        const pid = rows[i].parentId
+        if (pid && subtree.has(pid)) {
+          subtree.add(rows[i].id)
+          lastId = rows[i].id
+        } else {
+          break
+        }
       }
       return lastId
     }
@@ -933,16 +971,22 @@ export const sidebar: EmbossExtension = {
   cursor: grab;
 }
 
-/* Status dot */
+/* Status dot — phase-colored */
 .emboss-sidebar-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+  background: var(--emboss-ink-3);
+}
+.emboss-vivid .emboss-sidebar-dot,
+[data-color-set] .emboss-sidebar-dot {
+  background: var(--phase-c);
 }
 .emboss-sidebar-dot-sm {
   width: 6px;
   height: 6px;
+  opacity: 0.7;
 }
 
 /* Name */
@@ -951,6 +995,7 @@ export const sidebar: EmbossExtension = {
   text-overflow: ellipsis;
   font-size: 12.5px;
   color: var(--emboss-ink);
+  text-decoration: none;
   cursor: text;
   flex: 1;
 }
@@ -1032,18 +1077,20 @@ export const sidebar: EmbossExtension = {
   transform: rotate(0deg);
 }
 
-/* Colored pill — gray in grayscale, vivid in vivid, user-picked overrides both */
+/* Colored pill — 10px dot with 24px hit area via padding + background-clip */
 .emboss-sidebar-pill {
-  width: 10px;
-  height: 10px;
+  width: 24px;
+  height: 24px;
+  padding: 7px;
+  background-clip: content-box;
   border-radius: 50%;
   flex-shrink: 0;
   cursor: pointer;
-  background: var(--phase-gray, var(--emboss-ink-3));
+  background-color: var(--emboss-ink-3);
 }
 .emboss-vivid .emboss-sidebar-pill,
 [data-color-set] .emboss-sidebar-pill {
-  background: var(--phase-c);
+  background-color: var(--phase-c);
 }
 
 /* Task count badge */
@@ -1068,6 +1115,10 @@ export const sidebar: EmbossExtension = {
   border-radius: 1px;
   flex-shrink: 0;
 }
+.emboss-vivid .emboss-sidebar-diamond,
+[data-color-set] .emboss-sidebar-diamond {
+  border-color: var(--phase-c);
+}
 .emboss-sidebar-milestone-name {
   font-style: italic;
 }
@@ -1089,7 +1140,7 @@ export const sidebar: EmbossExtension = {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 .emboss-sidebar-edit-phase {
-  border-color: var(--phase-gray, var(--emboss-ink-4)) !important;
+  border-color: var(--emboss-ink-4) !important;
 }
 .emboss-vivid .emboss-sidebar-edit-phase,
 [data-color-set] .emboss-sidebar-edit-phase {

@@ -55,6 +55,7 @@ const CORE_STYLES = `
 
 export class Emboss implements EmbossInstance {
   state: EmbossState
+  get rows(): Row[] { return this.state.rows }
   private container: HTMLElement
   private extensions: EmbossExtension[] = []
   private listeners: Record<string, ((...args: any[]) => any)[]> = {}
@@ -174,7 +175,8 @@ export class Emboss implements EmbossInstance {
 
   setTheme(theme: string): void {
     this.state.theme = theme
-    this.container.classList.remove('emboss-grayscale', 'emboss-dark', 'emboss-vivid')
+    // Remove base theme classes but preserve vivid overlay
+    this.container.classList.remove('emboss-grayscale', 'emboss-dark')
     this.container.classList.add(`emboss-${theme}`)
     this.emit('onThemeChange', theme)
     this.render()
@@ -265,7 +267,7 @@ export class Emboss implements EmbossInstance {
     // 5. Update container attributes
     this.container.dataset.density = this.state.density
     if (!this.container.classList.contains(`emboss-${this.state.theme}`)) {
-      this.container.classList.remove('emboss-grayscale', 'emboss-dark', 'emboss-vivid')
+      this.container.classList.remove('emboss-grayscale', 'emboss-dark')
       this.container.classList.add(`emboss-${this.state.theme}`)
     }
 
@@ -290,7 +292,7 @@ export class Emboss implements EmbossInstance {
       const extRenderer = this.barRenderers[row.type]
       const barEl = extRenderer
         ? extRenderer(row, scale, this.state)
-        : renderBar(row, scale, this.state)
+        : renderBar(row, scale, this.state, this.container)
 
       // Position vertically by row index
       const innerTop = Math.round((scale.rowHeight - scale.barHeight) / 2)

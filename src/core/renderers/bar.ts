@@ -9,16 +9,17 @@
 
 import type { Row, Scale, EmbossState } from '../types'
 
-export function renderBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
-  if (row.type === 'phase') return renderPhaseBar(row, scale, state)
-  return renderTaskBar(row, scale, state)
+export function renderBar(row: Row, scale: Scale, state: EmbossState, container?: HTMLElement): HTMLElement {
+  if (row.type === 'phase') return renderPhaseBar(row, scale, state, container)
+  return renderTaskBar(row, scale, state, container)
 }
 
-function renderTaskBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
+function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: HTMLElement): HTMLElement {
   const left = row.start * scale.dayWidth
   const width = Math.max(row.duration * scale.dayWidth, scale.barHeight)
   const barTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
   const r = scale.barRadius
+  const isVivid = container?.classList.contains('emboss-vivid') ?? false
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar'
@@ -48,6 +49,14 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState): HTMLElement 
   const fill = document.createElement('div')
   fill.className = 'emboss-bar-fill'
   fill.style.cssText = `width:${fillWidth}px;border-radius:${fillRadius};`
+
+  // Phase-colored fill gradients in vivid mode
+  const pc = isVivid ? resolveBarPhaseColor(row, state) : null
+  if (pc) {
+    fill.style.backgroundImage = phaseGradient(pc.color, row.status)
+    if (row.type === 'subtask') fill.style.opacity = '0.7'
+  }
+
   bar.appendChild(fill)
 
   // Progress marker dot (hidden at 0% and 100%)
@@ -88,14 +97,87 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState): HTMLElement 
 }
 
 const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
+const GRAY_PALETTE_LIGHT = ['#4b5563', '#6b7280', '#9ca3af', '#374151', '#d1d5db']
+const GRAY_PALETTE_DARK = ['#d1d5db', '#9ca3af', '#6b7280', '#e5e7eb', '#a3a3a3']
 
-function renderPhaseBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
+function hexToHSL(hex: string): { h: number; s: number; l: number } {
+  const num = parseInt(hex.replace('#', ''), 16)
+  const r = (num >> 16) / 255
+  const g = ((num >> 8) & 0xff) / 255
+  const b = (num & 0xff) / 255
+  const max = Math.max(r, g, b), min = Math.min(r, g, b)
+  const l = (max + min) / 2
+  if (max === min) return { h: 0, s: 0, l: l * 100 }
+  const d = max - min
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+  let h = 0
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6
+  else if (max === g) h = ((b - r) / d + 2) / 6
+  else h = ((r - g) / d + 4) / 6
+  return { h: h * 360, s: s * 100, l: l * 100 }
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  s /= 100; l /= 100
+  const a = s * Math.min(l, 1 - l)
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+    return Math.round(255 * color).toString(16).padStart(2, '0')
+  }
+  return `#${f(0)}${f(8)}${f(4)}`
+}
+
+function phaseGradient(hexColor: string, status: string): string {
+  const hsl = hexToHSL(hexColor)
+  const endHue = (hsl.h + 50) % 360
+  if (status === 'done') {
+    const doneStart = hslToHex(hsl.h, hsl.s * 0.6, Math.min(hsl.l + 15, 80))
+    const doneEnd = hslToHex(endHue, hsl.s * 0.6, Math.min(hsl.l + 15, 80))
+    return `linear-gradient(90deg, ${doneStart}, ${doneEnd})`
+  }
+  if (status === 'upcoming') {
+    const upStart = hslToHex(hsl.h, hsl.s * 0.8, Math.min(hsl.l + 5, 70))
+    const upEnd = hslToHex(endHue, hsl.s * 0.8, Math.min(hsl.l + 5, 70))
+    return `linear-gradient(90deg, ${upStart}, ${upEnd})`
+  }
+  const endLight = hslToHex(endHue, Math.min(hsl.s, 85), Math.min(hsl.l + 10, 65))
+  return `linear-gradient(90deg, ${hexColor}, ${endLight})`
+}
+
+function resolveBarPhaseColor(row: Row, state: EmbossState): { color: string; idx: number } | null {
+  let phase: Row | undefined
+  if (row.type === 'phase') phase = row
+  else if (row.parentId) {
+    const parent = state.rows.find(r => r.id === row.parentId)
+    if (parent?.type === 'phase') phase = parent
+    else if (parent?.parentId) phase = state.rows.find(r => r.id === parent.parentId && r.type === 'phase')
+  }
+  if (!phase) return null
+  const phaseIdx = state.rows.filter(r => r.type === 'phase').indexOf(phase)
+  const idx = phaseIdx >= 0 ? phaseIdx : 0
+  return { color: phase.phaseColor || VIVID_PALETTE[idx % VIVID_PALETTE.length], idx }
+}
+
+function renderPhaseBar(row: Row, scale: Scale, state: EmbossState, container?: HTMLElement): HTMLElement {
   const left = row.start * scale.dayWidth
   const width = Math.max(row.duration * scale.dayWidth, 20)
   const barTop = Math.round((scale.rowHeight - 5) / 2)
   const phaseIdx = state.rows.filter(r => r.type === 'phase').findIndex(r => r.id === row.id)
   const idx = phaseIdx >= 0 ? phaseIdx : 0
-  const color = row.phaseColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
+  const isVivid = container?.classList.contains('emboss-vivid') ?? false
+  const isDark = container?.classList.contains('emboss-dark') ?? false
+  const grays = isDark ? GRAY_PALETTE_DARK : GRAY_PALETTE_LIGHT
+
+  // Resolve color: user-picked wins, then vivid palette, then gray palette
+  let color: string
+  if (row.phaseColor) {
+    color = row.phaseColor
+  } else if (isVivid) {
+    color = VIVID_PALETTE[idx % VIVID_PALETTE.length]
+  } else {
+    color = grays[idx % grays.length]
+  }
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar emboss-bar-phase'
@@ -103,8 +185,8 @@ function renderPhaseBar(row: Row, scale: Scale, state: EmbossState): HTMLElement
   bar.dataset.type = 'phase'
   bar.dataset.phaseIdx = String(idx % 5)
   bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:5px;border-radius:3px;`
-  bar.style.setProperty('--phase-c', color)
-  if (row.phaseColor) bar.dataset.colorSet = ''
+  bar.style.background = color
+  bar.style.opacity = '0.25'
 
   // Phase label — below the thin bar
   const label = document.createElement('div')
@@ -309,18 +391,9 @@ export const BAR_STYLES = `
 [data-phase-idx="3"] { --phase-gray: #374151; }
 [data-phase-idx="4"] { --phase-gray: #d1d5db; }
 
-/* Phase bar — 5px height, no interaction */
+/* Phase bar — 5px height, no interaction. Background + opacity set inline. */
 .emboss-bar-phase {
   pointer-events: none;
-  opacity: 0.4;
-  background: var(--phase-gray);
-}
-.emboss-vivid .emboss-bar-phase {
-  background: var(--phase-c);
-}
-/* User-picked color overrides in any theme */
-.emboss-bar-phase[data-color-set] {
-  background: var(--phase-c);
 }
 
 /* Phase label — below the thin bar, left-aligned */

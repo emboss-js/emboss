@@ -122,6 +122,7 @@ export interface EmbossExtension {
 
 export interface EmbossInstance {
   state: EmbossState
+  readonly rows: Row[]
   setView(view: EmbossState['view']): void
   setDensity(density: EmbossState['density']): void
   setTheme(theme: string): void
