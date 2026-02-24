@@ -95,6 +95,7 @@ export interface EmbossEvents {
 
   onRowUpdate(row: Row, changes: Partial<Row>): void | false
   onRowReorder(rowId: string, newIndex: number): void
+  onRowReparent(row: Row, oldParent: Row | null, newParent: Row | null, newType: string): void | false
 
   onBeforeRender(rows: Row[], state: EmbossState): Row[]
 }

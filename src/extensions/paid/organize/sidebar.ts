@@ -78,6 +78,19 @@ function createAvatar(row: Row, isVivid: boolean, size: 22 | 18 = 22): HTMLEleme
   return el
 }
 
+function createGrip(): HTMLElement {
+  const grip = document.createElement('span')
+  grip.className = 'emboss-sidebar-grip'
+  grip.innerHTML = '<svg width="6" height="10" viewBox="0 0 6 10">' +
+    '<circle cx="1.5" cy="1.5" r="1" fill="currentColor"/>' +
+    '<circle cx="4.5" cy="1.5" r="1" fill="currentColor"/>' +
+    '<circle cx="1.5" cy="5" r="1" fill="currentColor"/>' +
+    '<circle cx="4.5" cy="5" r="1" fill="currentColor"/>' +
+    '<circle cx="1.5" cy="8.5" r="1" fill="currentColor"/>' +
+    '<circle cx="4.5" cy="8.5" r="1" fill="currentColor"/></svg>'
+  return grip
+}
+
 // ─── Cell renderers ─────────────────────────────────────────────────────────
 // Vivid = inline color on dot/pill/diamond. Grayscale = no inline style, CSS default.
 // `_isVivid` is set each render from container class check.
@@ -106,9 +119,16 @@ function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
   del.className = 'emboss-sidebar-delete'
   del.textContent = '\u00d7'
 
+  const addChild = document.createElement('span')
+  addChild.className = 'emboss-sidebar-add-child'
+  addChild.textContent = '+'
+  addChild.dataset.addParent = row.id
+
+  el.prepend(createGrip())
   el.appendChild(dot)
   el.appendChild(name)
   if (row.assignee) el.appendChild(createAvatar(row, _isVivid, 22))
+  el.appendChild(addChild)
   el.appendChild(del)
   return el
 }
@@ -147,10 +167,17 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   del.className = 'emboss-sidebar-delete'
   del.textContent = '\u00d7'
 
+  const addChild = document.createElement('span')
+  addChild.className = 'emboss-sidebar-add-child'
+  addChild.textContent = '+'
+  addChild.dataset.addParent = row.id
+
+  el.prepend(createGrip())
   el.appendChild(chevron)
   el.appendChild(pill)
   el.appendChild(name)
   el.appendChild(badge)
+  el.appendChild(addChild)
   el.appendChild(del)
   return el
 }
@@ -177,6 +204,7 @@ function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
   del.className = 'emboss-sidebar-delete'
   del.textContent = '\u00d7'
 
+  el.prepend(createGrip())
   el.appendChild(dot)
   el.appendChild(name)
   if (row.assignee) el.appendChild(createAvatar(row, _isVivid, 22))
@@ -206,6 +234,7 @@ function renderMilestoneCell(row: Row, state: EmbossState): HTMLElement {
   del.className = 'emboss-sidebar-delete'
   del.textContent = '\u00d7'
 
+  el.prepend(createGrip())
   el.appendChild(diamond)
   el.appendChild(name)
   el.appendChild(del)
@@ -376,6 +405,39 @@ export const sidebar: EmbossExtension = {
         }
       }
       return lastId
+    }
+
+    // ── Add child row to parent ──
+    function handleAddChild(parentId: string) {
+      const parent = emboss.state.rows.find(r => r.id === parentId)
+      if (!parent) return
+
+      const id = `new-${Date.now()}`
+      const isPhase = parent.type === 'phase'
+      const childType = isPhase ? 'task' : 'subtask'
+      const childDepth = parent.depth + 1
+
+      editingRowId = id
+      isNewRow = true
+
+      const newRow: Row = {
+        id, type: childType, name: isPhase ? 'New Task' : 'New Subtask',
+        depth: childDepth, parentId: parent.id,
+        collapsed: false, hidden: false,
+        start: parent.start, duration: 5,
+        progress: 0, status: 'upcoming', dependencies: [],
+      }
+
+      if (!parent.children) parent.children = []
+      parent.children.push(id)
+
+      // If parent is collapsed, expand it
+      if (emboss.state.collapsed[parentId]) {
+        emboss.toggleCollapse(parentId)
+      }
+
+      const lastChild = findLastDescendant(parentId)
+      emboss.addRow(newRow, lastChild || parentId)
     }
 
     // ── Delete row + children ──
@@ -570,9 +632,17 @@ export const sidebar: EmbossExtension = {
           }
         })
 
-        // ── DELEGATED: body click (collapse, inline edit, delete) ──
+        // ── DELEGATED: body click (collapse, inline edit, delete, add-child) ──
         sidebarBodyEl.addEventListener('click', (e: MouseEvent) => {
           const target = e.target as HTMLElement
+
+          // Add child button
+          if (target.closest('.emboss-sidebar-add-child')) {
+            e.stopPropagation()
+            const btn = target.closest('.emboss-sidebar-add-child') as HTMLElement
+            if (btn.dataset.addParent) handleAddChild(btn.dataset.addParent)
+            return
+          }
 
           // Delete button
           if (target.closest('.emboss-sidebar-delete')) {
@@ -630,6 +700,8 @@ export const sidebar: EmbossExtension = {
         // ── DELEGATED: drag reorder ──────────────────────────────────────────
         let dragTimer: number | null = null
         let dragStartY = 0
+        let dragStartX = 0
+        let dragTargetDepth: number | null = null
         let dragPendingRowId: string | null = null
         let draggedRowId: string | null = null
         let draggedEl: HTMLElement | null = null
@@ -652,28 +724,46 @@ export const sidebar: EmbossExtension = {
           return rows.length
         }
 
-        function isValidDrop(dragging: Row, target: number, visible: Row[]): boolean {
-          const cur = visible.indexOf(dragging)
+        function findParentForDepth(insertIdx: number, targetDepth: number, visible: Row[]): Row | null {
+          if (targetDepth === 0) return null
+          if (targetDepth === 1) {
+            for (let i = insertIdx - 1; i >= 0; i--) {
+              if (visible[i].type === 'phase') return visible[i]
+            }
+            return null
+          }
+          // depth 2: scan backward for first task at depth 1 (stop if hits a phase first)
+          for (let i = insertIdx - 1; i >= 0; i--) {
+            if (visible[i].type === 'phase') return null
+            if (visible[i].type === 'task' && visible[i].depth === 1) return visible[i]
+          }
+          return null
+        }
 
-          if (dragging.type === 'phase') {
-            const groupEnd = getPhaseGroupEnd(cur, visible)
-            if (target >= cur && target <= groupEnd) return false
+        function isValidDrop(dragging: Row, target: number, visible: Row[], targetDepth?: number): boolean {
+          const cur = visible.indexOf(dragging)
+          if (target === cur || target === cur + 1) return false
+
+          const depth = targetDepth ?? dragging.depth
+
+          // depth 0: must land at phase boundary
+          if (depth === 0) {
+            if (dragging.type === 'phase') {
+              const groupEnd = getPhaseGroupEnd(cur, visible)
+              if (target >= cur && target <= groupEnd) return false
+            }
             const next = visible[target]
             return !next || next.type === 'phase'
           }
 
-          if (dragging.type === 'task' || dragging.type === 'milestone') {
-            if (target === cur || target === cur + 1) return false
+          // depth 1: must have a phase above
+          if (depth === 1) {
             return findPhaseForIdx(target, visible) !== null
           }
 
-          if (dragging.type === 'subtask') {
-            if (target === cur || target === cur + 1) return false
-            const parent = visible.find(r => r.id === dragging.parentId)
-            if (!parent) return false
-            const pi = visible.indexOf(parent)
-            const ns = visible.findIndex((r, i) => i > pi && r.depth <= parent.depth)
-            return target > pi && target <= (ns === -1 ? visible.length : ns)
+          // depth 2: must have a task above
+          if (depth === 2) {
+            return findParentForDepth(target, 2, visible) !== null
           }
 
           return false
@@ -708,18 +798,67 @@ export const sidebar: EmbossExtension = {
           remaining.splice(adj, 0, ...group)
           emboss.state.rows = remaining
 
-          // Re-parent task/milestone if it moved to a different phase
-          if (row.type === 'task' || row.type === 'milestone') {
-            const newParent = findPhaseForIdx(remaining.indexOf(row), remaining)
-            if (newParent && newParent.id !== row.parentId) {
-              const oldPhase = remaining.find(r => r.id === row.parentId)
-              if (oldPhase?.children) {
-                oldPhase.children = oldPhase.children.filter(cid => cid !== row.id)
+          // Horizontal re-parent: depth changed
+          if (dragTargetDepth !== null && dragTargetDepth !== row.depth) {
+            const newType = dragTargetDepth === 0 ? 'phase' : dragTargetDepth === 1 ? 'task' : 'subtask'
+            const oldParentRow = row.parentId ? remaining.find(r => r.id === row.parentId) || null : null
+            const newParentRow = findParentForDepth(remaining.indexOf(row), dragTargetDepth, remaining)
+
+            // Emit onRowReparent — veto support
+            const result = emboss.emit('onRowReparent', row, oldParentRow, newParentRow, newType)
+            if (result === false) {
+              emboss.render()
+              return
+            }
+
+            // Remove from old parent's children
+            if (oldParentRow?.children) {
+              oldParentRow.children = oldParentRow.children.filter(cid => cid !== row.id)
+            }
+
+            // Update row
+            const oldChildren = row.children || []
+            row.depth = dragTargetDepth
+            row.type = newType
+            row.parentId = newParentRow?.id || null
+
+            // Add to new parent's children
+            if (newParentRow) {
+              if (!newParentRow.children) newParentRow.children = []
+              newParentRow.children.push(row.id)
+            }
+
+            // If becoming phase: initialize children array
+            if (newType === 'phase' && !row.children) {
+              row.children = []
+            }
+
+            // Cascade children: if a task becomes a phase, its existing subtasks become tasks
+            if (newType === 'phase' && oldChildren.length) {
+              for (const childId of oldChildren) {
+                const child = remaining.find(r => r.id === childId)
+                if (child) {
+                  child.depth = 1
+                  child.type = 'task'
+                  child.parentId = row.id
+                }
               }
-              row.parentId = newParent.id
-              row.depth = 1
-              if (!newParent.children) newParent.children = []
-              newParent.children.push(row.id)
+              row.children = oldChildren
+            }
+          } else {
+            // Vertical-only re-parent: task/milestone moved to a different phase
+            if (row.type === 'task' || row.type === 'milestone') {
+              const newParent = findPhaseForIdx(remaining.indexOf(row), remaining)
+              if (newParent && newParent.id !== row.parentId) {
+                const oldPhase = remaining.find(r => r.id === row.parentId)
+                if (oldPhase?.children) {
+                  oldPhase.children = oldPhase.children.filter(cid => cid !== row.id)
+                }
+                row.parentId = newParent.id
+                row.depth = 1
+                if (!newParent.children) newParent.children = []
+                newParent.children.push(row.id)
+              }
             }
           }
 
@@ -730,6 +869,8 @@ export const sidebar: EmbossExtension = {
         function beginDrag(rowId: string) {
           isDragging = true
           draggedRowId = rowId
+          const row = emboss.state.rows.find(r => r.id === rowId)
+          if (row) dragTargetDepth = row.depth
           draggedEl = sidebarBodyEl!.querySelector(`[data-id="${rowId}"]`) as HTMLElement
           if (!draggedEl) return
 
@@ -776,10 +917,23 @@ export const sidebar: EmbossExtension = {
           const dragging = emboss.state.rows.find(r => r.id === draggedRowId)
           if (!dragging) return
 
-          if (isValidDrop(dragging, idx, visible)) {
+          // Horizontal depth calculation
+          const dx = e.clientX - dragStartX
+          const depthDelta = Math.round(dx / 40)
+          let targetDepth = Math.max(0, Math.min(2, dragging.depth + depthDelta))
+          // Phases (depth 0) can never indent
+          if (dragging.type === 'phase' && dragging.children?.length) targetDepth = 0
+          // Validate via findParentForDepth — if no valid parent exists at target depth, snap back
+          if (targetDepth > 0 && !findParentForDepth(idx, targetDepth, visible)) {
+            targetDepth = dragging.depth
+          }
+          dragTargetDepth = targetDepth
+
+          if (isValidDrop(dragging, idx, visible, dragTargetDepth)) {
             dropTargetIndex = idx
             dropIndicator!.style.display = 'block'
-            dropIndicator!.style.top = `${idx * rh - 1}px`
+            dropIndicator!.style.top = `${idx * rh}px`
+            dropIndicator!.style.left = `${16 + dragTargetDepth * 16}px`
           } else {
             dropTargetIndex = null
             dropIndicator!.style.display = 'none'
@@ -803,6 +957,8 @@ export const sidebar: EmbossExtension = {
           if (ghostEl) ghostEl.remove()
           ghostEl = null
           ghostOffsetY = 0
+          dragStartX = 0
+          dragTargetDepth = null
           if (dropIndicator) dropIndicator.remove()
           dropIndicator = null
           draggedRowId = null
@@ -816,12 +972,14 @@ export const sidebar: EmbossExtension = {
 
         sidebarBodyEl.addEventListener('mousedown', (e: MouseEvent) => {
           const target = e.target as HTMLElement
-          if (target.closest('.emboss-sidebar-delete, .emboss-sidebar-chevron, .emboss-sidebar-pill, .emboss-sidebar-name, .emboss-sidebar-edit-input')) return
-          const cell = target.closest('.emboss-sidebar-cell[data-id]') as HTMLElement | null
+          const grip = target.closest('.emboss-sidebar-grip')
+          if (!grip) return
+          const cell = grip.closest('.emboss-sidebar-cell[data-id]') as HTMLElement | null
           if (!cell?.dataset.id) return
 
           dragPendingRowId = cell.dataset.id
           dragStartY = e.clientY
+          dragStartX = e.clientX
           dragTimer = window.setTimeout(() => {
             dragTimer = null
             if (dragPendingRowId) beginDrag(dragPendingRowId)
@@ -829,7 +987,7 @@ export const sidebar: EmbossExtension = {
         })
 
         sidebarBodyEl.addEventListener('mousemove', (e: MouseEvent) => {
-          if (dragTimer && dragPendingRowId && Math.abs(e.clientY - dragStartY) > 5) {
+          if (dragTimer && dragPendingRowId && (Math.abs(e.clientY - dragStartY) > 5 || Math.abs(e.clientX - dragStartX) > 5)) {
             clearTimeout(dragTimer)
             dragTimer = null
             beginDrag(dragPendingRowId)
@@ -995,7 +1153,6 @@ export const sidebar: EmbossExtension = {
   white-space: nowrap;
   overflow: hidden;
   position: relative;
-  cursor: grab;
 }
 
 /* Status dot — grayscale default, vivid color set inline */
@@ -1057,10 +1214,33 @@ export const sidebar: EmbossExtension = {
   background: var(--emboss-surface-2);
 }
 
+/* ─── Grip handle ──────────────────────────────────────────────────────── */
+
+.emboss-sidebar-grip {
+  display: flex; align-items: center; justify-content: center;
+  width: 12px; height: 20px; flex-shrink: 0;
+  color: var(--emboss-ink-5); cursor: grab;
+  opacity: 0; transition: opacity 0.15s;
+  position: absolute; left: 4px; top: 50%; transform: translateY(-50%);
+}
+.emboss-sidebar-cell:hover .emboss-sidebar-grip { opacity: 1; }
+.emboss-presentation .emboss-sidebar-grip { display: none; }
+
+/* ─── Add child button ─────────────────────────────────────────────────── */
+
+.emboss-sidebar-add-child {
+  width: 16px; height: 16px; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  font-size: 14px; color: var(--emboss-ink-4); cursor: pointer;
+  border-radius: 3px; opacity: 0; transition: opacity 0.15s;
+}
+.emboss-sidebar-cell:hover .emboss-sidebar-add-child { opacity: 1; }
+.emboss-sidebar-add-child:hover { color: var(--emboss-ink-2); background: var(--emboss-surface-2); }
+.emboss-presentation .emboss-sidebar-add-child { display: none; }
+
 /* ─── Phase cell ────────────────────────────────────────────────────────── */
 
 .emboss-sidebar-phase {
-  cursor: grab;
 }
 .emboss-sidebar-phase:hover {
   background: var(--emboss-surface-2);
@@ -1230,6 +1410,7 @@ export const sidebar: EmbossExtension = {
   pointer-events: none;
   z-index: 30;
   border-radius: 1px;
+  transform: translateY(-50%);
 }
 .emboss-vivid .emboss-drop-indicator {
   background: #3b82f6;
