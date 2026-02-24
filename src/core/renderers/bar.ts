@@ -227,13 +227,13 @@ function renderPhaseBar(row: Row, scale: Scale, state: EmbossState, container?: 
   bar.dataset.type = 'phase'
   bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:${phaseH}px;border-radius:${phaseR}px;`
 
-  // Vivid: inline color at 40% opacity. Grayscale: CSS default (--emboss-ink-4 at 50%).
+  // Vivid: inline color at 25% opacity. Grayscale: CSS default (--emboss-ink-4 at 25%).
   if (isVivid) {
     const phaseIdx = state.rows.filter(r => r.type === 'phase').findIndex(r => r.id === row.id)
     const idx = phaseIdx >= 0 ? phaseIdx : 0
     const color = row.phaseColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
     bar.style.background = color
-    bar.style.opacity = '0.4'
+    bar.style.opacity = '0.25'
   }
 
   // Phase label — below the thin bar
@@ -502,14 +502,14 @@ export const BAR_STYLES = `
 .emboss-presentation .emboss-bar-label-inside {
   text-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
-/* Phase bar more visible */
-.emboss-presentation .emboss-bar-phase { opacity: 0.35; }
+/* Phase bar slightly more visible in presentation */
+.emboss-presentation .emboss-bar-phase { opacity: 0.3; }
 
 /* Phase bar — grayscale default; vivid overrides set inline */
 .emboss-bar-phase {
   pointer-events: none;
   background: var(--emboss-ink-4);
-  opacity: 0.5;
+  opacity: 0.25;
 }
 
 /* Phase label — below the thin bar, left-aligned */

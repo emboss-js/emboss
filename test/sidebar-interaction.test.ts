@@ -253,3 +253,72 @@ describe('Inline edit', () => {
     chart.destroy()
   })
 })
+
+// ─── Collapse ────────────────────────────────────────────────────────────
+
+describe('Phase collapse via chevron', () => {
+  it('clicking chevron toggles collapsed state', () => {
+    const chart = makeChart()
+    expect(chart.state.collapsed['p1']).toBeFalsy()
+    const chevron = document.querySelector('[data-id="p1"] .emboss-sidebar-chevron') as HTMLElement
+    chevron.click()
+    expect(chart.state.collapsed['p1']).toBe(true)
+    chart.destroy()
+  })
+
+  it('collapsing hides child rows in state', () => {
+    const chart = makeChart()
+    const chevron = document.querySelector('[data-id="p1"] .emboss-sidebar-chevron') as HTMLElement
+    chevron.click()
+    // Children of p1 (t1, t2, m1) should be hidden
+    expect(chart.state.rows.find(r => r.id === 't1')!.hidden).toBe(true)
+    expect(chart.state.rows.find(r => r.id === 't2')!.hidden).toBe(true)
+    expect(chart.state.rows.find(r => r.id === 'm1')!.hidden).toBe(true)
+    // p1 itself and p2's children should NOT be hidden
+    expect(chart.state.rows.find(r => r.id === 'p1')!.hidden).toBe(false)
+    expect(chart.state.rows.find(r => r.id === 't3')!.hidden).toBe(false)
+    chart.destroy()
+  })
+
+  it('collapsing removes child cells from sidebar DOM', () => {
+    const chart = makeChart()
+    expect(document.querySelector('[data-id="t1"]')).toBeTruthy()
+    expect(document.querySelector('[data-id="t2"]')).toBeTruthy()
+    const chevron = document.querySelector('[data-id="p1"] .emboss-sidebar-chevron') as HTMLElement
+    chevron.click()
+    // Child cells should be gone from the sidebar
+    expect(document.querySelector('.emboss-sidebar [data-id="t1"]')).toBeFalsy()
+    expect(document.querySelector('.emboss-sidebar [data-id="t2"]')).toBeFalsy()
+    expect(document.querySelector('.emboss-sidebar [data-id="m1"]')).toBeFalsy()
+    // Phase cell and other phase's children should remain
+    expect(document.querySelector('[data-id="p1"]')).toBeTruthy()
+    expect(document.querySelector('[data-id="t3"]')).toBeTruthy()
+    chart.destroy()
+  })
+
+  it('collapsing removes child bars from timeline DOM', () => {
+    const chart = makeChart()
+    expect(document.querySelector('.emboss-bars [data-id="t1"]')).toBeTruthy()
+    const chevron = document.querySelector('[data-id="p1"] .emboss-sidebar-chevron') as HTMLElement
+    chevron.click()
+    expect(document.querySelector('.emboss-bars [data-id="t1"]')).toBeFalsy()
+    expect(document.querySelector('.emboss-bars [data-id="t2"]')).toBeFalsy()
+    // Phase bar should still render
+    expect(document.querySelector('.emboss-bars [data-id="p1"]')).toBeTruthy()
+    chart.destroy()
+  })
+
+  it('clicking chevron again expands children back', () => {
+    const chart = makeChart()
+    const chevron = document.querySelector('[data-id="p1"] .emboss-sidebar-chevron') as HTMLElement
+    chevron.click()
+    expect(chart.state.collapsed['p1']).toBe(true)
+    // After collapse, chevron is re-rendered — find it again
+    const chevron2 = document.querySelector('[data-id="p1"] .emboss-sidebar-chevron') as HTMLElement
+    chevron2.click()
+    expect(chart.state.collapsed['p1']).toBe(false)
+    expect(chart.state.rows.find(r => r.id === 't1')!.hidden).toBe(false)
+    expect(document.querySelector('.emboss-sidebar [data-id="t1"]')).toBeTruthy()
+    chart.destroy()
+  })
+})

@@ -299,7 +299,8 @@ export class Emboss implements EmbossInstance {
       // Position vertically by row index
       const innerTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
       if (row.type === 'phase') {
-        ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + Math.round((scale.rowHeight - 5) / 2)}px`
+        const phaseH = this.state.density === 'presentation' ? 7 : 5
+        ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + Math.round((scale.rowHeight - phaseH) / 2)}px`
       } else {
         ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + innerTop}px`
       }
