@@ -267,6 +267,7 @@ export class Emboss implements EmbossInstance {
     // 5. Update container attributes
     this.container.dataset.density = this.state.density
     this.container.classList.toggle('emboss-dense', this.state.density === 'dense')
+    this.container.classList.toggle('emboss-presentation', this.state.density === 'presentation')
     if (!this.container.classList.contains(`emboss-${this.state.theme}`)) {
       this.container.classList.remove('emboss-grayscale', 'emboss-dark')
       this.container.classList.add(`emboss-${this.state.theme}`)

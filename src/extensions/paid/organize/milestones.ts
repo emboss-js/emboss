@@ -19,7 +19,7 @@ const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#
 function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
   const x = row.start * scale.dayWidth
   const centerY = Math.round(scale.rowHeight / 2)
-  const size = 20
+  const size = state.density === 'presentation' ? 24 : 20
   const half = size / 2
 
   // Resolve vivid color for parent phase
@@ -129,6 +129,10 @@ export const milestones: EmbossExtension = {
   color: var(--emboss-ink-2);
   font-style: italic;
   pointer-events: none;
+}
+/* Presentation: larger diamond */
+.emboss-presentation .emboss-milestone-diamond {
+  border-width: 3px;
 }
 `,
 }

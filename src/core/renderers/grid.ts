@@ -128,4 +128,8 @@ export const GRID_STYLES = `
 /* ─── Dense mode ──────────────────────────────────────────────────────── */
 .emboss-dense .emboss-grid-vline { opacity: 0.02; }
 .emboss-dense .emboss-grid-weekend { background: transparent; }
+/* ─── Presentation mode ───────────────────────────────────────────────── */
+.emboss-presentation .emboss-grid-vline { opacity: 0.015; }
+.emboss-presentation .emboss-grid-hline { opacity: 0.04; }
+.emboss-presentation .emboss-grid-weekend { opacity: 0.2; }
 `;

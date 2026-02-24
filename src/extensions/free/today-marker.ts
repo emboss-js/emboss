@@ -72,5 +72,10 @@ export const todayMarker: EmbossExtension = {
     .emboss-dense .emboss-today-label { display: none; }
     .emboss-dense .emboss-today-dot { width: 6px; height: 6px; }
     .emboss-dense .emboss-today-line { width: 1px; }
+    /* Presentation mode: more prominent */
+    .emboss-presentation .emboss-today-line { width: 2px; }
+    .emboss-presentation .emboss-today-dot { width: 10px; height: 10px; }
+    .emboss-presentation .emboss-today-ring { width: 20px; height: 20px; }
+    .emboss-presentation .emboss-today-label { font-size: 9px; }
   `,
 }

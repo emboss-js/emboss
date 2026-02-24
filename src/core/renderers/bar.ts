@@ -15,12 +15,17 @@ export function renderBar(row: Row, scale: Scale, state: EmbossState, container?
 }
 
 function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: HTMLElement): HTMLElement {
-  const left = row.start * scale.dayWidth
-  const width = Math.max(row.duration * scale.dayWidth, scale.barHeight)
-  const barTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
-  const r = scale.barRadius
   const isVivid = container?.classList.contains('emboss-vivid') ?? false
   const isDense = state.density === 'dense'
+  const isPres = state.density === 'presentation'
+  const left = row.start * scale.dayWidth
+  // Minimum bar width — density-aware
+  const minWidth = isDense
+    ? (scale.dayWidth <= 5 ? 6 : scale.dayWidth <= 10 ? 8 : scale.barHeight)
+    : scale.barHeight
+  const width = Math.max(row.duration * scale.dayWidth, minWidth)
+  const barTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
+  const r = scale.barRadius
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar'
@@ -75,8 +80,24 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
 
   if (isDense) {
     // Dense: always outside, name only (no progress %)
-    label.textContent = row.name
-    label.classList.add('emboss-bar-label-outside')
+    // Hide label entirely on very small bars (dense + quarter/month)
+    if (width < 20 && scale.dayWidth <= 8) {
+      label.style.display = 'none'
+    } else {
+      label.textContent = row.name
+      label.classList.add('emboss-bar-label-outside')
+    }
+  } else if (isPres) {
+    // Presentation: prefer inside (threshold 50px), bolder, · separator
+    const progressText = progress > 0 && progress < 100 ? ` \u00b7 ${progress}%` : ''
+    label.textContent = row.name + progressText
+    if (width > 50) {
+      label.classList.add('emboss-bar-label-inside')
+      label.style.fontWeight = '600'
+      if (isUpcoming0) label.classList.add('emboss-bar-label-upcoming')
+    } else {
+      label.classList.add('emboss-bar-label-outside')
+    }
   } else {
     const progressText = progress > 0 && progress < 100 ? ` ${progress}%` : ''
     label.textContent = row.name + progressText
@@ -89,8 +110,8 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
   }
   bar.appendChild(label)
 
-  // Minibar progress indicator (dense only, partial progress)
-  if (isDense && progress > 0 && progress < 100) {
+  // Minibar progress indicator (dense only, partial progress, skip at quarterly scale)
+  if (isDense && progress > 0 && progress < 100 && scale.dayWidth >= 8) {
     const minibar = document.createElement('div')
     minibar.className = 'emboss-minibar'
     minibar.style.width = `${width * progress / 100}px`
@@ -176,14 +197,17 @@ function resolveBarPhaseColor(row: Row, state: EmbossState): { color: string; id
 function renderPhaseBar(row: Row, scale: Scale, state: EmbossState, container?: HTMLElement): HTMLElement {
   const left = row.start * scale.dayWidth
   const width = Math.max(row.duration * scale.dayWidth, 20)
-  const barTop = Math.round((scale.rowHeight - 5) / 2)
+  const isPres = state.density === 'presentation'
+  const phaseH = isPres ? 7 : 5
+  const phaseR = isPres ? 4 : 3
+  const barTop = Math.round((scale.rowHeight - phaseH) / 2)
   const isVivid = container?.classList.contains('emboss-vivid') ?? false
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar emboss-bar-phase'
   bar.dataset.id = row.id
   bar.dataset.type = 'phase'
-  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:5px;border-radius:3px;`
+  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:${phaseH}px;border-radius:${phaseR}px;`
 
   // Vivid: inline color at 40% opacity. Grayscale: CSS default (--emboss-ink-4 at 50%).
   if (isVivid) {
@@ -363,7 +387,9 @@ export const BAR_STYLES = `
 .emboss-bar-label-outside {
   left: calc(100% + 6px);
   color: var(--emboss-ink-4);
+  max-width: 200px;
 }
+.emboss-dense .emboss-bar-label-outside { max-width: 160px; }
 
 /* Drag handles */
 .emboss-bar-handle {
@@ -414,6 +440,31 @@ export const BAR_STYLES = `
 .emboss-dense .emboss-bar:hover { opacity: 0.9; }
 /* Hide phase bars — sidebar shows grouping */
 .emboss-dense .emboss-bar-phase { display: none; }
+
+/* ─── Presentation mode overrides ─────────────────────────────────────── */
+
+/* No drag, no interaction chrome */
+.emboss-presentation .emboss-bar { cursor: default; }
+.emboss-presentation .emboss-bar:hover { transform: none; }
+.emboss-presentation .emboss-bar-marker { cursor: default; }
+/* Enhanced glass highlight */
+.emboss-presentation .emboss-bar-fill::before {
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 60%, transparent 100%);
+}
+/* Deeper shadow */
+.emboss-presentation .emboss-bar-fill::after {
+  height: 38%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.15) 100%);
+}
+/* Larger progress dot */
+.emboss-presentation .emboss-bar-marker { width: 14px; height: 14px; }
+.emboss-presentation .emboss-bar-marker::before { width: 8px; height: 8px; }
+/* Bolder inside labels */
+.emboss-presentation .emboss-bar-label-inside {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+/* Phase bar more visible */
+.emboss-presentation .emboss-bar-phase { opacity: 0.35; }
 
 /* Phase bar — grayscale default; vivid overrides set inline */
 .emboss-bar-phase {

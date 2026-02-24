@@ -35,6 +35,8 @@ export function initDrag(barsEl: HTMLElement, callbacks: DragCallbacks): () => v
 
   function onMouseDown(e: MouseEvent) {
     if (e.button !== 0) return
+    // No dragging in presentation mode
+    if (callbacks.getState().density === 'presentation') return
     const target = e.target as HTMLElement
 
     // Determine drag type from target class

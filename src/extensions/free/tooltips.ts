@@ -122,7 +122,7 @@ export const tooltips: EmbossExtension = {
       if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
       if (showTimer) { clearTimeout(showTimer); showTimer = null }
 
-      if (row && row.type !== 'phase') {
+      if (row && row.type !== 'phase' && emboss.state.density !== 'presentation') {
         currentRow = row
         showTimer = setTimeout(() => {
           if (currentRow) show(currentRow, lastX, lastY)

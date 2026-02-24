@@ -14,14 +14,14 @@ import { addDays, isWeekend, getMonthName, daysInMonth } from '../dates'
 
 export function renderHeader(scale: Scale, state: EmbossState): HTMLElement {
   switch (state.view) {
-    case 'day': return renderDayHeader(scale)
-    case 'week': return renderWeekHeader(scale)
-    case 'month': return renderMonthHeader(scale)
-    case 'quarter': return renderQuarterHeader(scale)
+    case 'day': return renderDayHeader(scale, state)
+    case 'week': return renderWeekHeader(scale, state)
+    case 'month': return renderMonthHeader(scale, state)
+    case 'quarter': return renderQuarterHeader(scale, state)
   }
 }
 
-function renderDayHeader(scale: Scale): HTMLElement {
+function renderDayHeader(scale: Scale, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-header-inner'
 
@@ -68,7 +68,7 @@ function renderDayHeader(scale: Scale): HTMLElement {
   return el
 }
 
-function renderWeekHeader(scale: Scale): HTMLElement {
+function renderWeekHeader(scale: Scale, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-header-inner'
 
@@ -117,7 +117,7 @@ function renderWeekHeader(scale: Scale): HTMLElement {
   return el
 }
 
-function renderMonthHeader(scale: Scale): HTMLElement {
+function renderMonthHeader(scale: Scale, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-header-inner'
 
@@ -136,7 +136,7 @@ function renderMonthHeader(scale: Scale): HTMLElement {
       if (span) span.style.width = `${dayCount * scale.dayWidth}px`
       span = document.createElement('span')
       span.className = 'emboss-header-cell emboss-header-month'
-      span.textContent = getMonthName(month)
+      span.textContent = getMonthName(month, state.density === 'presentation')
       row.appendChild(span)
       currentMonth = month
       dayCount = 0
@@ -149,14 +149,16 @@ function renderMonthHeader(scale: Scale): HTMLElement {
   return el
 }
 
-function renderQuarterHeader(scale: Scale): HTMLElement {
+function renderQuarterHeader(scale: Scale, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-header-inner'
+  const isDense = state.density === 'dense'
 
   const topRow = document.createElement('div')
   topRow.className = 'emboss-header-row emboss-header-row-top'
-  const bottomRow = document.createElement('div')
-  bottomRow.className = 'emboss-header-row emboss-header-row-bottom'
+  // Dense+Quarter: single row, no month sub-labels
+  const bottomRow = isDense ? null : document.createElement('div')
+  if (bottomRow) bottomRow.className = 'emboss-header-row emboss-header-row-bottom'
 
   let currentQuarter = -1
   let currentMonth = -1
@@ -183,8 +185,8 @@ function renderQuarterHeader(scale: Scale): HTMLElement {
     }
     quarterDayCount++
 
-    // Bottom row: month sub-labels
-    if (month !== currentMonth) {
+    // Bottom row: month sub-labels (skipped in dense)
+    if (bottomRow && month !== currentMonth) {
       if (monthSpan) monthSpan.style.width = `${monthDayCount * scale.dayWidth}px`
       monthSpan = document.createElement('span')
       monthSpan.className = 'emboss-header-cell emboss-header-month'
@@ -193,13 +195,15 @@ function renderQuarterHeader(scale: Scale): HTMLElement {
       currentMonth = month
       monthDayCount = 0
     }
-    monthDayCount++
+    if (bottomRow) monthDayCount++
   }
   if (quarterSpan) quarterSpan.style.width = `${quarterDayCount * scale.dayWidth}px`
-  if (monthSpan) monthSpan.style.width = `${monthDayCount * scale.dayWidth}px`
+  if (monthSpan && bottomRow) monthSpan.style.width = `${monthDayCount * scale.dayWidth}px`
 
   el.appendChild(topRow)
-  el.appendChild(bottomRow)
+  if (bottomRow) el.appendChild(bottomRow)
+  // Dense: remove top border-bottom since there's no second row
+  if (isDense) topRow.classList.remove('emboss-header-row-top')
   return el
 }
 
@@ -253,4 +257,12 @@ export const HEADER_STYLES = `
 .emboss-header-quarter {
   font-weight: 600;
 }
+/* ─── Dense header ────────────────────────────────────────────────────── */
+.emboss-dense .emboss-header-row { height: 24px; }
+.emboss-dense .emboss-header-cell { font-size: 10px; }
+.emboss-dense .emboss-header-week { font-size: 9px; }
+/* ─── Presentation header ─────────────────────────────────────────────── */
+.emboss-presentation .emboss-header-row { height: 32px; }
+.emboss-presentation .emboss-header-cell { font-size: 13px; }
+.emboss-presentation .emboss-header-week { font-size: 11px; }
 `;

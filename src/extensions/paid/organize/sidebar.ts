@@ -1266,6 +1266,21 @@ export const sidebar: EmbossExtension = {
   opacity: 0.85;
 }
 
+/* ─── Presentation mode sidebar ────────────────────────────────────────── */
+
+.emboss-presentation.emboss-has-sidebar {
+  grid-template-columns: 320px 1fr;
+}
+.emboss-presentation .emboss-sidebar-phase-name { font-size: 14px; font-weight: 700; }
+.emboss-presentation .emboss-sidebar-name { font-size: 13px; }
+.emboss-presentation .emboss-avatar { width: 26px; height: 26px; }
+.emboss-presentation .emboss-avatar-initials { font-size: 11px; }
+.emboss-presentation .emboss-sidebar-cell { padding-right: 16px; }
+/* Hide delete buttons — view only */
+.emboss-presentation .emboss-sidebar-delete { display: none; }
+/* Hide add button */
+.emboss-presentation .emboss-sidebar-add-btn { display: none; }
+
 /* ─── Avatars ──────────────────────────────────────────────────────────── */
 
 .emboss-avatar {
