@@ -293,7 +293,7 @@ export class Emboss implements EmbossInstance {
       // Check for extension bar renderer override
       const extRenderer = this.barRenderers[row.type]
       const barEl = extRenderer
-        ? extRenderer(row, scale, this.state)
+        ? extRenderer(row, scale, this.state, this.container)
         : renderBar(row, scale, this.state, this.container)
 
       // Position vertically by row index

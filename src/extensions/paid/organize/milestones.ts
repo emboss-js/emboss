@@ -16,10 +16,11 @@ import type { Row, Scale, EmbossState, EmbossExtension } from '../../../core/typ
 
 const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
 
-function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState): HTMLElement {
+function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState, container?: HTMLElement): HTMLElement {
+  const isDense = state.density === 'dense'
   const x = row.start * scale.dayWidth
   const centerY = Math.round(scale.rowHeight / 2)
-  const size = state.density === 'presentation' ? 24 : 20
+  const size = state.density === 'presentation' ? 24 : isDense ? 14 : 20
   const half = size / 2
 
   // Resolve vivid color for parent phase
@@ -49,12 +50,33 @@ function renderMilestoneBar(row: Row, scale: Scale, state: EmbossState): HTMLEle
 
   wrapper.appendChild(diamond)
 
-  // Label — right of diamond
-  const label = document.createElement('div')
-  label.className = 'emboss-milestone-label'
-  label.style.fontSize = `${scale.labelSize}px`
-  label.textContent = row.name
-  wrapper.appendChild(label)
+  // Label — right of diamond (hidden in dense mode)
+  if (isDense) {
+    const hasSidebar = container?.classList.contains('emboss-has-sidebar') ?? false
+    if (!hasSidebar) {
+      // No sidebar: hover shows floating name tag
+      wrapper.addEventListener('mouseenter', () => {
+        const tag = document.createElement('div')
+        tag.className = 'emboss-dense-tag'
+        tag.textContent = row.name
+        tag.style.left = `${x}px`
+        tag.style.top = `${centerY - half - 18}px`
+        ;(wrapper as any)._denseTag = tag
+        wrapper.parentElement?.appendChild(tag)
+      })
+      wrapper.addEventListener('mouseleave', () => {
+        ;(wrapper as any)._denseTag?.remove()
+        ;(wrapper as any)._denseTag = null
+      })
+    }
+    // With sidebar: label omitted entirely — sidebar row identifies it
+  } else {
+    const label = document.createElement('div')
+    label.className = 'emboss-milestone-label'
+    label.style.fontSize = `${scale.labelSize}px`
+    label.textContent = row.name
+    wrapper.appendChild(label)
+  }
 
   return wrapper
 }
@@ -130,6 +152,11 @@ export const milestones: EmbossExtension = {
   font-style: italic;
   pointer-events: none;
 }
+/* Dense: smaller diamond, no glass */
+.emboss-dense .emboss-milestone-diamond {
+  border-width: 2px;
+}
+.emboss-dense .emboss-milestone-diamond::before { display: none; }
 /* Presentation: larger diamond */
 .emboss-presentation .emboss-milestone-diamond {
   border-width: 3px;

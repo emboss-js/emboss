@@ -79,13 +79,31 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
   label.style.cssText = `font-size:${scale.labelSize}px;height:${scale.barHeight}px;line-height:${scale.barHeight}px;`
 
   if (isDense) {
-    // Dense: always outside, name only (no progress %)
-    // Hide label entirely on very small bars (dense + quarter/month)
-    if (width < 20 && scale.dayWidth <= 8) {
-      label.style.display = 'none'
+    const hasSidebar = container?.classList.contains('emboss-has-sidebar') ?? false
+    if (hasSidebar) {
+      // Sidebar active: inside label on wide bars, hidden on narrow (sidebar identifies)
+      if (width > 50) {
+        label.textContent = row.name
+        label.classList.add('emboss-bar-label-inside')
+      } else {
+        label.style.display = 'none'
+      }
     } else {
-      label.textContent = row.name
-      label.classList.add('emboss-bar-label-outside')
+      // No sidebar: no labels, hover shows floating name tag
+      label.style.display = 'none'
+      bar.addEventListener('mouseenter', () => {
+        const tag = document.createElement('div')
+        tag.className = 'emboss-dense-tag'
+        tag.textContent = row.name
+        tag.style.left = `${left}px`
+        tag.style.top = `${barTop - 18}px`
+        ;(bar as any)._denseTag = tag
+        bar.parentElement?.appendChild(tag)
+      })
+      bar.addEventListener('mouseleave', () => {
+        ;(bar as any)._denseTag?.remove()
+        ;(bar as any)._denseTag = null
+      })
     }
   } else if (isPres) {
     // Presentation: prefer inside (threshold 50px), bolder, · separator
@@ -440,6 +458,21 @@ export const BAR_STYLES = `
 .emboss-dense .emboss-bar:hover { opacity: 0.9; }
 /* Hide phase bars — sidebar shows grouping */
 .emboss-dense .emboss-bar-phase { display: none; }
+/* Dense hover name tag (no-sidebar mode) */
+.emboss-dense-tag {
+  position: absolute;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--emboss-surface);
+  border: 1px solid var(--emboss-border);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--emboss-ink-2);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 30;
+}
 
 /* ─── Presentation mode overrides ─────────────────────────────────────── */
 

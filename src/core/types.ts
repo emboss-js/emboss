@@ -69,7 +69,7 @@ export interface Scale {
 // Spec Section 3. Three slots per row. Core provides defaults.
 
 export type SidebarRenderer = (row: Row, state: EmbossState) => HTMLElement | null
-export type BarRenderer = (row: Row, scale: Scale, state: EmbossState) => SVGElement | HTMLElement
+export type BarRenderer = (row: Row, scale: Scale, state: EmbossState, container?: HTMLElement) => SVGElement | HTMLElement
 export type HeaderRenderer = (scale: Scale, state: EmbossState) => HTMLElement
 
 // ─── EVENTS ──────────────────────────────────────────────────────────────────
