@@ -3,9 +3,9 @@
  * CONTRACT: Section 10 Phase 2 (grid lines, weekend markers)
  *
  * Renders vertical grid lines and weekend shading.
- * Day: every day faint, weekends heavier
- * Week: lines every 7 days
- * Month/Quarter: month boundaries only
+ * Day: every day faint, weekends shaded
+ * Week: lines every 7 days, weekends shaded
+ * Month/Quarter: month boundaries only, weekends shaded
  * Horizontal row separator lines.
  */
 
@@ -18,13 +18,13 @@ export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: nu
   const totalWidth = scale.totalDays * scale.dayWidth
   const totalHeight = visibleRowCount * scale.rowHeight
 
-  // Vertical lines
+  // Vertical lines + weekend shading
   for (let d = 0; d < scale.totalDays; d++) {
     const date = addDays(scale.startDate, d)
     const x = d * scale.dayWidth
     const weekend = isWeekend(date)
 
-    // Weekend shading
+    // Weekend shading — full-height background stripe
     if (weekend && state.settings.markWeekends) {
       const shade = document.createElement('div')
       shade.className = 'emboss-grid-weekend'
@@ -34,6 +34,8 @@ export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: nu
 
     // Vertical lines based on view
     let showLine = false
+    let isBoundary = false
+
     if (state.view === 'day') {
       showLine = true
     } else if (state.view === 'week') {
@@ -42,10 +44,15 @@ export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: nu
       showLine = date.getDate() === 1 // Month boundaries
     }
 
-    if (showLine && d > 0) {
+    // Friday→Saturday boundary when weekends are marked
+    if (state.settings.markWeekends && date.getDay() === 6 && d > 0) {
+      isBoundary = true
+    }
+
+    if ((showLine || isBoundary) && d > 0) {
       const line = document.createElement('div')
       line.className = 'emboss-grid-vline'
-      if (state.view === 'day' && weekend) line.classList.add('emboss-grid-vline-weekend')
+      if (isBoundary && !showLine) line.classList.add('emboss-grid-vline-boundary')
       line.style.cssText = `left:${x}px;height:${totalHeight}px;`
       el.appendChild(line)
     }
@@ -76,8 +83,11 @@ export const GRID_STYLES = `
 .emboss-grid-weekend {
   position: absolute;
   top: 0;
-  background: var(--emboss-ink);
-  opacity: var(--emboss-grid-opacity);
+  background: rgba(0, 0, 0, 0.025);
+  pointer-events: none;
+}
+.emboss-dark .emboss-grid-weekend {
+  background: rgba(255, 255, 255, 0.025);
 }
 .emboss-grid-vline {
   position: absolute;
@@ -86,8 +96,8 @@ export const GRID_STYLES = `
   background: var(--emboss-ink);
   opacity: var(--emboss-grid-opacity);
 }
-.emboss-grid-vline-weekend {
-  opacity: calc(var(--emboss-grid-opacity) * 0.6);
+.emboss-grid-vline-boundary {
+  opacity: calc(var(--emboss-grid-opacity) * 1.5);
 }
 .emboss-grid-hline {
   position: absolute;

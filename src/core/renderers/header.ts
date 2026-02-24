@@ -247,7 +247,8 @@ export const HEADER_STYLES = `
   padding: 0;
 }
 .emboss-header-weekend {
-  opacity: 0.4;
+  color: var(--emboss-ink-4);
+  opacity: 0.6;
 }
 .emboss-header-quarter {
   font-weight: 600;

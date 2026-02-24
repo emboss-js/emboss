@@ -199,6 +199,29 @@ export class Emboss implements EmbossInstance {
     this.render()
   }
 
+  addRow(row: Row, afterId?: string): void {
+    if (afterId) {
+      const idx = this.state.rows.findIndex(r => r.id === afterId)
+      if (idx >= 0) this.state.rows.splice(idx + 1, 0, row)
+      else this.state.rows.push(row)
+    } else {
+      this.state.rows.push(row)
+    }
+    recalcHidden(this.state)
+    this.state.scale = calcScale(this.state.view, this.state.density, this.state.rows, this.state.scale.startDate)
+    this.render()
+  }
+
+  removeRow(rowId: string): void {
+    this.state.rows = this.state.rows.filter(r => r.id !== rowId)
+    for (const row of this.state.rows) {
+      if (row.children) row.children = row.children.filter(id => id !== rowId)
+    }
+    recalcHidden(this.state)
+    this.state.scale = calcScale(this.state.view, this.state.density, this.state.rows, this.state.scale.startDate)
+    this.render()
+  }
+
   // ─── Event system ──────────────────────────────────────────────────────────
 
   on(event: string, handler: (...args: any[]) => void): void {
