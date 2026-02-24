@@ -95,6 +95,8 @@ export const dependencyArrows: EmbossExtension = {
           pathEl.setAttribute('fill', 'none')
           pathEl.setAttribute('stroke', style.stroke)
           pathEl.setAttribute('stroke-width', String(style.width))
+          pathEl.setAttribute('stroke-linecap', 'round')
+          pathEl.setAttribute('stroke-linejoin', 'round')
           if (style.dash) pathEl.setAttribute('stroke-dasharray', style.dash)
           pathEl.dataset.f = source.id
           pathEl.dataset.t = target.id

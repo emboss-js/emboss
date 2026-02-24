@@ -15,6 +15,7 @@ import { renderBar, BAR_STYLES } from './renderers/bar'
 import { renderHeader, HEADER_STYLES } from './renderers/header'
 import { renderGrid, GRID_STYLES } from './renderers/grid'
 import { initDrag, DRAG_STYLES } from './drag'
+import { setLicense, checkLicense } from '../license'
 
 export interface EmbossConfig {
   extensions?: EmbossExtension[]
@@ -29,6 +30,7 @@ const CORE_STYLES = `
 .emboss {
   position: relative;
   overflow: hidden;
+  height: 100%;
   background: var(--emboss-bg);
   color: var(--emboss-ink);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -39,6 +41,9 @@ const CORE_STYLES = `
 .emboss-body {
   position: relative;
   overflow: auto;
+}
+.emboss-spacer {
+  pointer-events: none;
 }
 .emboss-bars {
   position: absolute;
@@ -64,6 +69,7 @@ export class Emboss implements EmbossInstance {
   private bodyEl: HTMLElement | null = null
   private gridEl: HTMLElement | null = null
   private barsEl: HTMLElement | null = null
+  private spacerEl: HTMLElement | null = null
   private dragCleanup: (() => void) | null = null
 
   constructor(selector: string, rows: Row[], config: EmbossConfig = {}) {
@@ -82,6 +88,9 @@ export class Emboss implements EmbossInstance {
 
     // Recalculate scale with final view/density
     this.state.scale = calcScale(this.state.view, this.state.density, rows, startDate)
+
+    // License key — soft enforcement
+    if (config.licenseKey) setLicense(config.licenseKey)
 
     // Inject core styles
     this.injectStyles('core', CORE_STYLES + BAR_STYLES + HEADER_STYLES + GRID_STYLES + DRAG_STYLES)
@@ -103,6 +112,9 @@ export class Emboss implements EmbossInstance {
 
   use(ext: EmbossExtension): void {
     this.extensions.push(ext)
+
+    // Soft license check for paid extensions
+    if (ext.type === 'paid' && ext.bundle) checkLicense(ext.bundle)
 
     // Merge renderers
     if (ext.sidebarRenderer) Object.assign(this.sidebarRenderers, ext.sidebarRenderer)
@@ -260,7 +272,7 @@ export class Emboss implements EmbossInstance {
       // Position vertically by row index
       const innerTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
       if (row.type === 'phase') {
-        ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + Math.round((scale.rowHeight - 8) / 2)}px`
+        ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + Math.round((scale.rowHeight - 5) / 2)}px`
       } else {
         ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + innerTop}px`
       }
@@ -270,9 +282,11 @@ export class Emboss implements EmbossInstance {
     this.barsEl!.innerHTML = ''
     this.barsEl!.appendChild(fragment)
 
-    // 9. Set body dimensions
-    this.bodyEl!.style.width = `${totalWidth}px`
-    this.bodyEl!.style.height = `${totalHeight}px`
+    // 9. Set content dimensions via spacer (in-flow element for scroll sizing)
+    // Grid and bars are position:absolute — they don't contribute to scroll dimensions.
+    // The spacer is in normal flow and defines the scrollable area.
+    this.spacerEl!.style.width = `${totalWidth}px`
+    this.spacerEl!.style.height = `${totalHeight}px`
     this.barsEl!.style.width = `${totalWidth}px`
     this.barsEl!.style.height = `${totalHeight}px`
     this.gridEl!.style.width = `${totalWidth}px`
@@ -297,6 +311,12 @@ export class Emboss implements EmbossInstance {
     this.barsEl = document.createElement('div')
     this.barsEl.className = 'emboss-bars'
 
+    // Spacer: in-flow element that defines scrollable area.
+    // Grid and bars are absolute-positioned and don't contribute to scroll dimensions.
+    this.spacerEl = document.createElement('div')
+    this.spacerEl.className = 'emboss-spacer'
+
+    this.bodyEl.appendChild(this.spacerEl)
     this.bodyEl.appendChild(this.gridEl)
     this.bodyEl.appendChild(this.barsEl)
 
@@ -363,6 +383,7 @@ export class Emboss implements EmbossInstance {
     this.bodyEl = null
     this.gridEl = null
     this.barsEl = null
+    this.spacerEl = null
     this.listeners = {}
   }
 }

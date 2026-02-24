@@ -2,12 +2,16 @@
  * @emboss/core — index.ts (package entry)
  *
  * Usage:
- *   import { Emboss } from '@emboss/core'
- *   import { todayMarker, tooltips, dependencyArrows } from '@emboss/core/extensions/free'
- *   import { sidebar, phases, milestones } from '@emboss/core/extensions/organize'
+ *   import { Emboss, todayMarker, tooltips, dependencyArrows } from '@emboss/core'
+ *   import { organize } from '@emboss/core'
+ *
+ * Sub-path imports also work:
+ *   import { todayMarker } from '@emboss/core/extensions/free'
+ *   import { sidebar, milestones } from '@emboss/core/extensions/organize'
  */
 
 export { Emboss } from './core/index'
+export type { EmbossConfig } from './core/index'
 export type {
   Row,
   EmbossState,
@@ -20,4 +24,12 @@ export type {
   BarRenderer,
   HeaderRenderer,
 } from './core/types'
+
+// Free extensions — named exports
+export { todayMarker, tooltips, dependencyArrows } from './extensions/free/index'
+
+// Organize bundle — named export
+export * as organize from './extensions/paid/organize/index'
+
+// License
 export { setLicense } from './license'

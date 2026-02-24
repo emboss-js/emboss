@@ -72,32 +72,48 @@ function renderWeekHeader(scale: Scale): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-header-inner'
 
-  const row = document.createElement('div')
-  row.className = 'emboss-header-row'
+  const topRow = document.createElement('div')
+  topRow.className = 'emboss-header-row emboss-header-row-top'
+  const bottomRow = document.createElement('div')
+  bottomRow.className = 'emboss-header-row emboss-header-row-bottom'
 
+  // Group days by month for top row, mark week starts for bottom row
   let currentMonth = -1
-  let span: HTMLElement | null = null
-  let dayCount = 0
+  let monthSpan: HTMLElement | null = null
+  let monthDayCount = 0
 
   for (let d = 0; d < scale.totalDays; d++) {
     const date = addDays(scale.startDate, d)
     const month = date.getMonth()
     const year = date.getFullYear()
 
+    // Top row: month labels
     if (month !== currentMonth) {
-      if (span) span.style.width = `${dayCount * scale.dayWidth}px`
-      span = document.createElement('span')
-      span.className = 'emboss-header-cell emboss-header-month'
-      span.textContent = `${getMonthName(month)} ${year}`
-      row.appendChild(span)
+      if (monthSpan) monthSpan.style.width = `${monthDayCount * scale.dayWidth}px`
+      monthSpan = document.createElement('span')
+      monthSpan.className = 'emboss-header-cell emboss-header-month'
+      monthSpan.textContent = `${getMonthName(month)} ${year}`
+      topRow.appendChild(monthSpan)
       currentMonth = month
-      dayCount = 0
+      monthDayCount = 0
     }
-    dayCount++
-  }
-  if (span) span.style.width = `${dayCount * scale.dayWidth}px`
+    monthDayCount++
 
-  el.appendChild(row)
+    // Bottom row: week-start dates (Monday)
+    if (date.getDay() === 1) {
+      const weekCell = document.createElement('span')
+      weekCell.className = 'emboss-header-cell emboss-header-week'
+      weekCell.style.width = `${7 * scale.dayWidth}px`
+      const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
+      weekCell.textContent = date.toLocaleDateString('en-US', opts)
+      bottomRow.appendChild(weekCell)
+    }
+  }
+  // Finalize last month span
+  if (monthSpan) monthSpan.style.width = `${monthDayCount * scale.dayWidth}px`
+
+  el.appendChild(topRow)
+  el.appendChild(bottomRow)
   return el
 }
 
@@ -195,6 +211,7 @@ export const HEADER_STYLES = `
   background: var(--emboss-surface);
   border-bottom: 1px solid var(--emboss-border);
   overflow: hidden;
+  min-height: min-content;
 }
 .emboss-header-inner {
   display: flex;
@@ -215,6 +232,15 @@ export const HEADER_STYLES = `
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
+}
+.emboss-header-row-top {
+  border-bottom: 1px solid var(--emboss-border);
+}
+.emboss-header-month {
+  font-weight: 600;
+}
+.emboss-header-week {
+  font-size: 10px;
 }
 .emboss-header-day {
   justify-content: center;

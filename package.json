@@ -10,15 +10,17 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./extensions/free": {
+      "types": "./dist/extensions/free/index.d.ts",
       "import": "./dist/extensions/free/index.mjs",
       "require": "./dist/extensions/free/index.js"
     },
     "./extensions/organize": {
+      "types": "./dist/extensions/paid/organize/index.d.ts",
       "import": "./dist/extensions/paid/organize/index.mjs",
       "require": "./dist/extensions/paid/organize/index.js"
     }
@@ -41,6 +43,8 @@
     "url": "https://github.com/emboss-js/emboss"
   },
   "devDependencies": {
+    "happy-dom": "^20.7.0",
+    "jsdom": "^28.1.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
     "vite": "^7.3.1",

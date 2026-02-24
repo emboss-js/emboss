@@ -25,7 +25,8 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState): HTMLElement 
   bar.dataset.id = row.id
   bar.dataset.status = row.status
   bar.dataset.type = row.type
-  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:${scale.barHeight}px;border-radius:${r}px;`
+  const doneOpacity = row.status === 'done' ? 'opacity:var(--emboss-opacity-done,0.45);' : ''
+  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:${scale.barHeight}px;border-radius:${r}px;${doneOpacity}`
 
   // Track — pill-shaped container behind fill
   const track = document.createElement('div')
@@ -89,13 +90,14 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState): HTMLElement 
 function renderPhaseBar(row: Row, scale: Scale): HTMLElement {
   const left = row.start * scale.dayWidth
   const width = Math.max(row.duration * scale.dayWidth, 20)
-  const barTop = Math.round((scale.rowHeight - 8) / 2)
+  const barTop = Math.round((scale.rowHeight - 5) / 2)
+  const color = row.phaseColor || 'var(--emboss-ink-3)'
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar emboss-bar-phase'
   bar.dataset.id = row.id
   bar.dataset.type = 'phase'
-  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:8px;border-radius:4px;`
+  bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:5px;border-radius:3px;background:${color};`
 
   // Phase label — below the thin bar
   const label = document.createElement('div')
@@ -112,6 +114,10 @@ export const BAR_STYLES = `
   position: absolute;
   cursor: pointer;
   user-select: none;
+  outline: none;
+}
+.emboss-bar:focus {
+  outline: none;
 }
 
 /* Track — pill-shaped container behind fill, inherits bar's border-radius */
@@ -122,7 +128,7 @@ export const BAR_STYLES = `
   width: 100%;
   height: 100%;
   border-radius: inherit;
-  background-color: var(--emboss-track, #c0c9d4);
+  background-color: var(--emboss-track, #e8ecf1);
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
 }
 .emboss-dark .emboss-bar-track {
@@ -163,8 +169,7 @@ export const BAR_STYLES = `
   pointer-events: none;
 }
 
-/* Status-driven fill gradients — use background-image longhand, not background shorthand,
-   because var() containing gradient values can fail shorthand parsing in some browsers */
+/* Status-driven fill gradients — via CSS custom properties for theme swaps */
 .emboss-bar[data-status="active"] .emboss-bar-fill {
   background-image: var(--emboss-fill-active);
 }
@@ -177,14 +182,14 @@ export const BAR_STYLES = `
 
 /* Opacity states — theme-responsive via CSS variables */
 .emboss-bar[data-status="done"] {
-  opacity: var(--emboss-opacity-done);
+  opacity: var(--emboss-opacity-done, 0.45);
   transition: opacity 0.15s;
 }
 .emboss-bar[data-status="done"]:hover {
-  opacity: 0.65;
+  opacity: 0.65 !important;
 }
 .emboss-bar[data-status="upcoming"] .emboss-bar-fill {
-  opacity: var(--emboss-opacity-upcoming);
+  opacity: var(--emboss-opacity-upcoming, 0.5);
 }
 
 /* Progress marker dot — z-index 2 so labels render above */
@@ -247,15 +252,17 @@ export const BAR_STYLES = `
   font-weight: 500;
 }
 
-/* Dark mode: white labels (fills pop against dark bg) */
+/* Dark mode: ALL inside labels white, regardless of status */
 .emboss-dark .emboss-bar-label-inside {
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0,0,0,.2);
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
 }
 
-/* Upcoming 0% in dark mode: white at 75% opacity */
-.emboss-dark .emboss-bar-label-upcoming {
+/* Upcoming 0% — fill covers full width, label white at 75% opacity in both themes */
+.emboss-bar-label-upcoming {
+  color: #fff;
   opacity: 0.75;
+  text-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
 /* Outside label — positioned right of bar, same vertical center */
@@ -288,11 +295,10 @@ export const BAR_STYLES = `
   right: 4px;
 }
 
-/* Phase bar */
+/* Phase bar — 5px height, phase color at 25% opacity, no interaction */
 .emboss-bar-phase {
   pointer-events: none;
-  background: var(--emboss-ink-3);
-  opacity: 0.5;
+  opacity: 0.25;
 }
 
 /* Phase label — below the thin bar, left-aligned */

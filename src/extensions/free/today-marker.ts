@@ -56,8 +56,8 @@ export const todayMarker: EmbossExtension = {
   },
 
   styles: `
-    .emboss-today-col { position: absolute; top: 0; pointer-events: none; z-index: 20; }
-    .emboss-today-glow { position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: var(--emboss-today, #ef4444); opacity: 0.04; z-index: 1; }
+    .emboss-today-col { position: absolute; top: 0; pointer-events: none; }
+    .emboss-today-glow { position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: var(--emboss-today, #ef4444); opacity: 0.02; z-index: 0; }
     .emboss-today-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 1.5px; background-color: var(--emboss-today, #ef4444); opacity: 0.5; transform: translateX(-50%); z-index: 20; }
     .emboss-today-dot { position: absolute; top: 6px; left: 50%; width: 8px; height: 8px; background-color: var(--emboss-today, #ef4444); border-radius: 50%; transform: translate(-50%, -50%); z-index: 25; }
     .emboss-today-ring { position: absolute; top: 6px; left: 50%; width: 16px; height: 16px; border-radius: 50%; background-color: rgba(239,68,68, 0.15); z-index: 24; animation: emboss-pulse 2s ease-in-out infinite; transform: translate(-50%, -50%); }

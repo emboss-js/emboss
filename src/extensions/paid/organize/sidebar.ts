@@ -56,6 +56,7 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   el.className = 'emboss-sidebar-cell emboss-sidebar-phase'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
+  el.style.paddingLeft = `${16 + row.depth * 16}px`
 
   const chevron = document.createElement('span')
   chevron.className = 'emboss-sidebar-chevron'
@@ -219,10 +220,11 @@ export const sidebar: EmbossExtension = {
   letter-spacing: 0.4px;
 }
 
-/* Chart header — explicit grid placement */
+/* Chart header — explicit grid placement, min-width:0 prevents content blowout */
 .emboss.emboss-has-sidebar .emboss-header {
   grid-column: 2;
   grid-row: 1;
+  min-width: 0;
 }
 
 /* Sidebar body — syncs vertical scroll from chart body */
@@ -234,10 +236,16 @@ export const sidebar: EmbossExtension = {
   border-right: 1px solid var(--emboss-border);
 }
 
-/* Chart body — explicit grid placement */
+/* Chart body — explicit grid placement, min-width:0 prevents content blowout */
 .emboss.emboss-has-sidebar .emboss-body {
   grid-column: 2;
   grid-row: 2;
+  min-width: 0;
+}
+
+/* Hide redundant phase labels on timeline when sidebar shows them */
+.emboss-has-sidebar .emboss-bar-label-phase {
+  display: none;
 }
 
 /* ─── Cells ─────────────────────────────────────────────────────────────── */
@@ -264,18 +272,26 @@ export const sidebar: EmbossExtension = {
   height: 6px;
 }
 
-/* Name */
+/* Name — ink scale: phase=ink, task=ink-2, subtask=ink-3, milestone=ink-2 */
 .emboss-sidebar-name {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 12.5px;
   color: var(--emboss-ink);
 }
+.emboss-sidebar-task .emboss-sidebar-name {
+  color: var(--emboss-ink-2);
+}
+.emboss-sidebar-subtask .emboss-sidebar-name {
+  color: var(--emboss-ink-3);
+}
+.emboss-sidebar-milestone .emboss-sidebar-name {
+  color: var(--emboss-ink-2);
+}
 
 /* ─── Phase cell ────────────────────────────────────────────────────────── */
 
 .emboss-sidebar-phase {
-  padding-left: 12px;
   cursor: pointer;
 }
 .emboss-sidebar-phase:hover {
@@ -315,7 +331,7 @@ export const sidebar: EmbossExtension = {
 .emboss-sidebar-pill {
   width: 8px;
   height: 8px;
-  border-radius: 2px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 

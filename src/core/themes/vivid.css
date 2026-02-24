@@ -1,0 +1,14 @@
+/**
+ * @emboss/core — themes/vivid.css
+ * CONTRACT: Section 6 (vivid template — fill overrides only)
+ *
+ * Vivid overrides fills only. Surfaces, ink, and track inherit from
+ * the base theme (grayscale or dark). Compose with dark:
+ *   .emboss-dark.emboss-vivid → dark surfaces + vivid fills
+ */
+
+.emboss-vivid {
+  --emboss-fill-active: linear-gradient(90deg, #3b82f6, #06b6d4);
+  --emboss-fill-done: linear-gradient(90deg, #34d399, #06b6d4);
+  --emboss-fill-upcoming: linear-gradient(90deg, #8b5cf6, #ec4899);
+}

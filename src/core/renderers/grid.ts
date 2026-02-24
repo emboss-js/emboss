@@ -83,15 +83,17 @@ export const GRID_STYLES = `
   position: absolute;
   top: 0;
   width: 1px;
-  background: var(--emboss-border);
+  background: var(--emboss-ink);
+  opacity: var(--emboss-grid-opacity);
 }
 .emboss-grid-vline-weekend {
-  opacity: 0.6;
+  opacity: calc(var(--emboss-grid-opacity) * 0.6);
 }
 .emboss-grid-hline {
   position: absolute;
   left: 0;
   height: 1px;
-  background: var(--emboss-border);
+  background: var(--emboss-ink);
+  opacity: var(--emboss-grid-opacity);
 }
 `;
