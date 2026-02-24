@@ -97,8 +97,6 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
 }
 
 const VIVID_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
-const GRAY_PALETTE_LIGHT = ['#4b5563', '#6b7280', '#9ca3af', '#374151', '#d1d5db']
-const GRAY_PALETTE_DARK = ['#d1d5db', '#9ca3af', '#6b7280', '#e5e7eb', '#a3a3a3']
 
 function hexToHSL(hex: string): { h: number; s: number; l: number } {
   const num = parseInt(hex.replace('#', ''), 16)
@@ -163,30 +161,22 @@ function renderPhaseBar(row: Row, scale: Scale, state: EmbossState, container?: 
   const left = row.start * scale.dayWidth
   const width = Math.max(row.duration * scale.dayWidth, 20)
   const barTop = Math.round((scale.rowHeight - 5) / 2)
-  const phaseIdx = state.rows.filter(r => r.type === 'phase').findIndex(r => r.id === row.id)
-  const idx = phaseIdx >= 0 ? phaseIdx : 0
   const isVivid = container?.classList.contains('emboss-vivid') ?? false
-  const isDark = container?.classList.contains('emboss-dark') ?? false
-  const grays = isDark ? GRAY_PALETTE_DARK : GRAY_PALETTE_LIGHT
-
-  // Resolve color: user-picked wins, then vivid palette, then gray palette
-  let color: string
-  if (row.phaseColor) {
-    color = row.phaseColor
-  } else if (isVivid) {
-    color = VIVID_PALETTE[idx % VIVID_PALETTE.length]
-  } else {
-    color = grays[idx % grays.length]
-  }
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar emboss-bar-phase'
   bar.dataset.id = row.id
   bar.dataset.type = 'phase'
-  bar.dataset.phaseIdx = String(idx % 5)
   bar.style.cssText = `left:${left}px;width:${width}px;top:${barTop}px;height:5px;border-radius:3px;`
-  bar.style.background = color
-  bar.style.opacity = '0.25'
+
+  // Vivid: inline color at 40% opacity. Grayscale: CSS default (--emboss-ink-4 at 50%).
+  if (isVivid) {
+    const phaseIdx = state.rows.filter(r => r.type === 'phase').findIndex(r => r.id === row.id)
+    const idx = phaseIdx >= 0 ? phaseIdx : 0
+    const color = row.phaseColor || VIVID_PALETTE[idx % VIVID_PALETTE.length]
+    bar.style.background = color
+    bar.style.opacity = '0.4'
+  }
 
   // Phase label — below the thin bar
   const label = document.createElement('div')
@@ -383,17 +373,11 @@ export const BAR_STYLES = `
   right: 4px;
 }
 
-/* Phase index → gray mapping (grayscale theme) */
-[data-phase-idx] { --phase-gray: var(--emboss-ink-3); }
-[data-phase-idx="0"] { --phase-gray: #4b5563; }
-[data-phase-idx="1"] { --phase-gray: #6b7280; }
-[data-phase-idx="2"] { --phase-gray: #9ca3af; }
-[data-phase-idx="3"] { --phase-gray: #374151; }
-[data-phase-idx="4"] { --phase-gray: #d1d5db; }
-
-/* Phase bar — 5px height, no interaction. Background + opacity set inline. */
+/* Phase bar — grayscale default; vivid overrides set inline */
 .emboss-bar-phase {
   pointer-events: none;
+  background: var(--emboss-ink-4);
+  opacity: 0.5;
 }
 
 /* Phase label — below the thin bar, left-aligned */

@@ -113,8 +113,10 @@ describe('"+" button in sidebar header', () => {
 // ─── Color picker ────────────────────────────────────────────────────────
 
 describe('Color picker on phase pills', () => {
-  it('clicking phase pill opens color picker', () => {
+  it('clicking phase pill opens color picker in vivid mode', () => {
     const chart = makeChart()
+    document.querySelector('#chart')!.classList.add('emboss-vivid')
+    chart.render()
     const pill = document.querySelector('.emboss-sidebar-pill') as HTMLElement
     pill.click()
     const picker = document.querySelector('.emboss-color-picker')
@@ -126,15 +128,26 @@ describe('Color picker on phase pills', () => {
 
   it('clicking swatch changes phase color', () => {
     const chart = makeChart()
+    document.querySelector('#chart')!.classList.add('emboss-vivid')
+    chart.render()
     ;(document.querySelector('.emboss-sidebar-pill') as HTMLElement).click()
-    ;(document.querySelector('.emboss-color-swatch[data-color="#6b7280"]') as HTMLElement).click()
-    expect(chart.state.rows.find(r => r.id === 'p1')!.phaseColor).toBe('#6b7280')
+    ;(document.querySelector('.emboss-color-swatch[data-color="#8b5cf6"]') as HTMLElement).click()
+    expect(chart.state.rows.find(r => r.id === 'p1')!.phaseColor).toBe('#8b5cf6')
+    expect(document.querySelector('.emboss-color-picker')).toBeFalsy()
+    chart.destroy()
+  })
+
+  it('clicking pill in grayscale does NOT open color picker', () => {
+    const chart = makeChart()
+    ;(document.querySelector('.emboss-sidebar-pill') as HTMLElement).click()
     expect(document.querySelector('.emboss-color-picker')).toBeFalsy()
     chart.destroy()
   })
 
   it('task dots do NOT open color picker', () => {
     const chart = makeChart()
+    document.querySelector('#chart')!.classList.add('emboss-vivid')
+    chart.render()
     ;(document.querySelector('.emboss-sidebar-task .emboss-sidebar-dot') as HTMLElement).click()
     expect(document.querySelector('.emboss-color-picker')).toBeFalsy()
     chart.destroy()

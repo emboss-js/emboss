@@ -25,62 +25,78 @@ import type { Row, EmbossState, EmbossExtension, Scale, SidebarRenderer } from '
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const VIVID_SWATCHES = [
+const VIVID_PALETTE = [
   '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b',
   '#10b981', '#ef4444', '#06b6d4', '#f97316',
 ]
 
-const GRAYSCALE_SWATCHES = [
-  '#374151', '#4b5563', '#6b7280', '#9ca3af',
-  '#1f2937', '#525252', '#78716c', '#a3a3a3',
-]
-
-// ─── Phase color resolution ─────────────────────────────────────────────────
-
-function resolvePhaseColor(row: Row, rows: Row[]): { color: string; idx: number; userSet: boolean } {
+/** Resolve the vivid color for a row's parent phase. Returns null if no phase found. */
+function resolveVividColor(row: Row, rows: Row[]): string | null {
   let phase: Row | undefined
-
-  if (row.type === 'phase') {
-    phase = row
-  } else if (row.parentId) {
+  if (row.type === 'phase') phase = row
+  else if (row.parentId) {
     const parent = rows.find(r => r.id === row.parentId)
-    if (parent?.type === 'phase') {
-      phase = parent
-    } else if (parent?.parentId) {
-      phase = rows.find(r => r.id === parent.parentId && r.type === 'phase')
-    }
+    if (parent?.type === 'phase') phase = parent
+    else if (parent?.parentId) phase = rows.find(r => r.id === parent.parentId && r.type === 'phase')
   }
-
-  if (!phase) return { color: VIVID_SWATCHES[0], idx: 0, userSet: false }
-
-  const phaseIdx = rows.filter(r => r.type === 'phase').indexOf(phase)
-  const idx = phaseIdx >= 0 ? phaseIdx : 0
-  return {
-    color: phase.phaseColor || VIVID_SWATCHES[idx % VIVID_SWATCHES.length],
-    idx,
-    userSet: !!phase.phaseColor,
-  }
+  if (!phase) return null
+  if (phase.phaseColor) return phase.phaseColor
+  const idx = rows.filter(r => r.type === 'phase').indexOf(phase)
+  return VIVID_PALETTE[(idx >= 0 ? idx : 0) % VIVID_PALETTE.length]
 }
 
-function applyPhaseVars(el: HTMLElement, pc: { color: string; idx: number; userSet: boolean }) {
-  el.dataset.phaseIdx = String(pc.idx % 5)
-  el.style.setProperty('--phase-c', pc.color)
-  if (pc.userSet) el.dataset.colorSet = ''
+// ─── Avatars ────────────────────────────────────────────────────────────────
+
+const AVATAR_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
+
+function hashToColor(name: string): string {
+  let hash = 0
+  for (const char of name) hash = ((hash << 5) - hash + char.charCodeAt(0)) | 0
+  return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length]
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0][0].toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+function createAvatar(row: Row, isVivid: boolean, size: 22 | 18 = 22): HTMLElement {
+  const el = document.createElement('div')
+  el.className = size === 18 ? 'emboss-avatar emboss-avatar-sm' : 'emboss-avatar'
+
+  if (isVivid) {
+    const bg = row.assigneeColor || (row.assignee ? hashToColor(row.assignee) : '')
+    if (bg) el.style.background = bg
+  }
+
+  const initials = document.createElement('span')
+  initials.className = 'emboss-avatar-initials'
+  initials.textContent = getInitials(row.assignee || '')
+  el.appendChild(initials)
+
+  return el
 }
 
 // ─── Cell renderers ─────────────────────────────────────────────────────────
+// Vivid = inline color on dot/pill/diamond. Grayscale = no inline style, CSS default.
+// `_isVivid` is set each render from container class check.
+
+let _isVivid = false
 
 function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
-  const pc = resolvePhaseColor(row, state.rows)
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-task'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${48 + row.depth * 16}px`
-  applyPhaseVars(el, pc)
 
   const dot = document.createElement('span')
   dot.className = 'emboss-sidebar-dot'
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) dot.style.background = c
+  }
 
   const name = document.createElement('span')
   name.className = 'emboss-sidebar-name'
@@ -92,6 +108,7 @@ function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
 
   el.appendChild(dot)
   el.appendChild(name)
+  if (row.assignee) el.appendChild(createAvatar(row, _isVivid, 22))
   el.appendChild(del)
   return el
 }
@@ -99,14 +116,12 @@ function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
 function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   const collapsed = state.collapsed[row.id]
   const count = row.children ? row.children.length : 0
-  const pc = resolvePhaseColor(row, state.rows)
 
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-phase'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${16 + row.depth * 16}px`
-  applyPhaseVars(el, pc)
 
   const chevron = document.createElement('span')
   chevron.className = 'emboss-sidebar-chevron'
@@ -115,6 +130,10 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   const pill = document.createElement('span')
   pill.className = 'emboss-sidebar-pill'
   pill.dataset.phaseId = row.id
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) pill.style.backgroundColor = c
+  }
 
   const name = document.createElement('span')
   name.className = 'emboss-sidebar-name emboss-sidebar-phase-name'
@@ -137,16 +156,18 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
 }
 
 function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
-  const pc = resolvePhaseColor(row, state.rows)
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-subtask'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${48 + row.depth * 16}px`
-  applyPhaseVars(el, pc)
 
   const dot = document.createElement('span')
   dot.className = 'emboss-sidebar-dot emboss-sidebar-dot-sm'
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) dot.style.background = c
+  }
 
   const name = document.createElement('span')
   name.className = 'emboss-sidebar-name'
@@ -158,21 +179,24 @@ function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
 
   el.appendChild(dot)
   el.appendChild(name)
+  if (row.assignee) el.appendChild(createAvatar(row, _isVivid, 22))
   el.appendChild(del)
   return el
 }
 
 function renderMilestoneCell(row: Row, state: EmbossState): HTMLElement {
-  const pc = resolvePhaseColor(row, state.rows)
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-milestone'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
   el.style.paddingLeft = `${48 + row.depth * 16}px`
-  applyPhaseVars(el, pc)
 
   const diamond = document.createElement('span')
   diamond.className = 'emboss-sidebar-diamond'
+  if (_isVivid) {
+    const c = resolveVividColor(row, state.rows)
+    if (c) diamond.style.borderColor = c
+  }
 
   const name = document.createElement('span')
   name.className = 'emboss-sidebar-name emboss-sidebar-milestone-name'
@@ -386,8 +410,12 @@ export const sidebar: EmbossExtension = {
       emboss.render()
     }
 
-    // ── Open color picker ──
+    // ── Open color picker (vivid only) ──
     function openColorPicker(pillEl: HTMLElement, phaseId: string) {
+      // Color picker disabled in grayscale mode
+      const isVivid = containerRef?.classList.contains('emboss-vivid') ?? false
+      if (!isVivid) return
+
       if (colorPickerEl && colorPickerPhaseId === phaseId) {
         closeColorPicker()
         return
@@ -398,16 +426,14 @@ export const sidebar: EmbossExtension = {
       colorPickerPhaseId = phaseId
       const row = emboss.state.rows.find(r => r.id === phaseId)
       if (!row) return
-      const currentColor = (row.phaseColor || '#6b7280').toLowerCase()
-      const isVivid = containerRef?.classList.contains('emboss-vivid') ?? false
-      const swatches = isVivid ? VIVID_SWATCHES : GRAYSCALE_SWATCHES
+      const currentColor = (row.phaseColor || '').toLowerCase()
 
       colorPickerEl = document.createElement('div')
       colorPickerEl.className = 'emboss-color-picker'
 
       const grid = document.createElement('div')
       grid.className = 'emboss-color-grid'
-      for (const c of swatches) {
+      for (const c of VIVID_PALETTE) {
         const swatch = document.createElement('div')
         swatch.className = 'emboss-color-swatch'
         swatch.dataset.color = c
@@ -515,6 +541,7 @@ export const sidebar: EmbossExtension = {
 
     emboss.on('afterRender', (container: HTMLElement, scale: Scale, state: EmbossState) => {
       containerRef = container
+      _isVivid = container.classList.contains('emboss-vivid')
 
       // ── First render: create sidebar DOM and wire delegated listeners ──
       if (!sidebarHeaderEl) {
@@ -971,17 +998,13 @@ export const sidebar: EmbossExtension = {
   cursor: grab;
 }
 
-/* Status dot — phase-colored */
+/* Status dot — grayscale default, vivid color set inline */
 .emboss-sidebar-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
   background: var(--emboss-ink-3);
-}
-.emboss-vivid .emboss-sidebar-dot,
-[data-color-set] .emboss-sidebar-dot {
-  background: var(--phase-c);
 }
 .emboss-sidebar-dot-sm {
   width: 6px;
@@ -1085,12 +1108,11 @@ export const sidebar: EmbossExtension = {
   background-clip: content-box;
   border-radius: 50%;
   flex-shrink: 0;
-  cursor: pointer;
   background-color: var(--emboss-ink-3);
 }
-.emboss-vivid .emboss-sidebar-pill,
-[data-color-set] .emboss-sidebar-pill {
-  background-color: var(--phase-c);
+/* Clickable only in vivid mode */
+.emboss-vivid .emboss-sidebar-pill {
+  cursor: pointer;
 }
 
 /* Task count badge */
@@ -1111,13 +1133,9 @@ export const sidebar: EmbossExtension = {
   width: 10px;
   height: 10px;
   transform: rotate(45deg);
-  border: 1.5px solid var(--emboss-ink-3);
+  border: 1.5px solid var(--emboss-ink-4);
   border-radius: 1px;
   flex-shrink: 0;
-}
-.emboss-vivid .emboss-sidebar-diamond,
-[data-color-set] .emboss-sidebar-diamond {
-  border-color: var(--phase-c);
 }
 .emboss-sidebar-milestone-name {
   font-style: italic;
@@ -1141,11 +1159,6 @@ export const sidebar: EmbossExtension = {
 }
 .emboss-sidebar-edit-phase {
   border-color: var(--emboss-ink-4) !important;
-}
-.emboss-vivid .emboss-sidebar-edit-phase,
-[data-color-set] .emboss-sidebar-edit-phase {
-  border-color: var(--phase-c) !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
 /* ─── Color picker ──────────────────────────────────────────────────────── */
@@ -1237,5 +1250,48 @@ export const sidebar: EmbossExtension = {
 }
 .emboss-drop-indicator::before { left: -3px; }
 .emboss-drop-indicator::after { right: -3px; }
+
+/* ─── Avatars ──────────────────────────────────────────────────────────── */
+
+.emboss-avatar {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--emboss-ink-3);
+}
+.emboss-avatar-sm {
+  width: 18px;
+  height: 18px;
+}
+.emboss-avatar-initials {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4), 0 0 4px rgba(0,0,0,0.2);
+  letter-spacing: 0.5px;
+}
+.emboss-avatar-sm .emboss-avatar-initials {
+  font-size: 8px;
+}
+/* Glass highlight on avatar */
+.emboss-avatar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 100%);
+  pointer-events: none;
+}
 `,
 }

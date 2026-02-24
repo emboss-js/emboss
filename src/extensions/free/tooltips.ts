@@ -13,6 +13,28 @@
 import type { EmbossExtension, Row, Scale, EmbossState } from '../../core/types'
 import { addDays } from '../../core/dates'
 
+const AVATAR_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
+
+function hashToColor(name: string): string {
+  let hash = 0
+  for (const char of name) hash = ((hash << 5) - hash + char.charCodeAt(0)) | 0
+  return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length]
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0][0].toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+function avatarHTML(row: Row, isVivid: boolean): string {
+  const bg = isVivid
+    ? (row.assigneeColor || hashToColor(row.assignee!))
+    : '#9ca3af'
+  const initials = getInitials(row.assignee!)
+  return `<div style="width:22px;height:22px;border-radius:50%;background:${bg};position:relative;flex-shrink:0;overflow:hidden"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#ffffff;text-shadow:0 1px 2px rgba(0,0,0,0.4),0 0 4px rgba(0,0,0,0.2);letter-spacing:0.5px">${initials}</span><span style="position:absolute;top:0;left:0;right:0;height:50%;border-radius:11px 11px 0 0;background:linear-gradient(180deg,rgba(255,255,255,0.35) 0%,transparent 100%);pointer-events:none"></span></div>`
+}
+
 function formatRange(startDate: Date, start: number, duration: number): string {
   const from = addDays(startDate, start)
   const to = addDays(startDate, start + duration - 1)
@@ -39,6 +61,7 @@ export const tooltips: EmbossExtension = {
     let showTimer: ReturnType<typeof setTimeout> | null = null
     let hideTimer: ReturnType<typeof setTimeout> | null = null
     let currentRow: Row | null = null
+    let isVivid = false
 
     function ensureTip(): HTMLElement {
       if (!tip) {
@@ -68,7 +91,7 @@ export const tooltips: EmbossExtension = {
         </div>
         ${range ? `<div class="emboss-tip-range">${range}</div>` : ''}
         ${progressBar}
-        ${row.assignee ? `<div class="emboss-tip-assignee">${row.assignee}</div>` : ''}
+        ${row.assignee ? `<div class="emboss-tip-assignee">${avatarHTML(row, isVivid)}<span>${row.assignee}</span></div>` : ''}
       `
 
       position(el, x, y)
@@ -114,6 +137,7 @@ export const tooltips: EmbossExtension = {
     let lastY = 0
 
     emboss.on('afterRender', (container: HTMLElement) => {
+      isVivid = container.classList.contains('emboss-vivid')
       const barsEl = container.querySelector('.emboss-bars')
       if (!barsEl || (barsEl as any).__embossTipWired) return
       ;(barsEl as any).__embossTipWired = true
@@ -129,7 +153,7 @@ export const tooltips: EmbossExtension = {
   },
 
   styles: `
-    .emboss-tip { position: fixed; z-index: 1000; pointer-events: none; background-color: #1a1d23; color: #fff; border-radius: 10px; padding: 10px 14px; font-size: 11px; line-height: 1.5; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-width: 240px; opacity: 0; transform: translateY(4px); transition: opacity 0.15s, transform 0.15s; }
+    .emboss-tip { position: fixed; z-index: 1000; pointer-events: none; background-color: #1a1d23; color: #fff; border-radius: 10px; padding: 10px 14px; font-size: 11px; line-height: 1.5; box-shadow: 0 4px 20px rgba(0,0,0,0.15); min-width: 200px; max-width: 240px; opacity: 0; transform: translateY(4px); transition: opacity 0.15s, transform 0.15s; }
     .emboss-tip.show { opacity: 1; transform: translateY(0); }
     .emboss-tip.emboss-tip-dark { background-color: #e5e7eb; color: #1a1d23; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
     .emboss-tip-phase { font-size: 9px; text-transform: uppercase; letter-spacing: 0.4px; color: rgba(255,255,255,0.6); margin-bottom: 2px; }
@@ -146,6 +170,7 @@ export const tooltips: EmbossExtension = {
     .emboss-tip-dark .emboss-tip-assignee { color: #4b5563; }
     .emboss-tip-dark .emboss-tip-bar { background: rgba(0,0,0,0.08); }
     .emboss-tip-dark .emboss-tip-fill { background: rgba(0,0,0,0.2); }
-    .emboss-tip-assignee { margin-top: 4px; font-size: 10px; color: rgba(255,255,255,0.6); }
+    .emboss-tip-assignee { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 10px; }
+    .emboss-tip-dark .emboss-tip-assignee { border-top-color: rgba(0,0,0,0.08); }
   `,
 }
