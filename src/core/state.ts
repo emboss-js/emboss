@@ -24,10 +24,10 @@ const SCALES: Record<string, Record<string, Omit<Scale, 'totalDays' | 'startDate
     quarter: { dayWidth: 7,  rowHeight: 52, barHeight: 28, barRadius: 14, labelSize: 12.5 },
   },
   dense: {
-    day:     { dayWidth: 44, rowHeight: 34, barHeight: 20, barRadius: 10, labelSize: 10 },
-    week:    { dayWidth: 32, rowHeight: 34, barHeight: 20, barRadius: 10, labelSize: 10 },
-    month:   { dayWidth: 12, rowHeight: 32, barHeight: 18, barRadius: 9,  labelSize: 10 },
-    quarter: { dayWidth: 7,  rowHeight: 32, barHeight: 18, barRadius: 9,  labelSize: 10 },
+    day:     { dayWidth: 44, rowHeight: 30, barHeight: 18, barRadius: 9, labelSize: 10 },
+    week:    { dayWidth: 32, rowHeight: 30, barHeight: 18, barRadius: 9, labelSize: 10 },
+    month:   { dayWidth: 10, rowHeight: 28, barHeight: 16, barRadius: 8, labelSize: 9.5 },
+    quarter: { dayWidth: 5,  rowHeight: 28, barHeight: 16, barRadius: 8, labelSize: 9.5 },
   },
 }
 

@@ -58,12 +58,23 @@ export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: nu
     }
   }
 
-  // Horizontal row lines
-  for (let i = 1; i <= visibleRowCount; i++) {
-    const line = document.createElement('div')
-    line.className = 'emboss-grid-hline'
-    line.style.cssText = `top:${i * scale.rowHeight}px;width:${totalWidth}px;`
-    el.appendChild(line)
+  // Horizontal row lines + zebra striping (dense mode)
+  const isDense = state.density === 'dense'
+  for (let i = 0; i <= visibleRowCount; i++) {
+    // Zebra stripe on even rows
+    if (isDense && i < visibleRowCount && i % 2 === 1) {
+      const stripe = document.createElement('div')
+      stripe.className = 'emboss-grid-stripe'
+      stripe.style.cssText = `top:${i * scale.rowHeight}px;width:${totalWidth}px;height:${scale.rowHeight}px;`
+      el.appendChild(stripe)
+    }
+    // Row separator line (skip top edge)
+    if (i > 0) {
+      const line = document.createElement('div')
+      line.className = 'emboss-grid-hline'
+      line.style.cssText = `top:${i * scale.rowHeight}px;width:${totalWidth}px;`
+      el.appendChild(line)
+    }
   }
 
   return el
@@ -106,4 +117,15 @@ export const GRID_STYLES = `
   background: var(--emboss-ink);
   opacity: var(--emboss-grid-opacity);
 }
+/* Zebra stripe (dense mode) */
+.emboss-grid-stripe {
+  position: absolute;
+  top: 0;
+  background: var(--emboss-surface-2);
+  opacity: 0.3;
+  pointer-events: none;
+}
+/* ─── Dense mode ──────────────────────────────────────────────────────── */
+.emboss-dense .emboss-grid-vline { opacity: 0.02; }
+.emboss-dense .emboss-grid-weekend { background: transparent; }
 `;

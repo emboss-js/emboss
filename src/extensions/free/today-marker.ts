@@ -67,5 +67,10 @@ export const todayMarker: EmbossExtension = {
     .emboss-dark .emboss-today-glow { background-color: var(--emboss-today, #f87171); }
     .emboss-dark .emboss-today-label { color: var(--emboss-today, #f87171); }
     @keyframes emboss-pulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; } 50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.05; } }
+    /* Dense mode: simplified today marker */
+    .emboss-dense .emboss-today-ring { display: none; }
+    .emboss-dense .emboss-today-label { display: none; }
+    .emboss-dense .emboss-today-dot { width: 6px; height: 6px; }
+    .emboss-dense .emboss-today-line { width: 1px; }
   `,
 }

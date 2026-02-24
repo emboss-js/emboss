@@ -1251,6 +1251,21 @@ export const sidebar: EmbossExtension = {
 .emboss-drop-indicator::before { left: -3px; }
 .emboss-drop-indicator::after { right: -3px; }
 
+/* ─── Dense mode sidebar ───────────────────────────────────────────────── */
+
+.emboss-dense.emboss-has-sidebar {
+  grid-template-columns: 220px 1fr;
+}
+.emboss-dense .emboss-sidebar-phase-name { font-size: 12px; }
+.emboss-dense .emboss-sidebar-name { font-size: 11px; }
+.emboss-dense .emboss-avatar { width: 18px; height: 18px; }
+.emboss-dense .emboss-avatar-initials { font-size: 8px; }
+/* Zebra stripe the sidebar cells to match grid */
+.emboss-dense .emboss-sidebar-cell:nth-child(even) {
+  background: var(--emboss-surface-2);
+  opacity: 0.85;
+}
+
 /* ─── Avatars ──────────────────────────────────────────────────────────── */
 
 .emboss-avatar {

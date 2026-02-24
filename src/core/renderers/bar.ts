@@ -20,6 +20,7 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
   const barTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
   const r = scale.barRadius
   const isVivid = container?.classList.contains('emboss-vivid') ?? false
+  const isDense = state.density === 'dense'
 
   const bar = document.createElement('div')
   bar.className = 'emboss-bar'
@@ -59,8 +60,8 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
 
   bar.appendChild(fill)
 
-  // Progress marker dot (hidden at 0% and 100%)
-  if (progress > 0 && progress < 100) {
+  // Progress marker dot (hidden at 0% and 100%; hidden in dense — minibar replaces it)
+  if (!isDense && progress > 0 && progress < 100) {
     const marker = document.createElement('div')
     marker.className = 'emboss-bar-marker'
     marker.style.left = `${fillWidth - 6}px`
@@ -71,19 +72,34 @@ function renderTaskBar(row: Row, scale: Scale, state: EmbossState, container?: H
   const label = document.createElement('div')
   label.className = 'emboss-bar-label'
   label.style.cssText = `font-size:${scale.labelSize}px;height:${scale.barHeight}px;line-height:${scale.barHeight}px;`
-  const progressText = progress > 0 && progress < 100 ? ` ${progress}%` : ''
-  label.textContent = row.name + progressText
 
-  if (width <= 70) {
+  if (isDense) {
+    // Dense: always outside, name only (no progress %)
+    label.textContent = row.name
     label.classList.add('emboss-bar-label-outside')
   } else {
-    label.classList.add('emboss-bar-label-inside')
-    if (isUpcoming0) label.classList.add('emboss-bar-label-upcoming')
+    const progressText = progress > 0 && progress < 100 ? ` ${progress}%` : ''
+    label.textContent = row.name + progressText
+    if (width <= 70) {
+      label.classList.add('emboss-bar-label-outside')
+    } else {
+      label.classList.add('emboss-bar-label-inside')
+      if (isUpcoming0) label.classList.add('emboss-bar-label-upcoming')
+    }
   }
   bar.appendChild(label)
 
-  // Drag handles (hidden in presentation density)
-  if (state.density !== 'presentation') {
+  // Minibar progress indicator (dense only, partial progress)
+  if (isDense && progress > 0 && progress < 100) {
+    const minibar = document.createElement('div')
+    minibar.className = 'emboss-minibar'
+    minibar.style.width = `${width * progress / 100}px`
+    if (pc) minibar.style.background = pc.color
+    bar.appendChild(minibar)
+  }
+
+  // Drag handles (hidden in presentation and dense density)
+  if (state.density === 'working') {
     const handleL = document.createElement('div')
     handleL.className = 'emboss-bar-handle emboss-bar-handle-left'
     bar.appendChild(handleL)
@@ -372,6 +388,32 @@ export const BAR_STYLES = `
 .emboss-bar-handle-right {
   right: 4px;
 }
+
+/* ─── Minibar (dense mode progress indicator) ─────────────────────────── */
+
+.emboss-minibar {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  height: 3px;
+  border-radius: 1.5px;
+  background: var(--emboss-ink-3);
+  opacity: 0.6;
+}
+
+/* ─── Dense mode overrides ────────────────────────────────────────────── */
+
+/* Strip glass highlight — bars become flat */
+.emboss-dense .emboss-bar-fill::before { display: none; }
+/* Thinner bottom shadow */
+.emboss-dense .emboss-bar-fill::after { height: 20%; }
+/* Grab entire bar body */
+.emboss-dense .emboss-bar { cursor: grab; }
+.emboss-dense .emboss-bar:active { cursor: grabbing; }
+/* Subtle hover — opacity bump instead of transform */
+.emboss-dense .emboss-bar:hover { opacity: 0.9; }
+/* Hide phase bars — sidebar shows grouping */
+.emboss-dense .emboss-bar-phase { display: none; }
 
 /* Phase bar — grayscale default; vivid overrides set inline */
 .emboss-bar-phase {
