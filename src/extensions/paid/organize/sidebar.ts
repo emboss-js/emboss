@@ -32,7 +32,7 @@ function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-task'
   el.style.height = `${state.scale.rowHeight}px`
-  el.style.paddingLeft = `${16 + row.depth * 16}px`
+  el.style.paddingLeft = `${36 + row.depth * 16}px`
 
   const dot = document.createElement('span')
   dot.className = 'emboss-sidebar-dot'
@@ -56,7 +56,7 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   el.className = 'emboss-sidebar-cell emboss-sidebar-phase'
   el.dataset.id = row.id
   el.style.height = `${state.scale.rowHeight}px`
-  el.style.paddingLeft = `${16 + row.depth * 16}px`
+  el.style.paddingLeft = `${12 + row.depth * 16}px`
 
   const chevron = document.createElement('span')
   chevron.className = 'emboss-sidebar-chevron'
@@ -85,7 +85,7 @@ function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-subtask'
   el.style.height = `${state.scale.rowHeight}px`
-  el.style.paddingLeft = `${16 + row.depth * 16}px`
+  el.style.paddingLeft = `${36 + row.depth * 16}px`
 
   const dot = document.createElement('span')
   dot.className = 'emboss-sidebar-dot emboss-sidebar-dot-sm'
@@ -104,7 +104,7 @@ function renderMilestoneCell(row: Row, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-milestone'
   el.style.height = `${state.scale.rowHeight}px`
-  el.style.paddingLeft = `${16 + row.depth * 16}px`
+  el.style.paddingLeft = `${36 + row.depth * 16}px`
 
   const diamond = document.createElement('span')
   diamond.className = 'emboss-sidebar-diamond'
@@ -339,8 +339,10 @@ export const sidebar: EmbossExtension = {
 .emboss-sidebar-badge {
   margin-left: auto;
   font-size: 10px;
-  color: var(--emboss-ink-4);
+  font-weight: 500;
+  color: var(--emboss-ink-3);
   background: var(--emboss-surface-2);
+  border: 1px solid var(--emboss-border);
   padding: 1px 6px;
   border-radius: 8px;
 }

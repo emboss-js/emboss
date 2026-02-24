@@ -192,15 +192,14 @@ export const BAR_STYLES = `
   opacity: var(--emboss-opacity-upcoming, 0.5);
 }
 
-/* Progress marker dot — z-index 2 so labels render above */
+/* Progress marker dot — 12px outer, 6px inner, z-index 2 so labels render above */
 .emboss-bar-marker {
   position: absolute;
   top: 50%;
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--emboss-surface);
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
+  background: #fff;
   transform: translateY(-50%);
   z-index: 2;
   cursor: ew-resize;
@@ -244,17 +243,17 @@ export const BAR_STYLES = `
   z-index: 4;
 }
 
-/* Inside label — dark text in light mode (grayscale fills aren't dark enough for white) */
+/* Inside label — white text on fill, text-shadow for contrast (§9.2) */
 .emboss-bar-label-inside {
   left: 10px;
   right: 10px;
-  color: var(--emboss-ink-2);
+  color: #fff;
   font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
-/* Dark mode: ALL inside labels white, regardless of status */
+/* Dark mode: stronger text-shadow for contrast */
 .emboss-dark .emboss-bar-label-inside {
-  color: #fff !important;
   text-shadow: 0 1px 2px rgba(0,0,0,.4);
 }
 
@@ -295,10 +294,10 @@ export const BAR_STYLES = `
   right: 4px;
 }
 
-/* Phase bar — 5px height, phase color at 25% opacity, no interaction */
+/* Phase bar — 5px height, phase color, no interaction */
 .emboss-bar-phase {
   pointer-events: none;
-  opacity: 0.25;
+  opacity: 0.4;
 }
 
 /* Phase label — below the thin bar, left-aligned */
