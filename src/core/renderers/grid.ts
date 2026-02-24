@@ -121,9 +121,11 @@ export const GRID_STYLES = `
 .emboss-grid-stripe {
   position: absolute;
   top: 0;
-  background: var(--emboss-surface-2);
-  opacity: 0.3;
+  background: rgba(0, 0, 0, 0.035);
   pointer-events: none;
+}
+.emboss-dark .emboss-grid-stripe {
+  background: rgba(255, 255, 255, 0.04);
 }
 /* ─── Dense mode ──────────────────────────────────────────────────────── */
 .emboss-dense .emboss-grid-vline { opacity: 0.02; }

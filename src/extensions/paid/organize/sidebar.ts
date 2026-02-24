@@ -1263,7 +1263,6 @@ export const sidebar: EmbossExtension = {
 /* Zebra stripe the sidebar cells to match grid */
 .emboss-dense .emboss-sidebar-cell:nth-child(even) {
   background: var(--emboss-surface-2);
-  opacity: 0.85;
 }
 
 /* ─── Presentation mode sidebar ────────────────────────────────────────── */

@@ -448,16 +448,22 @@ export const BAR_STYLES = `
 /* ─── Dense mode overrides ────────────────────────────────────────────── */
 
 /* Strip glass highlight — bars become flat */
-.emboss-dense .emboss-bar-fill::before { display: none; }
+.emboss-dense .emboss-bar-fill::before { display: none !important; }
 /* Thinner bottom shadow */
 .emboss-dense .emboss-bar-fill::after { height: 20%; }
 /* Grab entire bar body */
 .emboss-dense .emboss-bar { cursor: grab; }
 .emboss-dense .emboss-bar:active { cursor: grabbing; }
-/* Subtle hover — opacity bump instead of transform */
-.emboss-dense .emboss-bar:hover { opacity: 0.9; }
+/* Subtle hover — opacity bump, NOT scaleY transform */
+.emboss-dense .emboss-bar:hover { opacity: 0.9; transform: none !important; }
+/* Hide progress marker dots — minibar replaces them */
+.emboss-dense .emboss-bar-marker { display: none !important; }
+/* Hide drag handles */
+.emboss-dense .emboss-bar-handle { display: none; }
 /* Hide phase bars — sidebar shows grouping */
-.emboss-dense .emboss-bar-phase { display: none; }
+.emboss-dense .emboss-bar-phase { display: none !important; }
+/* With sidebar: kill outside labels — only inside or hidden */
+.emboss-dense.emboss-has-sidebar .emboss-bar-label-outside { display: none !important; }
 /* Dense hover name tag (no-sidebar mode) */
 .emboss-dense-tag {
   position: absolute;
