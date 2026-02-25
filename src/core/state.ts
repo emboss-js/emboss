@@ -46,6 +46,7 @@ export function createState(rows: Row[], startDate: Date): EmbossState {
     collapsed: {},
     selected: null,
     hoveredRow: null,
+    moveDependencies: false,
     settings: {
       markWeekends: false,
       excludeWeekends: false,

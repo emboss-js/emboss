@@ -24,6 +24,7 @@ export interface EmbossConfig {
   view?: EmbossState['view']
   startDate?: Date
   licenseKey?: string
+  moveDependencies?: boolean
   sidebar?: { columns?: string[] }
 }
 
@@ -89,6 +90,7 @@ export class Emboss implements EmbossInstance {
     if (config.view) this.state.view = config.view
     if (config.density) this.state.density = config.density
     if (config.theme) this.state.theme = config.theme
+    if (config.moveDependencies) this.state.moveDependencies = true
 
     // Recalculate scale with final view/density
     this.state.scale = calcScale(this.state.view, this.state.density, rows, startDate)

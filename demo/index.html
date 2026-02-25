@@ -39,6 +39,7 @@
     <button id="toggle-vivid">Vivid</button>
     <button id="toggle-weekends">Weekends</button>
     <span style="width:1px;background:#d1d5db;margin:0 4px;"></span>
+    <button id="toggle-sidebar" class="active">Sidebar</button>
     <button id="cols-both" class="active">Both Columns</button>
     <button id="cols-duration">Duration Only</button>
     <button id="cols-dates">Dates Only</button>
@@ -74,6 +75,8 @@
       view: 'week',
       density: 'working',
       startDate: projectStart,
+      licenseKey: 'EMB-OC-20991231-a8f3',
+      moveDependencies: true,
       extensions: [sidebar, milestones, columns, todayMarker, tooltips, dependencyArrows],
       sidebar: { columns: ['duration', 'dates'] },
     })
@@ -131,6 +134,28 @@
         chart.setSidebarColumns(cols)
       })
     }
+
+    // Sidebar toggle
+    let sidebarOn = true
+    document.getElementById('toggle-sidebar').addEventListener('click', () => {
+      sidebarOn = !sidebarOn
+      document.getElementById('toggle-sidebar').classList.toggle('active', sidebarOn)
+      if (sidebarOn) {
+        chart.use(sidebar)
+        chart.use(columns)
+        chart.render()
+      } else {
+        // Remove sidebar DOM elements before removing extensions
+        const container = document.getElementById('chart')
+        const sidebarHeader = container.querySelector('.emboss-sidebar-header')
+        const sidebarBody = container.querySelector('.emboss-sidebar')
+        if (sidebarHeader) sidebarHeader.remove()
+        if (sidebarBody) sidebarBody.remove()
+        container.classList.remove('emboss-has-sidebar', 'emboss-sidebar-collapsed')
+        chart.remove('columns')
+        chart.remove('sidebar')
+      }
+    })
 
     // Log drag events
     chart.on('onDragEnd', (row, update) => {

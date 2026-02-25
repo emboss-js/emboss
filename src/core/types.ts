@@ -46,6 +46,7 @@ export interface EmbossState {
   collapsed: Record<string, boolean>
   selected: string | null
   hoveredRow: string | null
+  moveDependencies: boolean
   settings: {
     markWeekends: boolean
     excludeWeekends: boolean
