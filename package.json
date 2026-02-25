@@ -23,6 +23,11 @@
       "types": "./dist/extensions/paid/organize/index.d.ts",
       "import": "./dist/extensions/paid/organize/index.mjs",
       "require": "./dist/extensions/paid/organize/index.js"
+    },
+    "./extensions/columns": {
+      "types": "./dist/extensions/paid/columns/index.d.ts",
+      "import": "./dist/extensions/paid/columns/index.mjs",
+      "require": "./dist/extensions/paid/columns/index.js"
     }
   },
   "scripts": {

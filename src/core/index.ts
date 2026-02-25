@@ -115,10 +115,12 @@ export class Emboss implements EmbossInstance {
   }
 
   use(ext: EmbossExtension): void {
-    this.extensions.push(ext)
+    // Gate paid extensions — skip entirely if license check fails
+    if (ext.type === 'paid' && ext.bundle && !checkLicense(ext.bundle)) {
+      return
+    }
 
-    // Soft license check for paid extensions
-    if (ext.type === 'paid' && ext.bundle) checkLicense(ext.bundle)
+    this.extensions.push(ext)
 
     // Merge renderers
     if (ext.sidebarRenderer) Object.assign(this.sidebarRenderers, ext.sidebarRenderer)
