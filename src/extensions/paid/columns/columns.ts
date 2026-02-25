@@ -63,7 +63,7 @@ function formatSingleDate(date: Date, isDense: boolean): string {
 // ─── Column widths ──────────────────────────────────────────────────────────
 
 const COL_WIDTHS: Record<string, number> = {
-  duration: 64,
+  duration: 76,
   dates: 120,
 }
 
@@ -318,8 +318,9 @@ export const columns: EmbossExtension = {
   text-align: center;
   flex-shrink: 0;
   white-space: nowrap;
+  box-sizing: border-box;
 }
-.emboss-sidebar-col-duration { width: 64px; }
+.emboss-sidebar-col-duration { width: 76px; }
 .emboss-sidebar-col-dates { width: 120px; }
 
 /* ─── Column data cells ────────────────────────────────────────────────── */
@@ -344,7 +345,7 @@ export const columns: EmbossExtension = {
   background: var(--emboss-surface-2);
 }
 .emboss-sidebar-col.duration {
-  width: 64px;
+  width: 76px;
   justify-content: flex-end;
 }
 .emboss-sidebar-col.dates {
@@ -402,7 +403,7 @@ export const columns: EmbossExtension = {
 /* ─── Dense mode column overrides ──────────────────────────────────────── */
 
 .emboss-dense .emboss-sidebar-col-duration,
-.emboss-dense .emboss-sidebar-col.duration { width: 48px; }
+.emboss-dense .emboss-sidebar-col.duration { width: 56px; }
 .emboss-dense .emboss-sidebar-col-dates,
 .emboss-dense .emboss-sidebar-col.dates { width: 96px; }
 .emboss-dense .emboss-sidebar-col { font-size: 10px; padding: 0 4px; }

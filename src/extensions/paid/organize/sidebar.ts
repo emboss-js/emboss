@@ -1227,6 +1227,7 @@ export const sidebar: EmbossExtension = {
   grid-row: 1;
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 0 12px 0 16px;
   background: var(--emboss-surface);
   border-right: 1px solid var(--emboss-border);
