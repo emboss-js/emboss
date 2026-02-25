@@ -116,9 +116,15 @@ export const columns: EmbossExtension = {
 
       const isCollapsed = container.classList.contains('emboss-sidebar-collapsed')
       const isDense = state.density === 'dense'
+      const isPresentation = state.density === 'presentation'
 
-      // Calculate extra width for columns
-      const extraWidth = activeColumns.reduce((sum, col) => sum + (COL_WIDTHS[col] || 0), 0)
+      // Density-aware column widths (must match CSS overrides)
+      const colWidths = isDense
+        ? { duration: 56, dates: 96 }
+        : isPresentation
+          ? { duration: 66, dates: 100 }
+          : COL_WIDTHS
+      const extraWidth = activeColumns.reduce((sum, col) => sum + (colWidths[col] || 0), 0)
 
       if (isCollapsed) {
         // Rail mode: no columns, reset sidebar width
@@ -127,7 +133,7 @@ export const columns: EmbossExtension = {
       }
 
       // Set sidebar width to accommodate columns
-      const baseWidth = isDense ? 220 : (state.density === 'presentation' ? 320 : 280)
+      const baseWidth = isDense ? 220 : 280
       container.style.setProperty('--emboss-sidebar-w', `${baseWidth + extraWidth}px`)
 
       // ── Augment header with column headers ──
@@ -324,7 +330,7 @@ export const columns: EmbossExtension = {
   box-sizing: border-box;
 }
 .emboss-sidebar-col-duration { width: 76px; }
-.emboss-sidebar-col-dates { width: 120px; }
+.emboss-sidebar-col-dates { width: 120px; text-align: left; }
 
 /* ─── Column data cells ────────────────────────────────────────────────── */
 
@@ -411,6 +417,14 @@ export const columns: EmbossExtension = {
 .emboss-dense .emboss-sidebar-col.dates { width: 96px; }
 .emboss-dense .emboss-sidebar-col { font-size: 10px; padding: 0 4px; }
 .emboss-dense .emboss-sidebar-header-col { font-size: 9px; padding: 6px 4px; }
+
+/* ─── Presentation mode column overrides ───────────────────────────────── */
+
+.emboss-presentation .emboss-sidebar-col-duration,
+.emboss-presentation .emboss-sidebar-col.duration { width: 66px; }
+.emboss-presentation .emboss-sidebar-col-dates,
+.emboss-presentation .emboss-sidebar-col.dates { width: 100px; }
+.emboss-presentation .emboss-sidebar-header-col { padding: 8px 4px; }
 
 /* ─── Rail mode: hide columns ──────────────────────────────────────────── */
 
