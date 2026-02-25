@@ -1618,7 +1618,7 @@ export const sidebar: EmbossExtension = {
 /* ─── Dense mode sidebar ───────────────────────────────────────────────── */
 
 .emboss-dense.emboss-has-sidebar {
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: var(--emboss-sidebar-w, 220px) 1fr;
 }
 .emboss-dense .emboss-sidebar-phase-name { font-size: 12px; }
 .emboss-dense .emboss-sidebar-name { font-size: 11px; }
@@ -1632,7 +1632,7 @@ export const sidebar: EmbossExtension = {
 /* ─── Presentation mode sidebar ────────────────────────────────────────── */
 
 .emboss-presentation.emboss-has-sidebar {
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: var(--emboss-sidebar-w, 320px) 1fr;
 }
 .emboss-presentation .emboss-sidebar-phase-name { font-size: 14px; font-weight: 700; }
 .emboss-presentation .emboss-sidebar-name { font-size: 13px; }

@@ -109,7 +109,10 @@ export const columns: EmbossExtension = {
 
     // ── afterRender: augment sidebar with columns ──
     emboss.on('afterRender', (container: HTMLElement, scale: Scale, state: EmbossState) => {
-      if (activeColumns.length === 0) return
+      if (activeColumns.length === 0) {
+        container.style.removeProperty('--emboss-sidebar-w')
+        return
+      }
 
       const isCollapsed = container.classList.contains('emboss-sidebar-collapsed')
       const isDense = state.density === 'dense'
