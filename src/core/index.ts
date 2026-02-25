@@ -203,6 +203,11 @@ export class Emboss implements EmbossInstance {
     // Let extensions reject the update
     const rejected = this.emit('onRowUpdate', row, changes)
     if (rejected === false) return
+    // Auto-derive status when progress changes
+    if (changes.progress !== undefined && !changes.status) {
+      if (changes.progress >= 100) changes.status = 'done'
+      else if (changes.progress > 0 && row.status !== 'active') changes.status = 'active'
+    }
     Object.assign(row, changes)
     this.state.scale = calcScale(this.state.view, this.state.density, this.state.rows, this.state.scale.startDate)
     this.render()

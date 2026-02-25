@@ -31,10 +31,19 @@ const SCALES: Record<string, Record<string, Omit<Scale, 'totalDays' | 'startDate
   },
 }
 
+// Minimum visible days per view — ensures the header shows meaningful time spans
+const MIN_DAYS: Record<string, number> = {
+  day: 30,
+  week: 42,
+  month: 90,
+  quarter: 180,
+}
+
 export function calcScale(view: string, density: string, rows: Row[], startDate: Date): Scale {
   const base = SCALES[density]?.[view] ?? SCALES.working.week
   const maxEnd = rows.reduce((m, r) => Math.max(m, r.start + r.duration), 0)
-  return { ...base, totalDays: Math.max(maxEnd + 7, 30), startDate }
+  const minDays = MIN_DAYS[view] ?? 30
+  return { ...base, totalDays: Math.max(maxEnd + 14, minDays), startDate }
 }
 
 export function createState(rows: Row[], startDate: Date): EmbossState {

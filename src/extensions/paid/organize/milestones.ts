@@ -86,6 +86,22 @@ export const milestones: EmbossExtension = {
   type: 'paid',
   bundle: 'organize',
 
+  // Auto-derive milestone progress/status from dependencies
+  enrichRows(rows) {
+    return rows.map(r => {
+      if (r.type !== 'milestone' || !r.dependencies.length) return r
+      const deps = r.dependencies
+        .map(id => rows.find(d => d.id === id))
+        .filter(Boolean) as Row[]
+      if (!deps.length) return r
+      const avgProgress = Math.round(deps.reduce((sum, d) => sum + d.progress, 0) / deps.length)
+      const allDone = deps.every(d => d.status === 'done')
+      const anyActive = deps.some(d => d.status === 'active' || d.status === 'done')
+      const status = allDone ? 'done' : anyActive ? 'active' : r.status
+      return { ...r, progress: avgProgress, status }
+    })
+  },
+
   barRenderer: {
     milestone: renderMilestoneBar,
   },
