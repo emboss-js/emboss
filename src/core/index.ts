@@ -24,6 +24,7 @@ export interface EmbossConfig {
   view?: EmbossState['view']
   startDate?: Date
   licenseKey?: string
+  sidebar?: { columns?: string[] }
 }
 
 const CORE_STYLES = `
@@ -55,6 +56,7 @@ const CORE_STYLES = `
 
 export class Emboss implements EmbossInstance {
   state: EmbossState
+  readonly options: EmbossConfig
   get rows(): Row[] { return this.state.rows }
   private container: HTMLElement
   private extensions: EmbossExtension[] = []
@@ -77,6 +79,7 @@ export class Emboss implements EmbossInstance {
     const el = document.querySelector(selector)
     if (!el) throw new Error(`Emboss: no element found for "${selector}"`)
     this.container = el as HTMLElement
+    this.options = config
 
     // Project start: config.startDate or today
     const startDate = config.startDate ? new Date(config.startDate) : new Date()

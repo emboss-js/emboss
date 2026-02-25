@@ -31,5 +31,8 @@ export { todayMarker, tooltips, dependencyArrows } from './extensions/free/index
 // Organize bundle — named export
 export * as organize from './extensions/paid/organize/index'
 
+// Columns bundle — named export
+export * as columnBundle from './extensions/paid/columns/index'
+
 // License
 export { setLicense } from './license'

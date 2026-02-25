@@ -124,12 +124,16 @@ function renderTaskCell(row: Row, state: EmbossState): HTMLElement {
   addChild.textContent = '+'
   addChild.dataset.addParent = row.id
 
+  const nameArea = document.createElement('div')
+  nameArea.className = 'emboss-sidebar-name-area'
+  nameArea.appendChild(name)
+  if (row.assignee) nameArea.appendChild(createAvatar(row, _isVivid, 22))
+  nameArea.appendChild(addChild)
+  nameArea.appendChild(del)
+
   el.prepend(createGrip())
   el.appendChild(dot)
-  el.appendChild(name)
-  if (row.assignee) el.appendChild(createAvatar(row, _isVivid, 22))
-  el.appendChild(addChild)
-  el.appendChild(del)
+  el.appendChild(nameArea)
   return el
 }
 
@@ -172,13 +176,17 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   addChild.textContent = '+'
   addChild.dataset.addParent = row.id
 
+  const nameArea = document.createElement('div')
+  nameArea.className = 'emboss-sidebar-name-area'
+  nameArea.appendChild(name)
+  nameArea.appendChild(badge)
+  nameArea.appendChild(addChild)
+  nameArea.appendChild(del)
+
   el.prepend(createGrip())
   el.appendChild(chevron)
   el.appendChild(pill)
-  el.appendChild(name)
-  el.appendChild(badge)
-  el.appendChild(addChild)
-  el.appendChild(del)
+  el.appendChild(nameArea)
   return el
 }
 
@@ -204,11 +212,15 @@ function renderSubtaskCell(row: Row, state: EmbossState): HTMLElement {
   del.className = 'emboss-sidebar-delete'
   del.textContent = '\u00d7'
 
+  const nameArea = document.createElement('div')
+  nameArea.className = 'emboss-sidebar-name-area'
+  nameArea.appendChild(name)
+  if (row.assignee) nameArea.appendChild(createAvatar(row, _isVivid, 22))
+  nameArea.appendChild(del)
+
   el.prepend(createGrip())
   el.appendChild(dot)
-  el.appendChild(name)
-  if (row.assignee) el.appendChild(createAvatar(row, _isVivid, 22))
-  el.appendChild(del)
+  el.appendChild(nameArea)
   return el
 }
 
@@ -234,10 +246,14 @@ function renderMilestoneCell(row: Row, state: EmbossState): HTMLElement {
   del.className = 'emboss-sidebar-delete'
   del.textContent = '\u00d7'
 
+  const nameArea = document.createElement('div')
+  nameArea.className = 'emboss-sidebar-name-area'
+  nameArea.appendChild(name)
+  nameArea.appendChild(del)
+
   el.prepend(createGrip())
   el.appendChild(diamond)
-  el.appendChild(name)
-  el.appendChild(del)
+  el.appendChild(nameArea)
   return el
 }
 
@@ -1094,20 +1110,25 @@ export const sidebar: EmbossExtension = {
       // ── Populate sidebar header ──
       sidebarHeaderEl.innerHTML = ''
 
+      const headerArea = document.createElement('div')
+      headerArea.className = 'emboss-sidebar-header-area'
+
       const label = document.createElement('span')
       label.className = 'emboss-sidebar-header-label'
       label.textContent = 'Tasks'
-      sidebarHeaderEl.appendChild(label)
+      headerArea.appendChild(label)
 
       const addBtn = document.createElement('button')
       addBtn.className = 'emboss-sidebar-add-btn'
       addBtn.textContent = '+'
-      sidebarHeaderEl.appendChild(addBtn)
+      headerArea.appendChild(addBtn)
 
       const collapseBtn = document.createElement('button')
       collapseBtn.className = 'emboss-sidebar-collapse'
       collapseBtn.textContent = sidebarCollapsed ? '\u25B6' : '\u25C0'
-      sidebarHeaderEl.appendChild(collapseBtn)
+      headerArea.appendChild(collapseBtn)
+
+      sidebarHeaderEl.appendChild(headerArea)
 
       // ── Render cells ──
       // If user is actively typing in an input, don't destroy it
@@ -1136,6 +1157,59 @@ export const sidebar: EmbossExtension = {
           }
         }
       }
+
+      // ── Inline timeline phases (rail mode only) ──
+      // When sidebar is collapsed to rail, phase rows get inline labels on the timeline
+      // so users can still see phase names and toggle collapse without the full sidebar.
+      const barsEl = container.querySelector('.emboss-bars') as HTMLElement
+      if (barsEl) {
+        barsEl.querySelectorAll('.emboss-inline-phase').forEach(el => el.remove())
+
+        if (sidebarCollapsed) {
+          const isDense = state.density === 'dense'
+          visibleRows.forEach((row, index) => {
+            if (row.type !== 'phase') return
+
+            const el = document.createElement('div')
+            el.className = 'emboss-inline-phase'
+            el.dataset.id = row.id
+            el.style.top = `${index * scale.rowHeight}px`
+            el.style.height = `${scale.rowHeight}px`
+
+            const chevron = document.createElement('span')
+            chevron.className = 'emboss-inline-chevron'
+            chevron.textContent = state.collapsed[row.id] ? '\u25B6' : '\u25BC'
+
+            const name = document.createElement('span')
+            name.className = 'emboss-inline-phase-name'
+            name.textContent = row.name
+            if (_isVivid) {
+              const c = resolveVividColor(row, state.rows)
+              if (c) name.style.color = c
+            }
+
+            el.appendChild(chevron)
+            el.appendChild(name)
+
+            if (!isDense) {
+              const childCount = row.children?.length || 0
+              if (childCount > 0) {
+                const count = document.createElement('span')
+                count.className = 'emboss-inline-phase-count'
+                count.textContent = String(childCount)
+                el.appendChild(count)
+              }
+            }
+
+            chevron.addEventListener('click', (e) => {
+              e.stopPropagation()
+              emboss.toggleCollapse(row.id)
+            })
+
+            barsEl.appendChild(el)
+          })
+        }
+      }
     })
   },
 
@@ -1153,10 +1227,16 @@ export const sidebar: EmbossExtension = {
   grid-row: 1;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 12px 0 16px;
   background: var(--emboss-surface);
   border-right: 1px solid var(--emboss-border);
   border-bottom: 1px solid var(--emboss-border);
+}
+.emboss-sidebar-header-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 .emboss-sidebar-header-label {
   font-size: 12px;
@@ -1247,6 +1327,14 @@ export const sidebar: EmbossExtension = {
   white-space: nowrap;
   overflow: hidden;
   position: relative;
+}
+.emboss-sidebar-name-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  min-width: 0;
 }
 
 /* Status dot — grayscale default, vivid color set inline */
@@ -1636,6 +1724,7 @@ export const sidebar: EmbossExtension = {
 .emboss-sidebar-collapsed .emboss-sidebar-add-btn { display: none; }
 .emboss-sidebar-collapsed .emboss-sidebar { width: 48px; }
 .emboss-sidebar-collapsed .emboss-sidebar-header { padding: 0; justify-content: center; }
+.emboss-sidebar-collapsed .emboss-sidebar-header-area { flex: none; }
 
 /* Rail cells: center content, no padding */
 .emboss-sidebar-rail-cell {
@@ -1682,5 +1771,54 @@ export const sidebar: EmbossExtension = {
   grid-template-columns: 48px 1fr;
 }
 .emboss-sidebar-collapsed.emboss-presentation .emboss-sidebar { width: 48px; }
+
+/* ─── Inline timeline phases (rail mode) ───────────────────────────────── */
+
+.emboss-inline-phase {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 12px;
+  position: absolute;
+  left: 0;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.emboss-inline-chevron {
+  font-size: 10px;
+  color: var(--emboss-ink-4);
+  cursor: pointer;
+  width: 16px;
+  text-align: center;
+  user-select: none;
+}
+.emboss-inline-chevron:hover {
+  color: var(--emboss-ink-2);
+}
+
+.emboss-inline-phase-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--emboss-ink-2);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.emboss-dark .emboss-inline-phase-name {
+  color: var(--emboss-ink);
+}
+
+.emboss-inline-phase-count {
+  font-size: 11px;
+  color: var(--emboss-ink-4);
+  background: var(--emboss-surface-2);
+  padding: 1px 6px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* Dense: smaller inline phase labels, no count badge */
+.emboss-dense .emboss-inline-phase-name { font-size: 11px; }
+.emboss-dense .emboss-inline-chevron { font-size: 8px; }
 `,
 }

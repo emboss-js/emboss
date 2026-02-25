@@ -38,6 +38,11 @@
     <button id="toggle-dark">Dark Mode</button>
     <button id="toggle-vivid">Vivid</button>
     <button id="toggle-weekends">Weekends</button>
+    <span style="width:1px;background:#d1d5db;margin:0 4px;"></span>
+    <button id="cols-both" class="active">Both Columns</button>
+    <button id="cols-duration">Duration Only</button>
+    <button id="cols-dates">Dates Only</button>
+    <button id="cols-none">No Columns</button>
   </div>
   <div id="chart"></div>
 
@@ -45,6 +50,7 @@
     import { Emboss } from '../src/index.ts'
     import { todayMarker, tooltips, dependencyArrows } from '../src/extensions/free/index.ts'
     import { sidebar, milestones } from '../src/extensions/paid/organize/index.ts'
+    import { columns } from '../src/extensions/paid/columns/index.ts'
 
     const rows = [
       { id: 'p1', type: 'phase', name: 'Design Phase', depth: 0, parentId: null, collapsed: false, hidden: false, start: 0, duration: 20, progress: 75, status: 'active', dependencies: [], children: ['t1','t2','t3','m1'] },
@@ -68,7 +74,8 @@
       view: 'week',
       density: 'working',
       startDate: projectStart,
-      extensions: [sidebar, milestones, todayMarker, tooltips, dependencyArrows],
+      extensions: [sidebar, milestones, columns, todayMarker, tooltips, dependencyArrows],
+      sidebar: { columns: ['duration', 'dates'] },
     })
 
     // View buttons
@@ -114,6 +121,16 @@
       chart.state.settings.markWeekends = weekends
       chart.render()
     })
+
+    // Column toggles
+    const colBtns = { 'cols-both': ['duration','dates'], 'cols-duration': ['duration'], 'cols-dates': ['dates'], 'cols-none': [] }
+    for (const [id, cols] of Object.entries(colBtns)) {
+      document.getElementById(id).addEventListener('click', () => {
+        Object.keys(colBtns).forEach(k => document.getElementById(k).classList.remove('active'))
+        document.getElementById(id).classList.add('active')
+        chart.setSidebarColumns(cols)
+      })
+    }
 
     // Log drag events
     chart.on('onDragEnd', (row, update) => {
