@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { setLicense, checkLicense, resetLicense } from '../src/license'
+import { setLicense, checkLicense, resetLicense, generateKey } from '../src/license'
 import { Emboss } from '../src/core/index'
 import { todayMarker } from '../src/extensions/free/today-marker'
 import { sidebar } from '../src/extensions/paid/organize/sidebar'
@@ -42,19 +42,19 @@ afterEach(() => {
 // ─── Key parsing tests ──────────────────────────────────────────────────────
 
 describe('Key parsing', () => {
-  it('valid key EMB-O-20991231-a8f3 unlocks organize', () => {
-    setLicense('EMB-O-20991231-a8f3')
+  it('valid key EMB-O-20991231 unlocks organize', () => {
+    setLicense(generateKey('O', '20991231'))
     expect(checkLicense('organize')).toBe(true)
   })
 
-  it('valid key EMB-OC-20991231-b2e1 unlocks organize + columns', () => {
-    setLicense('EMB-OC-20991231-b2e1')
+  it('valid key EMB-OC-20991231 unlocks organize + columns', () => {
+    setLicense(generateKey('OC', '20991231'))
     expect(checkLicense('organize')).toBe(true)
     expect(checkLicense('columns')).toBe(true)
   })
 
-  it('valid key EMB-OCSPA-20991231-f4d7 unlocks all bundles', () => {
-    setLicense('EMB-OCSPA-20991231-f4d7')
+  it('valid key EMB-OCSPA-20991231 unlocks all bundles', () => {
+    setLicense(generateKey('OCSPA', '20991231'))
     expect(checkLicense('organize')).toBe(true)
     expect(checkLicense('columns')).toBe(true)
     expect(checkLicense('people')).toBe(true)
@@ -68,13 +68,13 @@ describe('Key parsing', () => {
     expect(checkLicense('columns')).toBe(false)
   })
 
-  it('missing flag — EMB-O-20991231-a8f3 does not unlock columns (no C)', () => {
-    setLicense('EMB-O-20991231-a8f3')
+  it('missing flag — EMB-O does not unlock columns (no C)', () => {
+    setLicense(generateKey('O', '20991231'))
     expect(checkLicense('columns')).toBe(false)
   })
 
-  it('columns without organize — EMB-C-20991231-a8f3 does not unlock columns', () => {
-    setLicense('EMB-C-20991231-a8f3')
+  it('columns without organize — EMB-C does not unlock columns', () => {
+    setLicense(generateKey('C', '20991231'))
     expect(checkLicense('columns')).toBe(false)
   })
 
@@ -108,7 +108,7 @@ describe('Key parsing', () => {
 
   it('expired key still returns true but warns', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    setLicense('EMB-O-20200101-a8f3')
+    setLicense(generateKey('O', '20200101'))
     expect(checkLicense('organize')).toBe(true)
     expect(warnSpy).toHaveBeenCalledOnce()
     expect(warnSpy.mock.calls[0][0]).toContain('expired')
@@ -116,7 +116,11 @@ describe('Key parsing', () => {
   })
 
   it('case-insensitive flag matching', () => {
-    setLicense('EMB-oc-20991231-a8f3')
+    // generateKey uppercases internally, but we lowercase the flags in the key string
+    // to test case-insensitive matching
+    const key = generateKey('OC', '20991231')
+    const lowerKey = key.replace('EMB-OC-', 'EMB-oc-')
+    setLicense(lowerKey)
     expect(checkLicense('organize')).toBe(true)
     expect(checkLicense('columns')).toBe(true)
   })
@@ -141,7 +145,7 @@ describe('Extension gating', () => {
   it('valid O key — organize registers, columns skips', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const chart = makeChart({
-      licenseKey: 'EMB-O-20991231-a8f3',
+      licenseKey: generateKey('O', '20991231'),
       extensions: [sidebar, columns],
     })
 
@@ -156,7 +160,7 @@ describe('Extension gating', () => {
 
   it('valid OC key — both organize and columns register', () => {
     const chart = makeChart({
-      licenseKey: 'EMB-OC-20991231-b2e1',
+      licenseKey: generateKey('OC', '20991231'),
       extensions: [sidebar, columns],
     })
 
@@ -216,7 +220,7 @@ describe('Extension gating', () => {
       init() { initCalled = true },
     }
 
-    const chart = makeChart({ licenseKey: 'EMB-O-20991231-a8f3', extensions: [paidExt] })
+    const chart = makeChart({ licenseKey: generateKey('O', '20991231'), extensions: [paidExt] })
     expect(initCalled).toBe(true)
 
     chart.destroy()
@@ -244,7 +248,7 @@ describe('Integration — chart renders correctly under license scenarios', () =
 
   it('renders with organize extension (valid O key)', () => {
     const chart = makeChart({
-      licenseKey: 'EMB-O-20991231-a8f3',
+      licenseKey: generateKey('O', '20991231'),
       extensions: [todayMarker, sidebar],
     })
 
@@ -261,7 +265,7 @@ describe('Integration — chart renders correctly under license scenarios', () =
 
   it('renders with organize + columns (valid OC key)', () => {
     const chart = makeChart({
-      licenseKey: 'EMB-OC-20991231-b2e1',
+      licenseKey: generateKey('OC', '20991231'),
       extensions: [todayMarker, sidebar, columns],
     })
 
@@ -276,7 +280,7 @@ describe('Integration — chart renders correctly under license scenarios', () =
 
   it('use() at runtime respects license gating', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const chart = makeChart({ licenseKey: 'EMB-O-20991231-a8f3' })
+    const chart = makeChart({ licenseKey: generateKey('O', '20991231') })
 
     // Runtime use — columns should be gated (no C flag)
     chart.use(columns)
@@ -290,5 +294,47 @@ describe('Integration — chart renders correctly under license scenarios', () =
 
     chart.destroy()
     warnSpy.mockRestore()
+  })
+})
+
+// ─── Checksum validation tests ─────────────────────────────────────────────
+
+describe('Checksum validation', () => {
+  it('valid checksum passes', () => {
+    setLicense(generateKey('O', '20991231'))
+    expect(checkLicense('organize')).toBe(true)
+  })
+
+  it('tampered checksum (correct format, wrong hex) fails and warns once', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    setLicense('EMB-O-20991231-00000000')
+    expect(checkLicense('organize')).toBe(false)
+    expect(checkLicense('organize')).toBe(false)
+    expect(warnSpy).toHaveBeenCalledOnce()
+    expect(warnSpy.mock.calls[0][0]).toContain('Invalid license key checksum')
+    warnSpy.mockRestore()
+  })
+
+  it('tampered flags (changed O→OC but kept old checksum) fails', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    // Generate a valid O key, then swap flags to OC without updating checksum
+    const validKey = generateKey('O', '20991231')
+    const checksum = validKey.split('-').pop()
+    setLicense(`EMB-OC-20991231-${checksum}`)
+    expect(checkLicense('organize')).toBe(false)
+    warnSpy.mockRestore()
+  })
+
+  it('generateKey() produces keys that checkLicense() accepts', () => {
+    const keys = [
+      generateKey('O', '20991231'),
+      generateKey('OC', '20991231'),
+      generateKey('OCSPA', '20991231'),
+    ]
+    for (const key of keys) {
+      resetLicense()
+      setLicense(key)
+      expect(checkLicense('organize')).toBe(true)
+    }
   })
 })

@@ -8,7 +8,7 @@ import { describe, it, expect, afterEach } from 'vitest'
 import { Emboss } from '../src/core/index'
 import { sidebar } from '../src/extensions/paid/organize/sidebar'
 import { milestones } from '../src/extensions/paid/organize/milestones'
-import { resetLicense } from '../src/license'
+import { resetLicense, generateKey } from '../src/license'
 import type { Row, EmbossExtension } from '../src/core/types'
 
 const baseRows: Row[] = [
@@ -27,7 +27,7 @@ function makeChart(extensions: EmbossExtension[] = [sidebar, milestones]) {
   return new Emboss('#chart', JSON.parse(JSON.stringify(baseRows)), {
     view: 'week',
     startDate: new Date(),
-    licenseKey: 'EMB-O-20991231-a8f3',
+    licenseKey: generateKey('O', '20991231'),
     extensions,
   })
 }

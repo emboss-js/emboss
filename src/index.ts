@@ -28,4 +28,4 @@ export type {
 export { todayMarker, tooltips, dependencyArrows } from './extensions/free/index'
 
 // License
-export { setLicense } from './license'
+export { setLicense, generateKey } from './license'

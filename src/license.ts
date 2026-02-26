@@ -20,6 +20,29 @@ const BUNDLE_FLAGS: Record<string, string> = {
   analyze: 'A',
 }
 
+const SALT = 'emboss-2026'
+
+function crc32(str: string): string {
+  let crc = 0xFFFFFFFF
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i)
+    for (let j = 0; j < 8; j++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xEDB88320 : 0)
+    }
+  }
+  return ((crc ^ 0xFFFFFFFF) >>> 0).toString(16).padStart(8, '0')
+}
+
+function computeChecksum(flags: string, expiry: string): string {
+  return crc32(SALT + '-' + flags.toUpperCase() + '-' + expiry)
+}
+
+export function generateKey(flags: string, expiry: string): string {
+  const upper = flags.toUpperCase()
+  const checksum = computeChecksum(upper, expiry)
+  return `EMB-${upper}-${expiry}-${checksum}`
+}
+
 export function setLicense(key: string): void {
   licenseKey = key
 }
@@ -59,6 +82,16 @@ export function checkLicense(bundle: string): boolean {
 
   const [, flags, expiry] = match
   const upperFlags = flags.toUpperCase()
+
+  const expectedChecksum = computeChecksum(upperFlags, expiry)
+  if (match[3].toLowerCase() !== expectedChecksum) {
+    if (!warned.has('checksum')) {
+      warned.add('checksum')
+      console.warn('[Emboss] Invalid license key checksum.')
+    }
+    return false
+  }
+
   const flag = BUNDLE_FLAGS[bundle]
 
   if (!flag) return false // unknown bundle
