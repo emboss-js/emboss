@@ -412,7 +412,7 @@ import Base from '../layouts/Base.astro';
       <div class="demo-sidebar-wrap">
         <div class="demo-sidebar">
           <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#3b82f6"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
             <span class="demo-sb-count">3</span>
           </div>
@@ -429,7 +429,7 @@ import Base from '../layouts/Base.astro';
             <div class="demo-sb-name">UI Components</div>
           </div>
           <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#a855f7"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#c084fc,#a855f7)"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Engineering</div>
             <span class="demo-sb-count">2</span>
           </div>
@@ -442,7 +442,7 @@ import Base from '../layouts/Base.astro';
             <div class="demo-sb-name">Extension API</div>
           </div>
           <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#f59e0b"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#fbbf24,#f59e0b)"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Testing</div>
             <span class="demo-sb-count">4</span>
           </div>
@@ -482,7 +482,7 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-hdr-dur">Duration</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#3b82f6"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
             <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
             <span class="demo-col-dur">&mdash;</span>
           </div>
@@ -497,7 +497,7 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-dur demo-col-editing">12<span class="blink-cursor">&nbsp;</span></span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#a855f7"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#c084fc,#a855f7)"></div>
             <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Engineering</span>
             <span class="demo-col-dur">&mdash;</span>
           </div>
@@ -530,7 +530,7 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-hdr-date">Dates</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#ec4899"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#f472b6,#ec4899)"></div>
             <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
             <span class="demo-col-date">Jan 6 &ndash; Feb 14</span>
           </div>
@@ -545,7 +545,7 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-date demo-col-editing">Jan 13 &ndash; Jan 28</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#22c55e"></div>
+            <div class="demo-sb-pill" style="background:linear-gradient(180deg,#4ade80,#22c55e)"></div>
             <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Engineering</span>
             <span class="demo-col-date">Feb 3 &ndash; Apr 11</span>
           </div>
@@ -601,7 +601,7 @@ import Base from '../layouts/Base.astro';
       <div style="padding:24px;min-height:180px">
         <!-- Simulated sidebar rows, one in edit state with vivid phase colors -->
         <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px">
-          <div class="demo-sb-pill" style="background:#3b82f6"></div>
+          <div class="demo-sb-pill" style="background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div>
           <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
           <span class="demo-sb-count">3</span>
         </div>
@@ -1068,8 +1068,8 @@ import Base from '../layouts/Base.astro';
   :global(.demo-milestone-item) {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
   }
-  :global(.demo-diamond-lg) {
-    width: 36px; height: 36px; position: relative;
+  :global(.g-diamond.demo-diamond-lg) {
+    width: 36px; height: 36px; position: relative; top: auto;
   }
   :global(.demo-milestone-pct) {
     font-family: var(--font-mono); font-size: 12px; font-weight: 600;
