@@ -254,7 +254,24 @@ import Base from '../layouts/Base.astro';
           <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#22d3ee" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#a855f7,#c084fc)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#a855f7" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
-          <div style="display:flex;gap:6px;margin-top:12px;padding:0 4px">
+          <!-- Vivid milestone diamonds -->
+          <div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:0 4px">
+            <div class="g-diamond" style="border-color:#3b82f6;position:relative;top:0">
+              <div class="g-diamond-fill" style="height:100%;background:#3b82f6"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <div class="g-diamond" style="border-color:#a855f7;position:relative;top:0">
+              <div class="g-diamond-fill" style="height:60%;background:#a855f7"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <div class="g-diamond" style="border-color:#f59e0b;position:relative;top:0">
+              <div class="g-diamond-fill" style="height:30%;background:#f59e0b"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span style="font-size:11px;color:var(--emboss-ash);margin-left:4px">Phase-colored milestones</span>
+          </div>
+          <!-- Color palette -->
+          <div style="display:flex;gap:6px;margin-top:14px;padding:0 4px">
             <span class="demo-color-dot" style="background:#3b82f6"></span>
             <span class="demo-color-dot" style="background:#a855f7"></span>
             <span class="demo-color-dot" style="background:#ec4899"></span>
@@ -352,6 +369,79 @@ import Base from '../layouts/Base.astro';
             </div>
           </div>
           <p class="density-label" id="densityLabel" style="position:absolute;bottom:8px;right:16px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">44px ROWS &middot; 26px BARS &middot; DRAG HANDLES ON</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── MILESTONES ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge free">Core</span>
+      <h3>Milestone Diamonds</h3>
+      <p>Point-in-time markers for deadlines and checkpoints. Progress fills from bottom to top with a glass highlight. They scale up on hover. Done diamonds dim to 45%.</p>
+      <div class="feature-detail">
+        20&times;20px rotated square with 3px rounded corners. 2.5px border. Grayscale by default — enable Vivid mode for phase-colored borders and fills. Hover: scale 1.2&times;.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div style="padding:32px 24px;min-height:180px">
+        <!-- Progress fill showcase — grayscale -->
+        <div class="demo-milestone-row">
+          <div class="demo-milestone-item">
+            <div class="g-diamond demo-diamond-lg" style="border-color:#6d6358;">
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span class="demo-milestone-pct">0%</span>
+            <span class="demo-milestone-lbl">Upcoming</span>
+          </div>
+          <div class="demo-milestone-item">
+            <div class="g-diamond demo-diamond-lg" style="border-color:#6d6358;">
+              <div class="g-diamond-fill" style="height:25%;background:#574f45"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span class="demo-milestone-pct">25%</span>
+            <span class="demo-milestone-lbl">Started</span>
+          </div>
+          <div class="demo-milestone-item">
+            <div class="g-diamond demo-diamond-lg" style="border-color:#6d6358;">
+              <div class="g-diamond-fill" style="height:60%;background:#574f45"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span class="demo-milestone-pct">60%</span>
+            <span class="demo-milestone-lbl">In progress</span>
+          </div>
+          <div class="demo-milestone-item">
+            <div class="g-diamond demo-diamond-lg" style="border-color:#6d6358;">
+              <div class="g-diamond-fill" style="height:85%;background:#574f45"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span class="demo-milestone-pct">85%</span>
+            <span class="demo-milestone-lbl">Almost there</span>
+          </div>
+          <div class="demo-milestone-item">
+            <div class="g-diamond demo-diamond-lg done" style="border-color:#9d9488;">
+              <div class="g-diamond-fill" style="height:100%;background:#9d9488"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span class="demo-milestone-pct">100%</span>
+            <span class="demo-milestone-lbl">Done</span>
+          </div>
+        </div>
+        <!-- Contextual: diamonds on a timeline -->
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--emboss-border)">
+          <div class="g-row" style="height:36px">
+            <div class="g-bar bar-done" style="left:12px;width:100px;height:22px;top:7px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div>
+            <div class="g-diamond" style="left:122px;border-color:#9d9488;top:8px">
+              <div class="g-diamond-fill" style="height:100%;background:#9d9488"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <div class="g-bar" style="left:156px;width:140px;height:22px;top:7px"><div class="g-track"></div><div class="g-fill fill-active" style="width:98px"></div><span class="g-label inside" style="font-size:10.5px">Architecture &middot; 70%</span></div>
+            <div class="g-diamond" style="left:306px;border-color:#6d6358;top:8px">
+              <div class="g-diamond-fill" style="height:60%;background:#574f45"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -534,50 +624,6 @@ import Base from '../layouts/Base.astro';
     </div>
   </div>
 
-  <!-- ──── MILESTONES ──── -->
-  <div class="feature-row">
-    <div class="feature-text">
-      <span class="feature-badge paid">Organize</span>
-      <h3>Milestone Diamonds</h3>
-      <p>Point-in-time markers for deadlines and checkpoints. Phase-colored borders, progress fill from bottom to top, glass highlight. They scale up on hover.</p>
-      <div class="feature-detail">
-        20&times;20px rotated square with 3px rounded corners. 2.5px border in phase color. Done state: 45% opacity. Hover: scale 1.2&times;.
-      </div>
-    </div>
-    <div class="feature-visual">
-      <div class="demo-chart" style="min-height:180px">
-        <div class="g-row">
-          <div class="g-bar bar-done" style="left:20px;width:140px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div>
-          <!-- Done milestone -->
-          <div class="g-diamond done" style="left:172px;border-color:#9d9488;">
-            <div class="g-diamond-fill" style="height:100%;background:#9d9488"></div>
-            <div class="g-diamond-glass"></div>
-          </div>
-        </div>
-        <div class="g-row">
-          <div class="g-bar" style="left:60px;width:200px"><div class="g-track"></div><div class="g-fill fill-active" style="width:140px"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div>
-          <!-- Active milestone (partial fill) -->
-          <div class="g-diamond" style="left:272px;border-color:#3b82f6;">
-            <div class="g-diamond-fill" style="height:60%;background:#3b82f6"></div>
-            <div class="g-diamond-glass"></div>
-          </div>
-        </div>
-        <div class="g-row">
-          <div class="g-bar bar-upcoming" style="left:180px;width:140px"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div>
-          <!-- Upcoming milestone (empty) -->
-          <div class="g-diamond" style="left:332px;border-color:#22d3ee;">
-            <div class="g-diamond-glass"></div>
-          </div>
-        </div>
-        <div class="g-row">
-          <span class="g-label outside" style="left:178px;top:6px;font-style:italic;font-size:10.5px">Design Review</span>
-          <span class="g-label outside" style="left:278px;top:6px;font-style:italic;font-size:10.5px">Alpha</span>
-          <span class="g-label outside" style="left:338px;top:6px;font-style:italic;font-size:10.5px">Beta</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ──── INLINE EDITING ──── -->
   <div class="feature-row reverse">
     <div class="feature-text">
@@ -645,11 +691,11 @@ import Base from '../layouts/Base.astro';
         <tr><td>Today marker</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr><td>Hover tooltips</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr><td>Dependency arrows</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
+        <tr><td>Milestone diamonds</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr class="group-row"><td colspan="4">Structure</td></tr>
         <tr><td>Sidebar navigation</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Rail mode (compact sidebar)</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Phase grouping & collapse</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
-        <tr><td>Milestone diamonds</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Inline editing</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Duration & date columns</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Drag to reorder rows</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
@@ -741,7 +787,7 @@ import Base from '../layouts/Base.astro';
     letter-spacing: 0.06em; text-transform: uppercase;
     padding: 4px 12px; border-radius: 100px; margin-bottom: 16px;
   }
-  :global(.feature-badge.free) { background: var(--emboss-patina); color: white; }
+  :global(.feature-badge.free) { background: linear-gradient(135deg, #574f45, #6d6358); color: white; }
   :global(.feature-badge.paid) { background: var(--emboss-gradient); color: white; }
   :global(.feature-detail) {
     font-size: 13.5px; color: var(--emboss-ash); line-height: 1.6;
@@ -992,6 +1038,25 @@ import Base from '../layouts/Base.astro';
     background: linear-gradient(180deg, rgba(255,255,255,0.45), transparent);
   }
   :global(.g-diamond.done) { opacity: 0.45; }
+
+  /* Milestone progress showcase */
+  :global(.demo-milestone-row) {
+    display: flex; justify-content: center; gap: 32px; align-items: flex-start;
+  }
+  :global(.demo-milestone-item) {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  :global(.demo-diamond-lg) {
+    width: 36px; height: 36px; position: relative;
+  }
+  :global(.demo-milestone-pct) {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    color: var(--emboss-coal); letter-spacing: -0.02em;
+  }
+  :global([data-theme="dark"] .demo-milestone-pct) { color: var(--emboss-white); }
+  :global(.demo-milestone-lbl) {
+    font-size: 11px; color: var(--emboss-ash);
+  }
 
   /* ═══════════════════════════════════════════
      DEMO: VIEWS
