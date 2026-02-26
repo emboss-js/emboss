@@ -233,59 +233,6 @@ import Base from '../layouts/Base.astro';
     </div>
   </div>
 
-  <!-- ──── VIVID ──── -->
-  <div class="feature-row reverse">
-    <div class="feature-text">
-      <span class="feature-badge paid">Organize</span>
-      <h3>Vivid Mode</h3>
-      <p>Color-coded bars that auto-assign from an 8-color palette. Each phase gets its own accent — blue, purple, pink, amber, green, red, cyan, orange — and every child task inherits the phase color.</p>
-      <div class="feature-detail">
-        Phase pills, status dots, milestone borders, and bar fills all respond to the phase color. Subtasks render at 70% opacity of the parent. Override any color with the inline color picker.
-      </div>
-    </div>
-    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
-      <div class="demo-theme-wrap">
-        <div class="demo-theme-tabs">
-          <button class="demo-theme-tab" onclick="setDemoTheme('light',this)">Grayscale</button>
-          <button class="demo-theme-tab vivid-active" onclick="setDemoTheme('vivid',this)">&#10022; Vivid</button>
-        </div>
-        <div class="demo-theme-chart" id="vividDemo">
-          <div class="g-row"><div class="g-bar" style="left:12px;width:170px;"><div class="g-track"></div><div class="g-fill fill-vivid-done full" style="width:100%" id="vd1"></div><span class="g-label inside">Design System</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#2fa8d4" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#a855f7,#c084fc)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#a855f7" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
-          <!-- Vivid milestone diamonds -->
-          <div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:0 4px">
-            <div class="g-diamond" style="border-color:#3b82f6;position:relative;top:0">
-              <div class="g-diamond-fill" style="height:100%;background:#3b82f6"></div>
-              <div class="g-diamond-glass"></div>
-            </div>
-            <div class="g-diamond" style="border-color:#a855f7;position:relative;top:0">
-              <div class="g-diamond-fill" style="height:60%;background:#a855f7"></div>
-              <div class="g-diamond-glass"></div>
-            </div>
-            <div class="g-diamond" style="border-color:#f59e0b;position:relative;top:0">
-              <div class="g-diamond-fill" style="height:30%;background:#f59e0b"></div>
-              <div class="g-diamond-glass"></div>
-            </div>
-            <span style="font-size:11px;color:var(--emboss-ash);margin-left:4px">Phase-colored milestones</span>
-          </div>
-          <!-- Color palette -->
-          <div style="display:flex;gap:6px;margin-top:14px;padding:0 4px">
-            <span class="demo-color-dot" style="background:#3b82f6"></span>
-            <span class="demo-color-dot" style="background:#a855f7"></span>
-            <span class="demo-color-dot" style="background:#ec4899"></span>
-            <span class="demo-color-dot" style="background:#f59e0b"></span>
-            <span class="demo-color-dot" style="background:#22c55e"></span>
-            <span class="demo-color-dot" style="background:#ef4444"></span>
-            <span class="demo-color-dot" style="background:#2fa8d4"></span>
-            <span class="demo-color-dot" style="background:#f97316"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ──── VIEWS ──── -->
   <div class="feature-row reverse">
     <div class="feature-text">
@@ -454,10 +401,63 @@ import Base from '../layouts/Base.astro';
 <section class="section">
   <p class="section-label">Organize bundle — $49 one-time</p>
   <h2 class="section-title">Structure your chart</h2>
-  <p class="section-desc">The design infrastructure you'd spend weeks building. Sidebar, duration and date columns, vivid colors, phase grouping, milestones, and inline editing — each snaps in as a plug-and-play extension.</p>
+  <p class="section-desc">The design infrastructure you'd spend weeks building. Vivid colors, sidebar, duration and date columns, phase grouping, and inline editing — each snaps in as a plug-and-play extension.</p>
+
+  <!-- ──── VIVID ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Vivid Mode</h3>
+      <p>Color-coded bars that auto-assign from an 8-color palette. Each phase gets its own accent — blue, purple, pink, amber, green, red, cyan, orange — and every child task inherits the phase color.</p>
+      <div class="feature-detail">
+        Phase pills, status dots, milestone borders, and bar fills all respond to the phase color. Subtasks render at 70% opacity of the parent. Override any color with the inline color picker.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-theme-wrap">
+        <div class="demo-theme-tabs">
+          <button class="demo-theme-tab" onclick="setDemoTheme('light',this)">Grayscale</button>
+          <button class="demo-theme-tab vivid-active" onclick="setDemoTheme('vivid',this)">&#10022; Vivid</button>
+        </div>
+        <div class="demo-theme-chart" id="vividDemo">
+          <div class="g-row"><div class="g-bar" style="left:12px;width:170px;"><div class="g-track"></div><div class="g-fill fill-vivid-done full" style="width:100%" id="vd1"></div><span class="g-label inside">Design System</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#2fa8d4" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#a855f7,#c084fc)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#a855f7" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
+          <!-- Vivid milestone diamonds -->
+          <div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:0 4px">
+            <div class="g-diamond" style="border-color:#3b82f6;position:relative;top:0">
+              <div class="g-diamond-fill" style="height:100%;background:#3b82f6"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <div class="g-diamond" style="border-color:#a855f7;position:relative;top:0">
+              <div class="g-diamond-fill" style="height:60%;background:#a855f7"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <div class="g-diamond" style="border-color:#f59e0b;position:relative;top:0">
+              <div class="g-diamond-fill" style="height:30%;background:#f59e0b"></div>
+              <div class="g-diamond-glass"></div>
+            </div>
+            <span style="font-size:11px;color:var(--emboss-ash);margin-left:4px">Phase-colored milestones</span>
+          </div>
+          <!-- Color palette -->
+          <div style="display:flex;gap:6px;margin-top:14px;padding:0 4px">
+            <span class="demo-color-dot" style="background:#3b82f6"></span>
+            <span class="demo-color-dot" style="background:#a855f7"></span>
+            <span class="demo-color-dot" style="background:#ec4899"></span>
+            <span class="demo-color-dot" style="background:#f59e0b"></span>
+            <span class="demo-color-dot" style="background:#22c55e"></span>
+            <span class="demo-color-dot" style="background:#ef4444"></span>
+            <span class="demo-color-dot" style="background:#2fa8d4"></span>
+            <span class="demo-color-dot" style="background:#f97316"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ──── SIDEBAR ──── -->
-  <div class="feature-row">
+  <div class="feature-row reverse">
     <div class="feature-text">
       <span class="feature-badge paid">Organize</span>
       <h3>Sidebar</h3>
@@ -475,31 +475,47 @@ import Base from '../layouts/Base.astro';
             <span class="demo-sb-count">3</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#9d9488"></div>
+            <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <div class="demo-sb-name">Research</div>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <div class="demo-sb-name">Wireframes</div>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <div class="demo-sb-name">UI Components</div>
           </div>
           <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#2fa8d4"></div>
-            <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Engineering</div>
-            <span class="demo-sb-count">5</span>
+            <div class="demo-sb-pill" style="background:#a855f7"></div>
+            <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Engineering</div>
+            <span class="demo-sb-count">2</span>
+          </div>
+          <div class="demo-sb-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#a855f7"></div>
+            <div class="demo-sb-name">Core Architecture</div>
+          </div>
+          <div class="demo-sb-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#a855f7"></div>
+            <div class="demo-sb-name">Extension API</div>
+          </div>
+          <div class="demo-sb-row">
+            <div class="demo-sb-pill" style="background:#f59e0b"></div>
+            <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Testing</div>
+            <span class="demo-sb-count">4</span>
           </div>
         </div>
         <div class="demo-sidebar-chart" style="min-height:200px;position:relative">
-          <!-- Phase bar -->
-          <div style="position:absolute;left:8px;top:14px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.2)"></div>
-          <div class="g-row"><div class="g-bar bar-done" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:98px"></div><span class="g-label inside" style="font-size:10.5px">Wireframes &middot; 70%</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:36px"></div><span class="g-label inside" style="font-size:10.5px">UI &middot; 30%</span></div></div>
-          <!-- Collapsed phase indicator -->
-          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(34,211,238,0.2)"></div>
+          <!-- Blue phase bar -->
+          <div style="position:absolute;left:8px;top:14px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.25)"></div>
+          <div class="g-row"><div class="g-bar" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#60a5fa,#3b82f6)"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:98px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><span class="g-label inside" style="font-size:10.5px">Wireframes &middot; 70%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:36px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><span class="g-label inside" style="font-size:10.5px">UI &middot; 30%</span></div></div>
+          <!-- Purple phase bar -->
+          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(168,85,247,0.25)"></div>
+          <div class="g-row"><div class="g-bar" style="left:60px;width:160px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:112px;background:linear-gradient(90deg,#a855f7,#7c3aed)"></div><span class="g-label inside" style="font-size:10.5px">Core Arch &middot; 70%</span></div></div>
+          <!-- Amber phase collapsed -->
+          <div style="position:absolute;left:8px;top:190px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(245,158,11,0.25)"></div>
           <div class="g-row"></div>
         </div>
       </div>
@@ -529,19 +545,24 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-dur">&mdash;</span>
           </div>
           <div class="demo-col-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#9d9488"></div>
+            <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <span class="demo-col-name">Research</span>
             <span class="demo-col-dur">8d</span>
           </div>
           <div class="demo-col-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <span class="demo-col-name">Wireframes</span>
             <span class="demo-col-dur demo-col-editing">12<span class="blink-cursor">&nbsp;</span></span>
           </div>
+          <div class="demo-col-row">
+            <div class="demo-sb-pill" style="background:#a855f7"></div>
+            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Engineering</span>
+            <span class="demo-col-dur">&mdash;</span>
+          </div>
           <div class="demo-col-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#574f45"></div>
-            <span class="demo-col-name">UI Components</span>
-            <span class="demo-col-dur">10d</span>
+            <div class="demo-sb-dot" style="background:#a855f7"></div>
+            <span class="demo-col-name">Core Architecture</span>
+            <span class="demo-col-dur">15d</span>
           </div>
         </div>
         <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK DURATION TO EDIT &middot; ENTER TO SAVE</p>
@@ -567,29 +588,29 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-hdr-date">Dates</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#3b82f6"></div>
+            <div class="demo-sb-pill" style="background:#ec4899"></div>
             <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
             <span class="demo-col-date">Jan 6 &ndash; Feb 14</span>
           </div>
           <div class="demo-col-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#9d9488"></div>
+            <div class="demo-sb-dot" style="background:#ec4899"></div>
             <span class="demo-col-name">Research</span>
             <span class="demo-col-date">Jan 6 &ndash; Jan 15</span>
           </div>
           <div class="demo-col-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <div class="demo-sb-dot" style="background:#ec4899"></div>
             <span class="demo-col-name">Wireframes</span>
             <span class="demo-col-date demo-col-editing">Jan 13 &ndash; Jan 28</span>
           </div>
-          <div class="demo-col-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#574f45"></div>
-            <span class="demo-col-name">UI Components</span>
-            <span class="demo-col-date">Jan 27 &ndash; Feb 7</span>
-          </div>
           <div class="demo-col-row">
-            <div style="width:8px;height:8px;background:var(--emboss-ash);transform:rotate(45deg);border-radius:1.5px;flex-shrink:0"></div>
-            <span class="demo-col-name" style="font-style:italic">Design Review</span>
-            <span class="demo-col-date">Feb 14</span>
+            <div class="demo-sb-pill" style="background:#22c55e"></div>
+            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Engineering</span>
+            <span class="demo-col-date">Feb 3 &ndash; Apr 11</span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div style="width:8px;height:8px;background:#22c55e;transform:rotate(45deg);border-radius:1.5px;flex-shrink:0"></div>
+            <span class="demo-col-name" style="font-style:italic">Alpha Release</span>
+            <span class="demo-col-date">Mar 15</span>
           </div>
         </div>
         <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK DATE TO OPEN PICKER &middot; MILESTONES SHOW SINGLE DATE</p>
@@ -609,17 +630,17 @@ import Base from '../layouts/Base.astro';
     </div>
     <div class="feature-visual">
       <div class="demo-chart" style="min-height:220px">
-        <!-- Phase 1: Design (expanded) -->
+        <!-- Phase 1: Design (expanded, blue) -->
         <div style="position:absolute;left:20px;top:18px;width:300px;height:5px;border-radius:3px;background:rgba(59,130,246,0.25)"></div>
         <div class="g-row" style="height:38px"></div>
-        <div class="g-row"><div class="g-bar bar-done" style="left:20px;width:120px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div></div>
-        <div class="g-row"><div class="g-bar" style="left:80px;width:160px"><div class="g-track"></div><div class="g-fill fill-active" style="width:112px"></div><div class="g-marker" style="left:112px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Wireframes &middot; 70%</span></div></div>
-        <div class="g-row"><div class="g-bar" style="left:160px;width:160px"><div class="g-track"></div><div class="g-fill fill-active" style="width:48px"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Components &middot; 30%</span></div></div>
-        <!-- Phase 2: Engineering (collapsed, just the thin bar) -->
-        <div style="position:absolute;left:100px;top:196px;width:260px;height:5px;border-radius:3px;background:rgba(34,211,238,0.25)"></div>
+        <div class="g-row"><div class="g-bar" style="left:20px;width:120px"><div class="g-track"></div><div class="g-fill" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#60a5fa,#3b82f6)"></div><span class="g-label inside">Research</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:80px;width:160px"><div class="g-track"></div><div class="g-fill" style="width:112px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><div class="g-marker" style="left:112px"><div class="g-marker-inner" style="background:#3b82f6"></div></div><span class="g-label inside">Wireframes &middot; 70%</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:160px;width:160px"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#3b82f6"></div></div><span class="g-label inside">Components &middot; 30%</span></div></div>
+        <!-- Phase 2: Engineering (collapsed, purple) -->
+        <div style="position:absolute;left:100px;top:196px;width:260px;height:5px;border-radius:3px;background:rgba(168,85,247,0.25)"></div>
         <div class="g-row" style="height:38px"></div>
-        <p style="position:absolute;top:6px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</p>
-        <p style="position:absolute;top:188px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9654;</span> Engineering <span style="font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);font-weight:400">(5 tasks)</span></p>
+        <p style="position:absolute;top:6px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:#3b82f6;font-size:9px;margin-right:4px">&#9660;</span> Design</p>
+        <p style="position:absolute;top:188px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:#a855f7;font-size:9px;margin-right:4px">&#9654;</span> Engineering <span style="font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);font-weight:400">(5 tasks)</span></p>
       </div>
     </div>
   </div>
@@ -636,23 +657,23 @@ import Base from '../layouts/Base.astro';
     </div>
     <div class="feature-visual">
       <div style="padding:24px;min-height:180px">
-        <!-- Simulated sidebar rows, one in edit state -->
+        <!-- Simulated sidebar rows, one in edit state with vivid phase colors -->
         <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px">
           <div class="demo-sb-pill" style="background:#3b82f6"></div>
           <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
           <span class="demo-sb-count">3</span>
         </div>
         <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px;padding-left:28px">
-          <div class="demo-sb-dot" style="background:#9d9488"></div>
+          <div class="demo-sb-dot" style="background:#3b82f6"></div>
           <div class="demo-sb-name">Research & Discovery</div>
         </div>
-        <!-- This one is "editing" -->
+        <!-- This one is "editing" — border matches phase color -->
         <div class="demo-sb-row" style="border:2px solid #3b82f6;border-radius:10px;margin-bottom:6px;padding-left:28px;background:var(--emboss-surface)">
-          <div class="demo-sb-dot" style="background:#574f45"></div>
+          <div class="demo-sb-dot" style="background:#3b82f6"></div>
           <div style="font-size:12.5px;font-weight:500;color:var(--emboss-coal)">Wireframes & Prototyp<span class="blink-cursor">&nbsp;</span></div>
         </div>
         <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;padding-left:28px">
-          <div class="demo-sb-dot" style="background:#574f45"></div>
+          <div class="demo-sb-dot" style="background:#3b82f6"></div>
           <div class="demo-sb-name">UI Components</div>
         </div>
         <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK TO EDIT &middot; ENTER TO SAVE &middot; ESC TO CANCEL</p>
