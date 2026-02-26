@@ -183,13 +183,13 @@ import Base from '../layouts/Base.astro';
     <div class="feature-visual">
       <div class="demo-chart demo-arrows" style="min-height:224px">
         <!-- Arrow SVG -->
-        <svg class="demo-arrows-svg" viewBox="0 0 400 224" preserveAspectRatio="none">
-          <!-- Arrow 1: bar1 → bar2 (active, solid) -->
-          <path class="dep-path" d="M 42,31 L 22,31 L 22,75 L 82,75" stroke-linejoin="round"/>
-          <!-- Arrow 2: bar2 → bar3 (active, solid) -->
-          <path class="dep-path" d="M 82,75 L 62,75 L 62,119 L 142,119" stroke-linejoin="round"/>
-          <!-- Arrow 3: bar3 → bar4 (future, dashed) -->
-          <path class="dep-path future" d="M 142,119 L 122,119 L 122,163 L 222,163" stroke-linejoin="round"/>
+        <svg class="demo-arrows-svg" xmlns="http://www.w3.org/2000/svg">
+          <!-- Arrow 1: end of bar1 → start of bar2 (finish-to-start) -->
+          <path class="dep-path" d="M 226,42 L 236,42 L 236,64 L 96,64 L 96,86 L 106,86" stroke-linejoin="round"/>
+          <!-- Arrow 2: end of bar2 → start of bar3 -->
+          <path class="dep-path" d="M 306,86 L 316,86 L 316,108 L 156,108 L 156,130 L 166,130" stroke-linejoin="round"/>
+          <!-- Arrow 3: end of bar3 → start of bar4 (future, dashed) -->
+          <path class="dep-path future" d="M 326,130 L 336,130 L 336,152 L 236,152 L 236,174 L 246,174" stroke-linejoin="round"/>
         </svg>
         <div class="g-row">
           <div class="g-bar bar-done" style="left:42px;width:160px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div>
@@ -258,64 +258,6 @@ import Base from '../layouts/Base.astro';
           <div class="g-row" id="vr1"><div class="g-bar bar-done" style="left:10px;width:140px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div></div>
           <div class="g-row" id="vr2"><div class="g-bar" style="left:50px;width:200px;"><div class="g-track"></div><div class="g-fill fill-active" style="width:140px"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
           <div class="g-row" id="vr3"><div class="g-bar bar-upcoming" style="left:160px;width:120px;"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ──── DENSITY MODES ──── -->
-  <div class="feature-row">
-    <div class="feature-text">
-      <span class="feature-badge free">Core</span>
-      <h3>Density modes</h3>
-      <p>Three presentation contexts. Working mode for daily planning with full interactivity. Presentation mode for client demos with larger bars and hidden controls. Dense mode for big-picture overviews with compact rows and zebra striping.</p>
-      <div class="feature-detail">
-        Working: 44px rows, 26px bars, drag handles visible. Presentation: 60px rows, 34px bars, handles and add/delete buttons hidden, today marker enlarged. Dense: 30px rows, 18px bars, zebra striping, minibar progress indicators, floating name tags on hover.
-      </div>
-    </div>
-    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
-      <div class="demo-views-wrap">
-        <div class="demo-views-tabs">
-          <button class="demo-views-tab active" onclick="setDensityMode('working',this)">Working</button>
-          <button class="demo-views-tab" onclick="setDensityMode('presentation',this)">Presentation</button>
-          <button class="demo-views-tab" onclick="setDensityMode('dense',this)">Dense</button>
-        </div>
-        <div class="demo-chart" id="densityDemo" style="min-height:180px;padding:16px 20px;transition:all 0.3s ease">
-          <div class="g-row density-row" id="dr1" style="height:44px">
-            <div class="g-bar bar-done" id="db1" style="left:12px;width:140px;height:26px;top:9px;border-radius:13px">
-              <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill fill-done full" style="width:100%;border-radius:13px"></div>
-              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
-              <span class="g-label inside" id="dl1" style="font-size:11.5px">Research</span>
-            </div>
-          </div>
-          <div class="g-row density-row" id="dr2" style="height:44px">
-            <div class="g-bar" id="db2" style="left:60px;width:220px;height:26px;top:9px;border-radius:13px">
-              <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill fill-active" style="width:154px;border-radius:13px 0 0 13px"></div>
-              <div class="g-marker" id="dm2" style="left:154px"><div class="g-marker-inner" style="background:#574f45"></div></div>
-              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
-              <span class="g-label inside" id="dl2" style="font-size:11.5px">Architecture &middot; 70%</span>
-            </div>
-          </div>
-          <div class="g-row density-row" id="dr3" style="height:44px">
-            <div class="g-bar" id="db3" style="left:120px;width:160px;height:26px;top:9px;border-radius:13px">
-              <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill fill-active" style="width:48px;border-radius:13px 0 0 13px"></div>
-              <div class="g-marker" id="dm3" style="left:48px"><div class="g-marker-inner" style="background:#574f45"></div></div>
-              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
-              <span class="g-label inside" id="dl3" style="font-size:11.5px">Extensions &middot; 30%</span>
-            </div>
-          </div>
-          <div class="g-row density-row" id="dr4" style="height:44px">
-            <div class="g-bar bar-upcoming" id="db4" style="left:200px;width:120px;height:26px;top:9px;border-radius:13px">
-              <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div>
-              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
-              <span class="g-label inside" id="dl4" style="font-size:11.5px;opacity:0.75">Bundle</span>
-            </div>
-          </div>
-          <p class="density-label" id="densityLabel" style="position:absolute;bottom:8px;right:16px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">44px ROWS &middot; 26px BARS &middot; DRAG HANDLES ON</p>
         </div>
       </div>
     </div>
@@ -401,7 +343,7 @@ import Base from '../layouts/Base.astro';
 <section class="section">
   <p class="section-label">Organize bundle — $49 one-time</p>
   <h2 class="section-title">Structure your chart</h2>
-  <p class="section-desc">The design infrastructure you'd spend weeks building. Vivid colors, sidebar, duration and date columns, phase grouping, and inline editing — each snaps in as a plug-and-play extension.</p>
+  <p class="section-desc">The design infrastructure you'd spend weeks building. Vivid colors, sidebar, phase grouping, inline editing, and presentation density modes — each snaps in as a plug-and-play extension.</p>
 
   <!-- ──── VIVID ──── -->
   <div class="feature-row">
@@ -680,6 +622,64 @@ import Base from '../layouts/Base.astro';
       </div>
     </div>
   </div>
+
+  <!-- ──── DENSITY MODES ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Density Modes</h3>
+      <p>Three presentation contexts. Working mode ships free — 44px rows with full interactivity. Presentation and Dense unlock with Organize.</p>
+      <div class="feature-detail">
+        Presentation: 60px rows, 34px bars, handles and add/delete buttons hidden, today marker enlarged — built for client demos. Dense: 30px rows, 18px bars, zebra striping, minibar progress — built for big-picture overviews.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-views-wrap">
+        <div class="demo-views-tabs">
+          <button class="demo-views-tab active" onclick="setDensityMode('working',this)">Working</button>
+          <button class="demo-views-tab" onclick="setDensityMode('presentation',this)">Presentation</button>
+          <button class="demo-views-tab" onclick="setDensityMode('dense',this)">Dense</button>
+        </div>
+        <div class="demo-chart" id="densityDemo" style="min-height:180px;padding:16px 20px;transition:all 0.3s ease">
+          <div class="g-row density-row" id="dr1" style="height:44px">
+            <div class="g-bar bar-done" id="db1" style="left:12px;width:140px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill" id="df1" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#38bdf8,#2fa8d4)"></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl1" style="font-size:11.5px">Research</span>
+            </div>
+          </div>
+          <div class="g-row density-row" id="dr2" style="height:44px">
+            <div class="g-bar" id="db2" style="left:60px;width:220px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill" id="df2" style="width:154px;border-radius:13px 0 0 13px;background:linear-gradient(90deg,#3b82f6,#2fa8d4)"></div>
+              <div class="g-marker" id="dm2" style="left:154px"><div class="g-marker-inner" style="background:#2fa8d4"></div></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl2" style="font-size:11.5px">Architecture &middot; 70%</span>
+            </div>
+          </div>
+          <div class="g-row density-row" id="dr3" style="height:44px">
+            <div class="g-bar" id="db3" style="left:120px;width:160px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill" id="df3" style="width:48px;border-radius:13px 0 0 13px;background:linear-gradient(90deg,#a855f7,#c084fc)"></div>
+              <div class="g-marker" id="dm3" style="left:48px"><div class="g-marker-inner" style="background:#a855f7"></div></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl3" style="font-size:11.5px">Extensions &middot; 30%</span>
+            </div>
+          </div>
+          <div class="g-row density-row" id="dr4" style="height:44px">
+            <div class="g-bar bar-upcoming" id="db4" style="left:200px;width:120px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill" id="df4" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl4" style="font-size:11.5px;opacity:0.75">Testing</span>
+            </div>
+          </div>
+          <p class="density-label" id="densityLabel" style="position:absolute;bottom:8px;right:16px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">44px ROWS &middot; 26px BARS &middot; DRAG HANDLES ON</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
@@ -705,7 +705,8 @@ import Base from '../layouts/Base.astro';
         <tr><td>Drag to reschedule</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr class="group-row"><td colspan="4">Views & Modes</td></tr>
         <tr><td>Day / Week / Month / Quarter</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
-        <tr><td>Working / Presentation / Dense density</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
+        <tr><td>Working density</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
+        <tr><td>Presentation / Dense density</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Light & dark themes</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr><td>Custom theme CSS</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr class="group-row"><td colspan="4">Free Extensions</td></tr>
@@ -865,7 +866,7 @@ import Base from '../layouts/Base.astro';
     font-size: 11.5px; font-weight: 500; white-space: nowrap; z-index: 2;
     font-family: var(--font-body);
   }
-  :global(.g-label.inside) { left: 10px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  :global(.g-label.inside) { left: 10px; right: 10px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); overflow: hidden; text-overflow: ellipsis; }
   :global(.g-label.outside) { color: var(--emboss-ash); }
   :global(.g-marker) {
     position: absolute; top: 50%; transform: translate(-50%,-50%);
@@ -942,14 +943,14 @@ import Base from '../layouts/Base.astro';
   :global(.demo-tooltip-label) { opacity: 0.6; }
   :global(.demo-tooltip-bar) { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15); margin-top: 8px; overflow: hidden; }
   :global([data-theme="dark"] .demo-tooltip-bar) { background: rgba(0,0,0,0.1); }
-  :global(.demo-tooltip-bar-fill) { height: 100%; border-radius: 2px; background: var(--emboss-gradient); }
+  :global(.demo-tooltip-bar-fill) { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #574f45, #6d6358); }
 
   /* ═══════════════════════════════════════════
      DEMO: DEPENDENCY ARROWS
      ═══════════════════════════════════════════ */
   :global(.demo-arrows-svg) {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 5; pointer-events: none;
+    z-index: 5; pointer-events: none; overflow: visible;
   }
   :global(.dep-path) {
     fill: none; stroke: var(--emboss-ash); stroke-width: 1.5;
@@ -1353,14 +1354,14 @@ function setBarMode(mode, btn) {
 
 // View demo
 function setDemoView(view, btn) {
-  document.querySelectorAll('.demo-views-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.closest('.demo-views-tabs').querySelectorAll('.demo-views-tab').forEach(function(t) { t.classList.remove('active'); });
   btn.classList.add('active');
   var h = document.getElementById('viewHeader');
   var scales = {
     day: { labels: '<span style="width:32px">M10</span><span style="width:32px">T11</span><span style="width:32px">W12</span><span style="width:32px">T13</span><span style="width:32px">F14</span><span style="width:32px">M17</span><span style="width:32px">T18</span><span style="width:32px">W19</span><span style="width:32px">T20</span><span style="width:32px">F21</span><span style="width:32px">M24</span><span style="width:32px">T25</span>', bars: [{l:5,w:160},{l:35,w:230},{l:180,w:140}] },
     week: { labels: '<span style="width:46px">Mar</span><span style="width:46px">10</span><span style="width:46px">17</span><span style="width:46px">24</span><span style="width:46px">31</span><span style="width:46px">Apr 7</span><span style="width:46px">14</span><span style="width:46px">21</span>', bars: [{l:10,w:140},{l:50,w:200},{l:160,w:120}] },
     month: { labels: '<span style="width:60px">Feb</span><span style="width:60px">Mar</span><span style="width:60px">Apr</span><span style="width:60px">May</span><span style="width:60px">Jun</span><span style="width:60px">Jul</span>', bars: [{l:70,w:80},{l:100,w:110},{l:160,w:80}] },
-    quarter: { labels: '<span style="width:90px">Q1 2026</span><span style="width:90px">Q2 2026</span><span style="width:90px">Q3 2026</span><span style="width:90px">Q4 2026</span>', bars: [{l:50,w:50},{l:65,w:70},{l:100,w:50}] }
+    quarter: { labels: '<span style="width:90px">Q1 2026</span><span style="width:90px">Q2 2026</span><span style="width:90px">Q3 2026</span><span style="width:90px">Q4 2026</span>', bars: [{l:30,w:70},{l:60,w:90},{l:120,w:60}] }
   };
   var s = scales[view];
   h.innerHTML = s.labels;
@@ -1373,9 +1374,6 @@ function setDemoView(view, btn) {
 
 // Density mode demo
 function setDensityMode(mode, btn) {
-  document.querySelectorAll('.demo-views-tab').forEach(function(t) {
-    if (t.closest('#densityDemo') || t.parentElement === btn.parentElement) return;
-  });
   btn.closest('.demo-views-tabs').querySelectorAll('.demo-views-tab').forEach(function(t) { t.classList.remove('active'); });
   btn.classList.add('active');
   var demo = document.getElementById('densityDemo');
