@@ -276,8 +276,11 @@ export class Emboss implements EmbossInstance {
     // 4. Filter visible rows
     const visibleRows = rows.filter(r => !r.hidden)
     const { scale } = this.state
+    const isPres = this.state.density === 'presentation'
+    const phaseRowHeight = isPres ? 32 : scale.rowHeight
+    const rowHeightFor = (r: Row) => r.type === 'phase' ? phaseRowHeight : scale.rowHeight
     const totalWidth = scale.totalDays * scale.dayWidth
-    const totalHeight = visibleRows.length * scale.rowHeight
+    const totalHeight = visibleRows.reduce((sum, r) => sum + rowHeightFor(r), 0)
 
     // 5. Update container attributes
     this.container.dataset.density = this.state.density
@@ -298,27 +301,31 @@ export class Emboss implements EmbossInstance {
     headerContent.style.minWidth = `${totalWidth}px`
 
     // 7. Render grid
-    const gridContent = renderGrid(scale, this.state, visibleRows.length)
+    const rowHeights = visibleRows.map(r => rowHeightFor(r))
+    const gridContent = renderGrid(scale, this.state, visibleRows.length, rowHeights)
     this.gridEl!.innerHTML = ''
     this.gridEl!.appendChild(gridContent)
 
     // 8. Render bars using DocumentFragment for batched DOM writes
     const fragment = document.createDocumentFragment()
-    visibleRows.forEach((row, index) => {
+    let yOffset = 0
+    visibleRows.forEach((row) => {
       // Check for extension bar renderer override
       const extRenderer = this.barRenderers[row.type]
       const barEl = extRenderer
         ? extRenderer(row, scale, this.state, this.container)
         : renderBar(row, scale, this.state, this.container)
 
-      // Position vertically by row index
-      const innerTop = Math.round((scale.rowHeight - scale.barHeight) / 2)
+      // Position vertically using accumulated offset
+      const rh = rowHeightFor(row)
       if (row.type === 'phase') {
-        const phaseH = this.state.density === 'presentation' ? 7 : 5
-        ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + Math.round((scale.rowHeight - phaseH) / 2)}px`
+        const phaseH = isPres ? 7 : 5
+        ;(barEl as HTMLElement).style.top = `${yOffset + Math.round((rh - phaseH) / 2)}px`
       } else {
-        ;(barEl as HTMLElement).style.top = `${index * scale.rowHeight + innerTop}px`
+        const innerTop = Math.round((rh - scale.barHeight) / 2)
+        ;(barEl as HTMLElement).style.top = `${yOffset + innerTop}px`
       }
+      yOffset += rh
 
       fragment.appendChild(barEl)
     })

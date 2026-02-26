@@ -45,6 +45,12 @@ function resolveVividColor(row: Row, rows: Row[]): string | null {
   return VIVID_PALETTE[(idx >= 0 ? idx : 0) % VIVID_PALETTE.length]
 }
 
+/** Row height for sidebar cells — phases are shorter in presentation mode. */
+function cellHeight(row: Row, state: EmbossState): number {
+  if (row.type === 'phase' && state.density === 'presentation') return 32
+  return state.scale.rowHeight
+}
+
 // ─── Avatars ────────────────────────────────────────────────────────────────
 
 const AVATAR_PALETTE = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#f97316']
@@ -144,7 +150,7 @@ function renderPhaseCell(row: Row, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-phase'
   el.dataset.id = row.id
-  el.style.height = `${state.scale.rowHeight}px`
+  el.style.height = `${cellHeight(row, state)}px`
   el.style.paddingLeft = `${16 + row.depth * 16}px`
 
   const chevron = document.createElement('span')
@@ -264,7 +270,7 @@ function renderRailPhaseCell(row: Row, state: EmbossState): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-sidebar-cell emboss-sidebar-rail-cell emboss-sidebar-phase'
   el.dataset.id = row.id
-  el.style.height = `${state.scale.rowHeight}px`
+  el.style.height = `${cellHeight(row, state)}px`
 
   const pill = document.createElement('span')
   pill.className = 'emboss-rail-pill'
@@ -1012,9 +1018,15 @@ export const sidebar: EmbossExtension = {
           const rect = sidebarBodyEl.getBoundingClientRect()
           const y = e.clientY - rect.top + sidebarBodyEl.scrollTop
           const visible = emboss.state.rows.filter(r => !r.hidden)
-          const rh = emboss.state.scale.rowHeight
 
-          let idx = Math.round(y / rh)
+          // Accumulate row heights to find drop index
+          let accum = 0
+          let idx = visible.length
+          for (let i = 0; i < visible.length; i++) {
+            const rh = cellHeight(visible[i], emboss.state)
+            if (y < accum + rh / 2) { idx = i; break }
+            accum += rh
+          }
           idx = Math.max(0, Math.min(idx, visible.length))
 
           const dragging = emboss.state.rows.find(r => r.id === draggedRowId)
@@ -1035,7 +1047,8 @@ export const sidebar: EmbossExtension = {
           if (isValidDrop(dragging, idx, visible, dragTargetDepth)) {
             dropTargetIndex = idx
             dropIndicator!.style.display = 'block'
-            dropIndicator!.style.top = `${idx * rh}px`
+            const dropY = visible.slice(0, idx).reduce((sum, r) => sum + cellHeight(r, emboss.state), 0)
+            dropIndicator!.style.top = `${dropY}px`
             dropIndicator!.style.left = `${16 + dragTargetDepth * 16}px`
           } else {
             dropTargetIndex = null
@@ -1167,14 +1180,16 @@ export const sidebar: EmbossExtension = {
 
         if (sidebarCollapsed) {
           const isDense = state.density === 'dense'
+          let inlineY = 0
           visibleRows.forEach((row, index) => {
-            if (row.type !== 'phase') return
+            const rh = cellHeight(row, emboss.state)
+            if (row.type !== 'phase') { inlineY += rh; return }
 
             const el = document.createElement('div')
             el.className = 'emboss-inline-phase'
             el.dataset.id = row.id
-            el.style.top = `${index * scale.rowHeight}px`
-            el.style.height = `${scale.rowHeight}px`
+            el.style.top = `${inlineY}px`
+            el.style.height = `${rh}px`
 
             const chevron = document.createElement('span')
             chevron.className = 'emboss-inline-chevron'
@@ -1207,6 +1222,7 @@ export const sidebar: EmbossExtension = {
             })
 
             barsEl.appendChild(el)
+            inlineY += rh
           })
         }
       }

@@ -9,14 +9,16 @@
  * Horizontal row separator lines.
  */
 
-import type { Scale, EmbossState } from '../types'
+import type { Row, Scale, EmbossState } from '../types'
 import { addDays, isWeekend } from '../dates'
 
-export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: number): HTMLElement {
+export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: number, rowHeights?: number[]): HTMLElement {
   const el = document.createElement('div')
   el.className = 'emboss-grid-inner'
   const totalWidth = scale.totalDays * scale.dayWidth
-  const totalHeight = visibleRowCount * scale.rowHeight
+  const totalHeight = rowHeights
+    ? rowHeights.reduce((sum, h) => sum + h, 0)
+    : visibleRowCount * scale.rowHeight
 
   // Vertical lines + weekend shading
   for (let d = 0; d < scale.totalDays; d++) {
@@ -60,21 +62,24 @@ export function renderGrid(scale: Scale, state: EmbossState, visibleRowCount: nu
 
   // Horizontal row lines + zebra striping (dense mode)
   const isDense = state.density === 'dense'
+  let yPos = 0
   for (let i = 0; i <= visibleRowCount; i++) {
+    const rh = rowHeights ? rowHeights[i] ?? scale.rowHeight : scale.rowHeight
     // Zebra stripe on even rows
     if (isDense && i < visibleRowCount && i % 2 === 1) {
       const stripe = document.createElement('div')
       stripe.className = 'emboss-grid-stripe'
-      stripe.style.cssText = `top:${i * scale.rowHeight}px;width:${totalWidth}px;height:${scale.rowHeight}px;`
+      stripe.style.cssText = `top:${yPos}px;width:${totalWidth}px;height:${rh}px;`
       el.appendChild(stripe)
     }
     // Row separator line (skip top edge)
     if (i > 0) {
       const line = document.createElement('div')
       line.className = 'emboss-grid-hline'
-      line.style.cssText = `top:${i * scale.rowHeight}px;width:${totalWidth}px;`
+      line.style.cssText = `top:${yPos}px;width:${totalWidth}px;`
       el.appendChild(line)
     }
+    yPos += rh
   }
 
   return el

@@ -1,6 +1,6 @@
 {
   "name": "@emboss-js/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The Tiptap of Gantt charts. Beautiful, extensible, open core.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
