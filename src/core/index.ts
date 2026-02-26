@@ -87,16 +87,18 @@ export class Emboss implements EmbossInstance {
     startDate.setHours(0, 0, 0, 0)
     this.state = createState(rows, startDate)
 
+    // License key — set before gated features
+    if (config.licenseKey) setLicense(config.licenseKey)
+
     if (config.view) this.state.view = config.view
-    if (config.density) this.state.density = config.density
+    if (config.density && (config.density === 'working' || checkLicense('organize'))) {
+      this.state.density = config.density
+    }
     if (config.theme) this.state.theme = config.theme
     if (config.moveDependencies) this.state.moveDependencies = true
 
     // Recalculate scale with final view/density
     this.state.scale = calcScale(this.state.view, this.state.density, rows, startDate)
-
-    // License key — soft enforcement
-    if (config.licenseKey) setLicense(config.licenseKey)
 
     // Inject core styles
     this.injectStyles('core', CORE_STYLES + BAR_STYLES + HEADER_STYLES + GRID_STYLES + DRAG_STYLES)
@@ -174,6 +176,7 @@ export class Emboss implements EmbossInstance {
   }
 
   setDensity(density: EmbossState['density']): void {
+    if (density !== 'working' && !checkLicense('organize')) return
     this.state.density = density
     this.state.scale = calcScale(this.state.view, density, this.state.rows, this.state.scale.startDate)
     this.emit('onDensityChange', density)
