@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features — Emboss</title>
+<meta name="description" content="Every extension, every tier. See what ships free with Emboss core and what the Organize bundle adds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --emboss-coal: #1e1c19;
+  --emboss-graphite: #2e2b26;
+  --emboss-slate: #574f45;
+  --emboss-ash: #736a61;
+  --emboss-fog: #cdc6bb;
+  --emboss-cloud: #e3ddd4;
+  --emboss-snow: #f0ebe4;
+  --emboss-cream: #f5f2ec;
+  --emboss-white: #faf8f4;
+  --emboss-vivid-1: #3b82f6;
+  --emboss-vivid-2: #38bdf8;
+  --emboss-vivid-3: #22d3ee;
+  --emboss-gradient: linear-gradient(135deg, #3b82f6, #38bdf8, #22d3ee);
+  --emboss-gradient-text: linear-gradient(135deg, #60a5fa, #38bdf8, #22d3ee);
+  --emboss-press: #3b82f6;
+  --emboss-patina: #10b981;
+  --emboss-signal: #ef4444;
+  --emboss-surface: var(--emboss-white);
+  --emboss-surface-raised: var(--emboss-cream);
+  --emboss-surface-inset: var(--emboss-snow);
+  --emboss-border: rgba(30,28,25,0.07);
+  --emboss-border-strong: rgba(30,28,25,0.13);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Hanken Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --emboss-lift-sm: 0 1px 2px rgba(30,28,25,0.05), 0 1px 3px rgba(30,28,25,0.07);
+  --emboss-lift-md: 0 4px 14px rgba(30,28,25,0.07), 0 1px 3px rgba(30,28,25,0.09);
+  --emboss-lift-lg: 0 12px 40px rgba(30,28,25,0.09), 0 4px 14px rgba(30,28,25,0.06);
+  --emboss-lift-xl: 0 20px 60px rgba(30,28,25,0.11), 0 8px 20px rgba(30,28,25,0.07);
+}
+[data-theme="dark"] {
+  --emboss-ash: #9d9488;
+  --emboss-surface: #131210;
+  --emboss-surface-raised: #1e1c19;
+  --emboss-surface-inset: #181613;
+  --emboss-border: rgba(250,248,244,0.06);
+  --emboss-border-strong: rgba(250,248,244,0.12);
+  --emboss-lift-sm: 0 1px 3px rgba(0,0,0,0.35);
+  --emboss-lift-md: 0 4px 14px rgba(0,0,0,0.4);
+  --emboss-lift-lg: 0 14px 44px rgba(0,0,0,0.5);
+  --emboss-lift-xl: 0 22px 64px rgba(0,0,0,0.6);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--emboss-surface);
+  color: var(--emboss-coal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+[data-theme="dark"] body { color: var(--emboss-fog); }
+a { color: var(--emboss-press); text-decoration:none; }
+
+/* ═══════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding: 14px 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(250,248,244,0.8);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid var(--emboss-border);
+}
+[data-theme="dark"] nav { background: rgba(19,18,16,0.82); }
+.emboss-logo { display:inline-flex; align-items:center; gap:10px; text-decoration:none; }
+.emboss-wordmark { font-family:var(--font-body); font-weight:700; letter-spacing:-0.03em; color:var(--emboss-coal); }
+[data-theme="dark"] .emboss-wordmark { color:var(--emboss-white); }
+.nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+.nav-links a { font-size:14px; font-weight:500; color:var(--emboss-slate); transition:color 0.2s; text-decoration:none; }
+.nav-links a:hover { color:var(--emboss-coal); }
+.nav-links a.active { color:var(--emboss-coal); font-weight:600; }
+[data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active { color:var(--emboss-white); }
+.theme-toggle {
+  width:36px; height:36px; border-radius:10px;
+  border: 1px solid var(--emboss-border-strong);
+  background: var(--emboss-surface-raised);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:16px; transition:all 0.2s;
+}
+.theme-toggle:hover { box-shadow:var(--emboss-lift-sm); transform:translateY(-1px); }
+
+/* ═══════════════════════════════════════════
+   SHARED
+   ═══════════════════════════════════════════ */
+.section { padding:100px 40px; max-width:1200px; margin:0 auto; }
+.section-label {
+  font-family:var(--font-mono); font-size:11px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  margin-bottom:16px;
+}
+.section-title {
+  font-family:var(--font-display); font-size:clamp(32px, 4vw, 48px);
+  font-weight:400; line-height:1.15; letter-spacing:-0.02em;
+  color:var(--emboss-coal); margin-bottom:16px;
+}
+[data-theme="dark"] .section-title { color:var(--emboss-white); }
+.section-desc { font-size:17px; line-height:1.7; color:var(--emboss-slate); max-width:640px; margin-bottom:48px; }
+[data-theme="dark"] .section-desc { color:var(--emboss-ash); }
+.vivid-text {
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* BUTTONS */
+.btn-primary {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 28px; border-radius:12px;
+  background:var(--emboss-coal); color:var(--emboss-white);
+  font-family:var(--font-body); font-size:15px; font-weight:600;
+  border:none; cursor:pointer; box-shadow:var(--emboss-lift-md); transition:all 0.2s;
+}
+[data-theme="dark"] .btn-primary { background:var(--emboss-white); color:var(--emboss-coal); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:var(--emboss-lift-lg); }
+.btn-vivid {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 28px; border-radius:12px;
+  background:var(--emboss-gradient); color:white;
+  font-family:var(--font-body); font-size:15px; font-weight:600;
+  border:none; cursor:pointer;
+  box-shadow: 0 4px 18px rgba(59,130,246,0.22), 0 2px 6px rgba(34,211,238,0.15);
+  transition:all 0.2s;
+}
+.btn-vivid:hover { transform:translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,0.28), 0 4px 14px rgba(34,211,238,0.2); }
+.btn-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 28px; border-radius:12px;
+  background:var(--emboss-surface-raised); color:var(--emboss-coal);
+  font-family:var(--font-body); font-size:15px; font-weight:600;
+  border:1px solid var(--emboss-border-strong); cursor:pointer; transition:all 0.2s;
+}
+[data-theme="dark"] .btn-secondary { color:var(--emboss-fog); }
+.btn-secondary:hover { transform:translateY(-2px); box-shadow:var(--emboss-lift-md); }
+
+/* ═══════════════════════════════════════════
+   PAGE HERO
+   ═══════════════════════════════════════════ */
+.page-hero { padding:140px 40px 80px; text-align:center; }
+.page-hero h1 {
+  font-family:var(--font-display); font-size:clamp(40px, 5vw, 64px);
+  font-weight:400; line-height:1.1; letter-spacing:-0.02em;
+  color:var(--emboss-coal); max-width:700px; margin:0 auto;
+}
+[data-theme="dark"] .page-hero h1 { color:var(--emboss-white); }
+.page-hero h1 em {
+  font-style:italic;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.page-hero p {
+  font-size:18px; color:var(--emboss-slate); max-width:560px;
+  margin:20px auto 0; line-height:1.7;
+}
+[data-theme="dark"] .page-hero p { color:var(--emboss-ash); }
+
+/* ═══════════════════════════════════════════
+   FEATURE ROWS
+   ═══════════════════════════════════════════ */
+.feature-row {
+  display:grid; grid-template-columns:1fr 1fr; gap:48px;
+  align-items:center; padding:60px 0;
+  border-bottom:1px solid var(--emboss-border);
+}
+.feature-row:last-child { border-bottom:none; }
+.feature-row.reverse .feature-text { order:2; }
+.feature-row.reverse .feature-visual { order:1; }
+.feature-text h3 {
+  font-family:var(--font-display); font-size:28px;
+  font-weight:400; line-height:1.2; color:var(--emboss-coal); margin-bottom:12px;
+}
+[data-theme="dark"] .feature-text h3 { color:var(--emboss-white); }
+.feature-text p { font-size:15px; line-height:1.7; color:var(--emboss-slate); margin-bottom:16px; }
+[data-theme="dark"] .feature-text p { color:var(--emboss-ash); }
+.feature-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10px; font-weight:500;
+  letter-spacing:0.06em; text-transform:uppercase;
+  padding:4px 12px; border-radius:100px; margin-bottom:16px;
+}
+.feature-badge.free { background:var(--emboss-patina); color:white; }
+.feature-badge.paid { background:var(--emboss-gradient); color:white; }
+.feature-detail {
+  font-size:13.5px; color:var(--emboss-ash); line-height:1.6;
+  padding-left:16px; border-left:2px solid var(--emboss-border); margin-top:4px;
+}
+
+/* ═══════════════════════════════════════════
+   MINI-DEMO CONTAINER
+   ═══════════════════════════════════════════ */
+.feature-visual {
+  border-radius:16px; overflow:hidden;
+  background:var(--emboss-surface-raised);
+  border:1px solid var(--emboss-border);
+  box-shadow:var(--emboss-lift-md);
+}
+.demo-chart {
+  padding:20px 24px; position:relative; overflow:hidden;
+  min-height:200px;
+}
+
+/* ═══════════════════════════════════════════
+   GANTT BAR SYSTEM (shared across demos)
+   ═══════════════════════════════════════════ */
+.g-row { position:relative; height:44px; }
+.g-bar {
+  height:26px; border-radius:13px; position:absolute;
+  top:9px; overflow:hidden; cursor:pointer;
+  transition:transform 0.2s, opacity 0.2s;
+}
+.g-bar:hover { transform:scaleY(1.08); }
+.g-track {
+  position:absolute; inset:0; border-radius:13px;
+  background:var(--emboss-cloud);
+}
+[data-theme="dark"] .g-track { background:var(--emboss-graphite); }
+.g-fill {
+  position:absolute; top:0; left:0; bottom:0;
+  border-radius:13px 0 0 13px;
+}
+.g-fill.full { border-radius:13px; }
+.g-fill::before {
+  content:''; position:absolute; top:2px; left:4px; right:4px;
+  height:40%; border-radius:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.12) 60%, transparent 100%);
+}
+.g-fill::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:35%;
+  background:linear-gradient(0deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+  border-radius:0 0 0 13px;
+}
+.g-fill.full::after { border-radius:0 0 13px 13px; }
+.g-label {
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-size:11.5px; font-weight:500; white-space:nowrap; z-index:2;
+  font-family:var(--font-body);
+}
+.g-label.inside { left:10px; color:white; text-shadow:0 1px 2px rgba(0,0,0,0.2); }
+.g-label.outside { color:var(--emboss-ash); }
+.g-marker {
+  position:absolute; top:50%; transform:translate(-50%,-50%);
+  width:12px; height:12px; border-radius:50%; background:white;
+  box-shadow:0 0 0 2px white, 0 2px 4px rgba(0,0,0,0.15); z-index:3;
+  transition:transform 0.2s;
+}
+.g-bar:hover .g-marker { transform:translate(-50%,-50%) scale(1.15); }
+.g-marker-inner {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:6px; height:6px; border-radius:50%;
+}
+.g-handle {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:3px; height:55%; border-radius:2px;
+  background:rgba(255,255,255,0.4); opacity:0;
+  transition:opacity 0.15s; z-index:4;
+}
+.g-bar:hover .g-handle { opacity:1; }
+.g-handle-l { left:4px; }
+.g-handle-r { right:4px; }
+.g-grid { position:absolute; top:0; bottom:0; width:1px; background:var(--emboss-coal); opacity:0.04; }
+
+/* Fills */
+.fill-active { background:linear-gradient(90deg, #574f45, #6d6358); }
+.fill-done { background:linear-gradient(90deg, #9d9488, #a8a098); }
+.fill-upcoming { background:linear-gradient(90deg, #9d9488, #a8a098); }
+.bar-done { opacity:0.45; }
+.bar-done:hover { opacity:0.65; }
+.bar-upcoming .g-fill { opacity:0.5; }
+
+/* ═══════════════════════════════════════════
+   DEMO: TODAY MARKER
+   ═══════════════════════════════════════════ */
+.today-line { position:absolute; top:0; bottom:0; width:1.5px; background:var(--emboss-signal); opacity:0.5; z-index:10; }
+.today-dot { position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:var(--emboss-signal); z-index:11; }
+.today-ring {
+  position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  width:16px; height:16px; border-radius:50%;
+  border:1.5px solid var(--emboss-signal); opacity:0.3;
+  animation:todayPulse 2s ease-in-out infinite;
+}
+@keyframes todayPulse {
+  0%,100% { transform:translateX(-50%) scale(1); opacity:0.3; }
+  50% { transform:translateX(-50%) scale(1.6); opacity:0; }
+}
+.today-lbl {
+  position:absolute; top:-22px; left:50%; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:8px; font-weight:500;
+  letter-spacing:0.08em; color:var(--emboss-signal);
+}
+.today-glow {
+  position:absolute; top:0; bottom:0; width:40px; transform:translateX(-50%);
+  background:var(--emboss-signal); opacity:0.04; z-index:1;
+}
+
+/* ═══════════════════════════════════════════
+   DEMO: TOOLTIP
+   ═══════════════════════════════════════════ */
+.demo-tooltip {
+  position:absolute; z-index:30;
+  background:var(--emboss-coal); color:var(--emboss-fog);
+  border-radius:12px; padding:14px 18px; min-width:200px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
+  font-size:12.5px; pointer-events:none;
+  opacity:0; transition:opacity 0.2s;
+}
+[data-theme="dark"] .demo-tooltip { background:var(--emboss-fog); color:var(--emboss-coal); }
+.demo-tooltip.show { opacity:1; }
+.demo-tooltip-name { font-weight:600; font-size:13.5px; margin-bottom:6px; color:white; }
+[data-theme="dark"] .demo-tooltip-name { color:var(--emboss-coal); }
+.demo-tooltip-row { display:flex; justify-content:space-between; gap:16px; margin-top:4px; }
+.demo-tooltip-label { opacity:0.6; }
+.demo-tooltip-bar { height:4px; border-radius:2px; background:rgba(255,255,255,0.15); margin-top:8px; overflow:hidden; }
+[data-theme="dark"] .demo-tooltip-bar { background:rgba(0,0,0,0.1); }
+.demo-tooltip-bar-fill { height:100%; border-radius:2px; background:var(--emboss-gradient); }
+
+/* ═══════════════════════════════════════════
+   DEMO: DEPENDENCY ARROWS
+   ═══════════════════════════════════════════ */
+.demo-arrows-svg {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  z-index:5; pointer-events:none;
+}
+.dep-path {
+  fill:none; stroke:var(--emboss-ash); stroke-width:1.5;
+  opacity:0; transition:opacity 0.25s;
+}
+.dep-path.future { stroke-dasharray:5 3; }
+.dep-dot {
+  fill:var(--emboss-ash);
+  opacity:0; transition:opacity 0.25s;
+}
+.demo-arrows:hover .dep-path,
+.demo-arrows:hover .dep-dot { opacity:0.65; }
+
+/* ═══════════════════════════════════════════
+   DEMO: THEME TOGGLE
+   ═══════════════════════════════════════════ */
+.demo-theme-wrap {
+  border-radius:16px; overflow:hidden;
+  border:1px solid var(--emboss-border);
+  box-shadow:var(--emboss-lift-md);
+}
+.demo-theme-tabs {
+  display:flex; background:var(--emboss-surface-inset);
+  border-bottom:1px solid var(--emboss-border);
+  padding:8px 12px; gap:6px;
+}
+.demo-theme-tab {
+  padding:5px 14px; border-radius:8px; border:none;
+  font-family:var(--font-body); font-size:11.5px; font-weight:500;
+  color:var(--emboss-ash); background:transparent; cursor:pointer;
+  transition:all 0.15s;
+}
+.demo-theme-tab.active { background:var(--emboss-surface); color:var(--emboss-coal); box-shadow:var(--emboss-lift-sm); }
+[data-theme="dark"] .demo-theme-tab.active { color:var(--emboss-white); }
+.demo-theme-tab.vivid-active { background:var(--emboss-gradient); color:white; }
+.demo-theme-chart { padding:16px 20px; position:relative; transition:background 0.3s; }
+.demo-theme-chart.dark-demo { background:#131210; }
+.demo-theme-chart.dark-demo .g-track { background:#2e2b26; }
+.demo-theme-chart.dark-demo .g-label.outside { color:#9d9488; }
+
+/* Vivid fills */
+.fill-vivid-active { background:linear-gradient(90deg, #3b82f6, #22d3ee); }
+.fill-vivid-done { background:linear-gradient(90deg, #38bdf8, #22d3ee); }
+.fill-vivid-upcoming { background:linear-gradient(90deg, #60a5fa, #38bdf8); }
+
+/* ═══════════════════════════════════════════
+   DARK MODE: all demos respond to page toggle
+   ═══════════════════════════════════════════ */
+[data-theme="dark"] .demo-chart { background:var(--emboss-surface-raised); }
+[data-theme="dark"] .feature-visual { background:var(--emboss-surface-raised); }
+[data-theme="dark"] .demo-sidebar-wrap { background:var(--emboss-surface-raised); }
+[data-theme="dark"] .g-label.outside { color:#9d9488; }
+[data-theme="dark"] .g-diamond { background:var(--emboss-surface-raised); }
+[data-theme="dark"] .demo-sb-row:hover { background:var(--emboss-surface-inset); }
+
+/* ═══════════════════════════════════════════
+   DEMO: SIDEBAR
+   ═══════════════════════════════════════════ */
+.demo-sidebar-wrap {
+  display:grid; grid-template-columns:180px 1fr;
+  border-radius:16px; overflow:hidden;
+  border:1px solid var(--emboss-border);
+  box-shadow:var(--emboss-lift-md);
+  background:var(--emboss-surface-raised);
+}
+.demo-sidebar {
+  border-right:1px solid var(--emboss-border);
+  font-size:12.5px;
+}
+.demo-sb-row {
+  height:40px; display:flex; align-items:center; gap:8px;
+  padding:0 14px; border-bottom:1px solid var(--emboss-border);
+  transition:background 0.15s;
+}
+.demo-sb-row:hover { background:var(--emboss-surface-inset); }
+.demo-sb-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.demo-sb-name { color:var(--emboss-coal); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+[data-theme="dark"] .demo-sb-name { color:var(--emboss-fog); }
+.demo-sb-phase {
+  font-weight:600; font-size:12px; color:var(--emboss-coal);
+  display:flex; align-items:center; gap:6px;
+}
+[data-theme="dark"] .demo-sb-phase { color:var(--emboss-white); }
+.demo-sb-chevron { font-size:9px; color:var(--emboss-ash); transition:transform 0.2s; }
+.demo-sb-pill {
+  width:8px; height:22px; border-radius:4px; flex-shrink:0;
+}
+.demo-sb-count {
+  font-family:var(--font-mono); font-size:10px; color:var(--emboss-ash);
+  margin-left:auto;
+}
+.demo-sidebar-chart { padding:12px 16px; position:relative; overflow:hidden; }
+
+/* ═══════════════════════════════════════════
+   DEMO: MILESTONES
+   ═══════════════════════════════════════════ */
+.g-diamond {
+  width:20px; height:20px; position:absolute; top:12px;
+  transform:rotate(45deg); border-radius:3px;
+  border:2.5px solid; background:var(--emboss-surface);
+  overflow:hidden; cursor:pointer;
+  transition:transform 0.2s;
+  z-index:5;
+}
+.g-diamond:hover { transform:rotate(45deg) scale(1.2); }
+.g-diamond-fill {
+  position:absolute; bottom:0; left:0; right:0;
+  transition:height 0.3s;
+}
+.g-diamond-glass {
+  position:absolute; top:0; left:0; right:0; height:50%;
+  background:linear-gradient(180deg, rgba(255,255,255,0.45), transparent);
+}
+.g-diamond.done { opacity:0.45; }
+
+/* ═══════════════════════════════════════════
+   DEMO: VIEWS
+   ═══════════════════════════════════════════ */
+.demo-views-wrap {
+  border-radius:16px; overflow:hidden;
+  border:1px solid var(--emboss-border);
+  box-shadow:var(--emboss-lift-md);
+}
+.demo-views-tabs {
+  display:flex; background:var(--emboss-surface-inset);
+  border-bottom:1px solid var(--emboss-border);
+  padding:8px 12px; gap:6px;
+}
+.demo-views-tab {
+  padding:5px 14px; border-radius:8px; border:none;
+  font-family:var(--font-body); font-size:11.5px; font-weight:500;
+  color:var(--emboss-ash); background:transparent; cursor:pointer; transition:all 0.15s;
+}
+.demo-views-tab.active { background:var(--emboss-surface); color:var(--emboss-coal); box-shadow:var(--emboss-lift-sm); }
+[data-theme="dark"] .demo-views-tab.active { color:var(--emboss-white); }
+
+/* HEADER ROW */
+.demo-header {
+  display:flex; padding:0 20px; height:28px; align-items:center;
+  border-bottom:1px solid var(--emboss-border);
+  font-family:var(--font-mono); font-size:10px; color:var(--emboss-ash);
+  letter-spacing:0.04em; gap:0; overflow:hidden;
+}
+.demo-header span { text-align:center; flex-shrink:0; }
+
+/* ═══════════════════════════════════════════
+   COMPARISON TABLE
+   ═══════════════════════════════════════════ */
+.compare-table-wrap { overflow-x:auto; margin-top:48px; }
+.compare-table { width:100%; border-collapse:collapse; font-size:14px; min-width:700px; }
+.compare-table thead th {
+  padding:16px 20px; text-align:center;
+  font-size:16px; font-weight:700; color:var(--emboss-coal);
+  border-bottom:2px solid var(--emboss-border);
+}
+[data-theme="dark"] .compare-table thead th { color:var(--emboss-white); }
+.compare-table thead th:first-child { text-align:left; }
+.compare-table thead th.featured {
+  background:var(--emboss-surface-raised); border-radius:12px 12px 0 0; position:relative;
+}
+.compare-table thead th.featured::before {
+  content:'Recommended'; position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+  padding:2px 12px; border-radius:100px;
+  background:var(--emboss-gradient); color:white;
+  font-family:var(--font-mono); font-size:9px; font-weight:500;
+  letter-spacing:0.06em; text-transform:uppercase;
+}
+.compare-table tbody td {
+  padding:12px 20px; text-align:center;
+  border-bottom:1px solid var(--emboss-border); color:var(--emboss-slate);
+}
+[data-theme="dark"] .compare-table tbody td { color:var(--emboss-ash); }
+.compare-table tbody td:first-child { text-align:left; font-weight:500; color:var(--emboss-coal); }
+[data-theme="dark"] .compare-table tbody td:first-child { color:var(--emboss-fog); }
+.compare-table tbody td.featured { background:var(--emboss-surface-raised); }
+.compare-table .check {
+  display:inline-block; font-weight:700;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.compare-table .dash { color:var(--emboss-cloud); }
+[data-theme="dark"] .compare-table .dash { color:var(--emboss-graphite); }
+.compare-table .group-row td {
+  font-family:var(--font-mono); font-size:10px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--emboss-ash); padding:20px 20px 8px; border-bottom:none;
+}
+.compare-table tfoot td { padding:20px; border-top:2px solid var(--emboss-border); text-align:center; }
+
+/* ═══════════════════════════════════════════
+   FUTURE BUNDLES
+   ═══════════════════════════════════════════ */
+.future-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; }
+.future-card {
+  padding:32px; border-radius:20px;
+  background:var(--emboss-surface-raised); border:1px solid var(--emboss-border);
+  position:relative; overflow:hidden;
+}
+.future-card::after {
+  content:'Coming soon'; position:absolute; top:16px; right:16px;
+  font-family:var(--font-mono); font-size:9px; font-weight:500;
+  letter-spacing:0.06em; text-transform:uppercase;
+  padding:3px 10px; border-radius:100px;
+  background:var(--emboss-surface-inset); color:var(--emboss-ash); border:1px solid var(--emboss-border);
+}
+.future-card h3 { font-size:17px; font-weight:700; color:var(--emboss-coal); margin-bottom:8px; }
+[data-theme="dark"] .future-card h3 { color:var(--emboss-white); }
+.future-card p { font-size:14px; line-height:1.65; color:var(--emboss-slate); }
+[data-theme="dark"] .future-card p { color:var(--emboss-ash); }
+
+/* MISSION / CTA */
+.mission { padding:120px 40px; text-align:center; }
+.mission-statement {
+  font-family:var(--font-display); font-size:clamp(24px, 3.5vw, 36px);
+  font-weight:400; line-height:1.35; color:var(--emboss-coal); max-width:700px; margin:0 auto;
+}
+[data-theme="dark"] .mission-statement { color:var(--emboss-fog); }
+
+/* FOOTER */
+footer { padding:60px 40px 40px; max-width:1200px; margin:0 auto; border-top:1px solid var(--emboss-border); }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:48px; }
+.footer-brand p { font-size:14px; color:var(--emboss-ash); max-width:280px; line-height:1.6; margin-top:12px; }
+.footer-col h4 { font-size:13px; font-weight:700; color:var(--emboss-coal); margin-bottom:16px; }
+[data-theme="dark"] .footer-col h4 { color:var(--emboss-fog); }
+.footer-col ul { list-style:none; }
+.footer-col ul li { margin-bottom:10px; }
+.footer-col ul li a { font-size:13.5px; color:var(--emboss-ash); transition:color 0.15s; text-decoration:none; }
+.footer-col ul li a:hover { color:var(--emboss-coal); }
+[data-theme="dark"] .footer-col ul li a:hover { color:var(--emboss-white); }
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:24px; border-top:1px solid var(--emboss-border);
+}
+.footer-bottom p { font-size:13px; color:var(--emboss-ash); }
+.footer-tagline {
+  font-family:var(--font-mono); font-size:11px;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+@media (max-width:768px) {
+  .page-hero { padding:100px 24px 60px; }
+  .section { padding:60px 24px; }
+  .mission { padding:80px 24px; }
+  nav { padding:12px 20px; }
+  .nav-links { display:none; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .feature-row { grid-template-columns:1fr; gap:24px; }
+  .feature-row.reverse .feature-text { order:1; }
+  .feature-row.reverse .feature-visual { order:2; }
+  .demo-sidebar-wrap { grid-template-columns:1fr; }
+  .demo-sidebar { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG defs -->
+<svg style="position:absolute;width:0;height:0;">
+  <defs>
+    <radialGradient id="dip" cx="0.85" cy="0.75" r="1.2" fx="0.95" fy="0.95">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.8"/>
+      <stop offset="30%" stop-color="#38bdf8" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#3b82f6" stop-opacity="0.22"/>
+      <stop offset="80%" stop-color="#3b82f6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="emboss-logo">
+    <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+    <span class="emboss-wordmark">emboss</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/features" class="active">Features</a></li>
+    <li><a href="/docs">Docs</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="https://github.com/leantime/emboss">GitHub</a></li>
+  </ul>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <p class="section-label">Features</p>
+  <h1>Everything ships as<br>an <em>extension</em></h1>
+  <p>Free extensions come with the package. Paid bundles add the structure, flare, and analysis you'd otherwise build yourself.</p>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FREE EXTENSIONS
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <p class="section-label">Included with core</p>
+  <h2 class="section-title">Free extensions</h2>
+  <p class="section-desc">These ship with <code style="font-size:15px;background:var(--emboss-surface-inset);padding:2px 8px;border-radius:4px">@emboss/core</code> and are MIT licensed. Import what you need, leave what you don't.</p>
+
+  <!-- ──── GLASS BARS ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge free">Core</span>
+      <h3>Glass-finished bars</h3>
+      <p>The signature visual. Every bar is two layers — a track at full width and a fill at progress width — with a glass highlight, dimensional shadow, and progress marker dot.</p>
+      <div class="feature-detail">
+        Progress marker at fill edge (hidden at 0% and 100%). Smart labels: inside when bar is wide enough, outside when narrow. Drag handles appear on hover. Done bars dim to 45%. Upcoming bars show the full track at 50% opacity.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-theme-wrap">
+        <div class="demo-theme-tabs">
+          <button class="demo-theme-tab active" onclick="setBarMode('grayscale',this)">Grayscale</button>
+          <button class="demo-theme-tab" onclick="setBarMode('vivid',this)">✦ Vivid</button>
+        </div>
+        <div class="demo-chart" id="glassDemo" style="min-height:180px">
+          <!-- Done bar -->
+          <div class="g-row">
+            <div class="g-bar bar-done" style="left:12px;width:200px;">
+              <div class="g-track"></div>
+              <div class="g-fill fill-done full gb-done" style="width:100%"></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside">Research & Discovery</span>
+            </div>
+          </div>
+          <!-- Active bar with progress -->
+          <div class="g-row">
+            <div class="g-bar" style="left:60px;width:260px;">
+              <div class="g-track"></div>
+              <div class="g-fill fill-active gb-active" style="width:180px"></div>
+              <div class="g-marker" style="left:180px"><div class="g-marker-inner gb-marker" style="background:#574f45"></div></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside">Core Architecture · 69%</span>
+            </div>
+          </div>
+          <!-- Narrow active bar (label outside) -->
+          <div class="g-row">
+            <div class="g-bar" style="left:200px;width:60px;">
+              <div class="g-track"></div>
+              <div class="g-fill fill-active gb-active" style="width:24px"></div>
+              <div class="g-marker" style="left:24px"><div class="g-marker-inner gb-marker" style="background:#574f45"></div></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label outside" style="left:66px;">API · 40%</span>
+            </div>
+          </div>
+          <!-- Upcoming bar -->
+          <div class="g-row">
+            <div class="g-bar bar-upcoming" style="left:140px;width:200px;">
+              <div class="g-track"></div>
+              <div class="g-fill fill-upcoming gb-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" style="opacity:0.75;">Organize Bundle</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── TODAY MARKER ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge free">Free</span>
+      <h3>Today Marker</h3>
+      <p>A pulsing vertical line that always shows where you are in the timeline. Red line, solid dot, animated ring, and a subtle column glow behind it.</p>
+      <div class="feature-detail">
+        1.5px line at 50% opacity. 8px dot. 16px ring pulsing to 1.6× scale over 2 seconds. ~40px glow column at 4% opacity. "TODAY" label in monospace above.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="demo-chart" style="min-height:180px">
+        <!-- Grid lines -->
+        <div class="g-grid" style="left:80px"></div>
+        <div class="g-grid" style="left:160px"></div>
+        <div class="g-grid" style="left:240px"></div>
+        <div class="g-grid" style="left:320px"></div>
+        <!-- Today marker -->
+        <div style="position:absolute;left:195px;top:0;bottom:0;z-index:10;">
+          <div class="today-glow" style="left:0"></div>
+          <div class="today-line" style="left:0">
+            <span class="today-lbl">TODAY</span>
+            <div class="today-dot"></div>
+            <div class="today-ring"></div>
+          </div>
+        </div>
+        <!-- Bars behind the marker -->
+        <div class="g-row">
+          <div class="g-bar bar-done" style="left:20px;width:160px;">
+            <div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div>
+            <span class="g-label inside">Design System</span>
+          </div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar" style="left:80px;width:220px;">
+            <div class="g-track"></div><div class="g-fill fill-active" style="width:120px"></div>
+            <div class="g-marker" style="left:120px"><div class="g-marker-inner" style="background:#574f45"></div></div>
+            <span class="g-label inside">Core Architecture · 55%</span>
+          </div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar" style="left:160px;width:180px;">
+            <div class="g-track"></div><div class="g-fill fill-active" style="width:40px"></div>
+            <div class="g-marker" style="left:40px"><div class="g-marker-inner" style="background:#574f45"></div></div>
+            <span class="g-label inside">Extension API · 22%</span>
+          </div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar bar-upcoming" style="left:260px;width:120px;">
+            <div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div>
+            <span class="g-label inside" style="opacity:0.75">Arrows</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── TOOLTIPS ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge free">Free</span>
+      <h3>Tooltips</h3>
+      <p>Cursor-following cards that show task name, date range, progress percentage, and assignee on hover. Boundary-aware — they never clip off the edge of the chart.</p>
+      <div class="feature-detail">
+        Dark card on light theme, light card on dark theme. Status dot, human-readable dates, and progress bar. Follows cursor with a slight offset.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="demo-chart" id="tooltipDemo" style="min-height:180px;cursor:default" onmouseenter="showTooltip()" onmouseleave="hideTooltip()">
+        <div class="g-row"><div class="g-bar bar-done" style="left:16px;width:180px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div></div>
+        <div class="g-row">
+          <div class="g-bar" id="tooltipBar" style="left:60px;width:240px;">
+            <div class="g-track"></div><div class="g-fill fill-active" style="width:168px"></div>
+            <div class="g-marker" style="left:168px"><div class="g-marker-inner" style="background:#574f45"></div></div>
+            <span class="g-label inside">Core Architecture · 70%</span>
+          </div>
+        </div>
+        <div class="g-row"><div class="g-bar bar-upcoming" style="left:200px;width:160px;"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div></div>
+        <div class="g-row" style="height:24px"></div>
+        <!-- Static tooltip (visible by default, positioned over bar) -->
+        <div class="demo-tooltip show" style="top:58px;right:20px;" id="demoTooltipCard">
+          <div class="demo-tooltip-name">Core Architecture</div>
+          <div class="demo-tooltip-row"><span class="demo-tooltip-label">Dates</span><span>Mar 12 — Apr 8</span></div>
+          <div class="demo-tooltip-row"><span class="demo-tooltip-label">Progress</span><span>70%</span></div>
+          <div class="demo-tooltip-row"><span class="demo-tooltip-label">Status</span><span>Active</span></div>
+          <div class="demo-tooltip-bar"><div class="demo-tooltip-bar-fill" style="width:70%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── DEPENDENCY ARROWS ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge free">Free</span>
+      <h3>Dependency Arrows</h3>
+      <p>SVG paths connecting dependent tasks. Start-to-start routing with right-angle joins. Hidden by default — they appear when you hover a connected bar, then fade out.</p>
+      <div class="feature-detail">
+        Status-based styling: solid 1.5px for active, dashed for future, lighter for completed. 2.5px connection dots at endpoints. Hover any bar to see its connections.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="demo-chart demo-arrows" style="min-height:224px">
+        <!-- Arrow SVG -->
+        <svg class="demo-arrows-svg" viewBox="0 0 400 224" preserveAspectRatio="none">
+          <!-- Arrow 1: bar1 → bar2 (active, solid) -->
+          <path class="dep-path" d="M 42,31 L 22,31 L 22,75 L 82,75" stroke-linejoin="round"/>
+          <circle class="dep-dot" cx="42" cy="31" r="2.5"/>
+          <circle class="dep-dot" cx="82" cy="75" r="2.5"/>
+          <!-- Arrow 2: bar2 → bar3 (active, solid) -->
+          <path class="dep-path" d="M 82,75 L 62,75 L 62,119 L 142,119" stroke-linejoin="round"/>
+          <circle class="dep-dot" cx="82" cy="75" r="2.5"/>
+          <circle class="dep-dot" cx="142" cy="119" r="2.5"/>
+          <!-- Arrow 3: bar3 → bar4 (future, dashed) -->
+          <path class="dep-path future" d="M 142,119 L 122,119 L 122,163 L 222,163" stroke-linejoin="round"/>
+          <circle class="dep-dot" cx="142" cy="119" r="2.5"/>
+          <circle class="dep-dot" cx="222" cy="163" r="2.5"/>
+        </svg>
+        <div class="g-row">
+          <div class="g-bar bar-done" style="left:42px;width:160px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar" style="left:82px;width:200px;"><div class="g-track"></div><div class="g-fill fill-active" style="width:140px"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Architecture · 70%</span></div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar" style="left:142px;width:160px;"><div class="g-track"></div><div class="g-fill fill-active" style="width:48px"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Extension API · 30%</span></div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar bar-upcoming" style="left:222px;width:140px;"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div><span class="g-label inside" style="opacity:0.75">Arrows</span></div>
+        </div>
+        <p style="position:absolute;bottom:8px;left:24px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">HOVER TO REVEAL ARROWS</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── THEMES ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge free">Core</span>
+      <h3>Themes</h3>
+      <p>Every visual value flows through CSS custom properties. Light and dark ship with core. Swap themes by changing one class on the container. Build your own in 20 lines of CSS.</p>
+      <div class="feature-detail">
+        ~40 custom properties prefixed with --emboss-. Surface colors, ink hierarchy, bar fills, track styles. Dark theme swaps all values. Vivid template overrides fills only.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-theme-wrap">
+        <div class="demo-theme-tabs">
+          <button class="demo-theme-tab active" onclick="setDemoTheme('light',this)">Light</button>
+          <button class="demo-theme-tab" onclick="setDemoTheme('dark',this)">Dark</button>
+          <button class="demo-theme-tab" onclick="setDemoTheme('vivid',this)">✦ Vivid</button>
+        </div>
+        <div class="demo-theme-chart" id="themeDemo">
+          <div class="g-row"><div class="g-bar bar-done" style="left:12px;width:160px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%" id="td1"></div><span class="g-label inside">Design System</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:60px;width:220px;"><div class="g-track"></div><div class="g-fill fill-active" style="width:154px" id="td2"></div><div class="g-marker" style="left:154px"><div class="g-marker-inner" style="background:#574f45" id="td2m"></div></div><span class="g-label inside">Architecture · 70%</span></div></div>
+          <div class="g-row"><div class="g-bar bar-upcoming" style="left:180px;width:140px;"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px" id="td3"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── VIEWS & DENSITY ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge free">Core</span>
+      <h3>Views & Density</h3>
+      <p>Four zoom levels — day, week, month, quarter — and three density modes. Working for daily use, presentation for client meetings, dense for when you need the big picture.</p>
+      <div class="feature-detail">
+        Each view × density combination maps to specific pixel values: day width, row height, bar height, label size. Swap with one method call.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-views-wrap">
+        <div class="demo-views-tabs">
+          <button class="demo-views-tab active" onclick="setDemoView('week',this)">Week</button>
+          <button class="demo-views-tab" onclick="setDemoView('month',this)">Month</button>
+          <button class="demo-views-tab" onclick="setDemoView('quarter',this)">Quarter</button>
+        </div>
+        <div class="demo-header" id="viewHeader">
+          <span style="width:46px">Mar</span><span style="width:46px">10</span><span style="width:46px">17</span><span style="width:46px">24</span><span style="width:46px">31</span><span style="width:46px">Apr 7</span><span style="width:46px">14</span><span style="width:46px">21</span>
+        </div>
+        <div class="demo-chart" id="viewDemo" style="min-height:140px;padding:12px 20px">
+          <div class="g-row" id="vr1"><div class="g-bar bar-done" style="left:10px;width:140px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div></div>
+          <div class="g-row" id="vr2"><div class="g-bar" style="left:50px;width:200px;"><div class="g-track"></div><div class="g-fill fill-active" style="width:140px"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Architecture · 70%</span></div></div>
+          <div class="g-row" id="vr3"><div class="g-bar bar-upcoming" style="left:160px;width:120px;"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ORGANIZE BUNDLE
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <p class="section-label">Organize bundle — $49 one-time</p>
+  <h2 class="section-title">Structure your chart</h2>
+  <p class="section-desc">The design infrastructure you'd spend weeks building. Sidebar navigation, phase grouping, milestone diamonds, and inline editing — ready in one import.</p>
+
+  <!-- ──── SIDEBAR ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Sidebar</h3>
+      <p>A scroll-synced panel showing task names, status dots, phase grouping, and assignee avatars. Full-width mode at 280px or collapse to a 48px rail with icon-only view.</p>
+      <div class="feature-detail">
+        Phase rows show colored pill + name + chevron + task count. Task rows show status dot + name. Milestones show diamond icon + italic name. Subtasks indent by depth.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-sidebar-wrap">
+        <div class="demo-sidebar">
+          <div class="demo-sb-row">
+            <div class="demo-sb-pill" style="background:#3b82f6"></div>
+            <div class="demo-sb-phase"><span class="demo-sb-chevron">▼</span> Design</div>
+            <span class="demo-sb-count">3</span>
+          </div>
+          <div class="demo-sb-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#9d9488"></div>
+            <div class="demo-sb-name">Research</div>
+          </div>
+          <div class="demo-sb-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <div class="demo-sb-name">Wireframes</div>
+          </div>
+          <div class="demo-sb-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <div class="demo-sb-name">UI Components</div>
+          </div>
+          <div class="demo-sb-row">
+            <div class="demo-sb-pill" style="background:#22d3ee"></div>
+            <div class="demo-sb-phase"><span class="demo-sb-chevron">▶</span> Engineering</div>
+            <span class="demo-sb-count">5</span>
+          </div>
+        </div>
+        <div class="demo-sidebar-chart" style="min-height:200px;position:relative">
+          <!-- Phase bar -->
+          <div style="position:absolute;left:8px;top:14px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.2)"></div>
+          <div class="g-row"><div class="g-bar bar-done" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:98px"></div><span class="g-label inside" style="font-size:10.5px">Wireframes · 70%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:36px"></div><span class="g-label inside" style="font-size:10.5px">UI · 30%</span></div></div>
+          <!-- Collapsed phase indicator -->
+          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(34,211,238,0.2)"></div>
+          <div class="g-row"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── PHASE GROUPING ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Phase Grouping</h3>
+      <p>Collapsible groups that span their children on the timeline. Color-coded thin bars show the phase at a glance. Click the chevron to expand or collapse.</p>
+      <div class="feature-detail">
+        Phase dates are computed — spanning from earliest child start to latest child end. Phase progress rolls up from children. 5px thin bar at 25% opacity of the phase color.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="demo-chart" style="min-height:220px">
+        <!-- Phase 1: Design (expanded) -->
+        <div style="position:absolute;left:20px;top:18px;width:300px;height:5px;border-radius:3px;background:rgba(59,130,246,0.25)"></div>
+        <div class="g-row" style="height:38px"></div>
+        <div class="g-row"><div class="g-bar bar-done" style="left:20px;width:120px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:80px;width:160px"><div class="g-track"></div><div class="g-fill fill-active" style="width:112px"></div><div class="g-marker" style="left:112px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Wireframes · 70%</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:160px;width:160px"><div class="g-track"></div><div class="g-fill fill-active" style="width:48px"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Components · 30%</span></div></div>
+        <!-- Phase 2: Engineering (collapsed, just the thin bar) -->
+        <div style="position:absolute;left:100px;top:196px;width:260px;height:5px;border-radius:3px;background:rgba(34,211,238,0.25)"></div>
+        <div class="g-row" style="height:38px"></div>
+        <p style="position:absolute;top:6px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">▼</span> Design</p>
+        <p style="position:absolute;top:188px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">▶</span> Engineering <span style="font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);font-weight:400">(5 tasks)</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── MILESTONES ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Milestone Diamonds</h3>
+      <p>Point-in-time markers for deadlines and checkpoints. Phase-colored borders, progress fill from bottom to top, glass highlight. They scale up on hover.</p>
+      <div class="feature-detail">
+        20×20px rotated square with 3px rounded corners. 2.5px border in phase color. Done state: 45% opacity. Hover: scale 1.2×.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div class="demo-chart" style="min-height:180px">
+        <div class="g-row">
+          <div class="g-bar bar-done" style="left:20px;width:140px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside">Research</span></div>
+          <!-- Done milestone -->
+          <div class="g-diamond done" style="left:172px;border-color:#9d9488;">
+            <div class="g-diamond-fill" style="height:100%;background:#9d9488"></div>
+            <div class="g-diamond-glass"></div>
+          </div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar" style="left:60px;width:200px"><div class="g-track"></div><div class="g-fill fill-active" style="width:140px"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#574f45"></div></div><span class="g-label inside">Architecture · 70%</span></div>
+          <!-- Active milestone (partial fill) -->
+          <div class="g-diamond" style="left:272px;border-color:#3b82f6;">
+            <div class="g-diamond-fill" style="height:60%;background:#3b82f6"></div>
+            <div class="g-diamond-glass"></div>
+          </div>
+        </div>
+        <div class="g-row">
+          <div class="g-bar bar-upcoming" style="left:180px;width:140px"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div>
+          <!-- Upcoming milestone (empty) -->
+          <div class="g-diamond" style="left:332px;border-color:#22d3ee;">
+            <div class="g-diamond-glass"></div>
+          </div>
+        </div>
+        <div class="g-row">
+          <span class="g-label outside" style="left:178px;top:6px;font-style:italic;font-size:10.5px">Design Review</span>
+          <span class="g-label outside" style="left:278px;top:6px;font-style:italic;font-size:10.5px">Alpha</span>
+          <span class="g-label outside" style="left:338px;top:6px;font-style:italic;font-size:10.5px">Beta</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── INLINE EDITING ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Inline Editing</h3>
+      <p>Click any name in the sidebar to edit it directly. Phase-colored border on focus. Enter to save, Escape to cancel. No modals, no forms — just type.</p>
+      <div class="feature-detail">
+        Editable fields: task name, phase name. The input inherits sidebar typography. Changes emit an onRowUpdate event that your app can listen to and persist.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div style="padding:24px;min-height:180px">
+        <!-- Simulated sidebar rows, one in edit state -->
+        <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px">
+          <div class="demo-sb-pill" style="background:#3b82f6"></div>
+          <div class="demo-sb-phase"><span class="demo-sb-chevron">▼</span> Design</div>
+          <span class="demo-sb-count">3</span>
+        </div>
+        <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px;padding-left:28px">
+          <div class="demo-sb-dot" style="background:#9d9488"></div>
+          <div class="demo-sb-name">Research & Discovery</div>
+        </div>
+        <!-- This one is "editing" -->
+        <div class="demo-sb-row" style="border:2px solid #3b82f6;border-radius:10px;margin-bottom:6px;padding-left:28px;background:var(--emboss-surface)">
+          <div class="demo-sb-dot" style="background:#574f45"></div>
+          <div style="font-size:12.5px;font-weight:500;color:var(--emboss-coal)">Wireframes & Prototyp<span style="border-right:2px solid var(--emboss-press);animation:blink 1s step-end infinite">&nbsp;</span></div>
+        </div>
+        <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;padding-left:28px">
+          <div class="demo-sb-dot" style="background:#574f45"></div>
+          <div class="demo-sb-name">UI Components</div>
+        </div>
+        <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK TO EDIT · ENTER TO SAVE · ESC TO CANCEL</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>@keyframes blink { 50% { border-color:transparent; } }</style>
+
+<!-- ═══════════════════════════════════════════
+     COMPARISON TABLE
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <p class="section-label">Compare</p>
+  <h2 class="section-title">What's in each tier</h2>
+  <p class="section-desc">Core is the foundation. Organize adds the structure you need for real projects.</p>
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead><tr>
+        <th></th>
+        <th>Core <span style="display:block;font-size:13px;font-weight:400;color:var(--emboss-ash)">Free</span></th>
+        <th class="featured">Organize <span style="display:block;font-size:13px;font-weight:400;color:var(--emboss-ash)">$49 one-time</span></th>
+        <th>Templates <span style="display:block;font-size:13px;font-weight:400;color:var(--emboss-ash)">$19 each</span></th>
+      </tr></thead>
+      <tbody>
+        <tr class="group-row"><td colspan="4">Rendering</td></tr>
+        <tr><td>Glass-finished bars</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Progress markers & labels</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Drag handles</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Drag to reschedule</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr class="group-row"><td colspan="4">Views & Modes</td></tr>
+        <tr><td>Day / Week / Month / Quarter</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Working / Presentation / Dense</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Light & dark themes</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Custom theme CSS</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr class="group-row"><td colspan="4">Free Extensions</td></tr>
+        <tr><td>Today marker</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Hover tooltips</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Dependency arrows</td><td><span class="check">✓</span></td><td class="featured"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr class="group-row"><td colspan="4">Structure</td></tr>
+        <tr><td>Sidebar navigation</td><td><span class="dash">—</span></td><td class="featured"><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+        <tr><td>Rail mode (compact sidebar)</td><td><span class="dash">—</span></td><td class="featured"><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+        <tr><td>Phase grouping & collapse</td><td><span class="dash">—</span></td><td class="featured"><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+        <tr><td>Milestone diamonds</td><td><span class="dash">—</span></td><td class="featured"><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+        <tr><td>Inline editing</td><td><span class="dash">—</span></td><td class="featured"><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+        <tr class="group-row"><td colspan="4">Themes</td></tr>
+        <tr><td>Vivid template</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Mono template</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Blueprint template</td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+      </tbody>
+      <tfoot><tr>
+        <td></td>
+        <td><button class="btn-primary" style="font-size:13px;padding:10px 20px">Get started</button></td>
+        <td class="featured"><button class="btn-vivid" style="font-size:13px;padding:10px 20px">Purchase →</button></td>
+        <td><button class="btn-secondary" style="font-size:13px;padding:10px 20px">Browse</button></td>
+      </tr></tfoot>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FUTURE BUNDLES
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <p class="section-label">On the roadmap</p>
+  <h2 class="section-title">More bundles coming</h2>
+  <p class="section-desc">Each bundle adds a layer of capability. We build them when they're ready, not before.</p>
+  <div class="future-grid">
+    <div class="future-card"><h3>Team</h3><p>Swimlane view by assignee. Resource allocation. Workload heatmaps. See who's doing what and who's overloaded.</p></div>
+    <div class="future-card"><h3>Analyze</h3><p>Critical path highlighting. Baseline comparison. Export to PDF/PNG. The analysis layer for project reviews.</p></div>
+    <div class="future-card"><h3>Subtasks</h3><p>Deep nesting for task breakdowns. Subtask bars inherit parent color at 70%. Collapse and expand at any depth.</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="mission" style="padding-bottom:120px;">
+  <p class="section-label">Get started</p>
+  <p class="mission-statement">The engine was always there.<br><span class="vivid-text">We're drawing out the beauty.</span></p>
+  <div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <button class="btn-vivid" onclick="navigator.clipboard.writeText('npm install @emboss/core')">npm install @emboss/core →</button>
+    <button class="btn-secondary" onclick="window.location='/docs'">Read the docs</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="emboss-logo" style="gap:8px;margin-bottom:4px;">
+        <svg width="22" height="22" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+        <span class="emboss-wordmark" style="font-size:16px;">emboss</span>
+      </div>
+      <p>Beautiful software isn't a luxury. It's accessibility.</p>
+    </div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a href="#">Core library</a></li><li><a href="#">Organize bundle</a></li><li><a href="#">Templates</a></li><li><a href="#">Changelog</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="/docs">Documentation</a></li><li><a href="/features">Features</a></li><li><a href="#">GitHub</a></li><li><a href="#">npm</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="https://leantime.io">Leantime</a></li><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Emboss. Made by the Leantime team.</p>
+    <span class="footer-tagline">open source builds the engine. we bring the finish.</span>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelector('.theme-toggle').textContent = isDark ? '☀' : '☾';
+  localStorage.setItem('emboss-theme', isDark ? 'light' : 'dark');
+}
+if (localStorage.getItem('emboss-theme') === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+  document.querySelector('.theme-toggle').textContent = '☾';
+}
+
+// Tooltip demo
+function showTooltip() { document.getElementById('demoTooltipCard').classList.add('show'); }
+function hideTooltip() { /* keep it visible as a static demo */ }
+
+// Theme demo
+function setDemoTheme(mode, btn) {
+  btn.closest('.demo-theme-tabs').querySelectorAll('.demo-theme-tab').forEach(t => t.classList.remove('active','vivid-active'));
+  btn.classList.add(mode === 'vivid' ? 'vivid-active' : 'active');
+  const chart = document.getElementById('themeDemo');
+  chart.classList.remove('dark-demo');
+  const f1 = document.getElementById('td1');
+  const f2 = document.getElementById('td2');
+  const f3 = document.getElementById('td3');
+  const m = document.getElementById('td2m');
+  if (mode === 'dark') {
+    chart.classList.add('dark-demo');
+    f1.className = 'g-fill fill-done full'; f2.className = 'g-fill fill-active'; f3.className = 'g-fill fill-upcoming';
+    m.style.background = '#574f45';
+  } else if (mode === 'vivid') {
+    f1.className = 'g-fill fill-vivid-done full'; f2.className = 'g-fill fill-vivid-active'; f3.className = 'g-fill fill-vivid-active';
+    m.style.background = '#22d3ee';
+  } else {
+    f1.className = 'g-fill fill-done full'; f2.className = 'g-fill fill-active'; f3.className = 'g-fill fill-upcoming';
+    m.style.background = '#574f45';
+  }
+}
+
+// Glass bars demo — grayscale/vivid toggle
+function setBarMode(mode, btn) {
+  btn.closest('.demo-theme-tabs').querySelectorAll('.demo-theme-tab').forEach(t => t.classList.remove('active','vivid-active'));
+  btn.classList.add(mode === 'vivid' ? 'vivid-active' : 'active');
+  const demo = document.getElementById('glassDemo');
+  const vivid = mode === 'vivid';
+  demo.querySelectorAll('.gb-active').forEach(el => {
+    el.className = el.className.replace(/fill-(vivid-)?active/, vivid ? 'fill-vivid-active' : 'fill-active');
+  });
+  demo.querySelectorAll('.gb-done').forEach(el => {
+    el.className = el.className.replace(/fill-(vivid-)?done/, vivid ? 'fill-vivid-done' : 'fill-done');
+  });
+  demo.querySelectorAll('.gb-upcoming').forEach(el => {
+    el.className = el.className.replace(/fill-(vivid-)?upcoming/, vivid ? 'fill-vivid-upcoming' : 'fill-upcoming');
+  });
+  demo.querySelectorAll('.gb-marker').forEach(el => {
+    el.style.background = vivid ? '#22d3ee' : '#574f45';
+  });
+}
+
+// View demo
+function setDemoView(view, btn) {
+  document.querySelectorAll('.demo-views-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const h = document.getElementById('viewHeader');
+  const scales = {
+    week: { labels: '<span style="width:46px">Mar</span><span style="width:46px">10</span><span style="width:46px">17</span><span style="width:46px">24</span><span style="width:46px">31</span><span style="width:46px">Apr 7</span><span style="width:46px">14</span><span style="width:46px">21</span>', bars: [{l:10,w:140},{l:50,w:200},{l:160,w:120}] },
+    month: { labels: '<span style="width:60px">Feb</span><span style="width:60px">Mar</span><span style="width:60px">Apr</span><span style="width:60px">May</span><span style="width:60px">Jun</span><span style="width:60px">Jul</span>', bars: [{l:70,w:80},{l:100,w:110},{l:160,w:80}] },
+    quarter: { labels: '<span style="width:90px">Q1 2026</span><span style="width:90px">Q2 2026</span><span style="width:90px">Q3 2026</span><span style="width:90px">Q4 2026</span>', bars: [{l:50,w:50},{l:65,w:70},{l:100,w:50}] }
+  };
+  const s = scales[view];
+  h.innerHTML = s.labels;
+  ['vr1','vr2','vr3'].forEach((id,i) => {
+    const bar = document.getElementById(id).querySelector('.g-bar');
+    bar.style.left = s.bars[i].l + 'px';
+    bar.style.width = s.bars[i].w + 'px';
+  });
+}
+
+// Scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';} });
+}, {threshold:0.08});
+document.querySelectorAll('.section,.mission,.page-hero').forEach(el => {
+  el.style.opacity='0'; el.style.transform='translateY(24px)';
+  el.style.transition='opacity 0.7s ease, transform 0.7s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>

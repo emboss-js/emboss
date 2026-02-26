@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Documentation" description="Emboss documentation — getting started, API reference, and extension guides.">
+  <section class="placeholder">
+    <p class="section-label">Documentation</p>
+    <h1 class="section-title">Coming soon</h1>
+    <p class="section-desc">We're writing the docs. In the meantime, check out the <a href="https://github.com/leantime/emboss" target="_blank" rel="noopener">GitHub repo</a> for usage examples.</p>
+    <a href="/" class="btn-secondary">&larr; Back to home</a>
+  </section>
+</Base>
+
+<style>
+  .placeholder {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+  }
+  .placeholder .section-desc {
+    margin-bottom: 32px;
+  }
+</style>

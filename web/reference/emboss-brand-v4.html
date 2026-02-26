@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emboss — Beautiful software isn't a luxury. It's accessibility.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --emboss-coal: #1e1c19;
+  --emboss-graphite: #2e2b26;
+  --emboss-slate: #574f45;
+  --emboss-ash: #736a61;
+  --emboss-fog: #cdc6bb;
+  --emboss-cloud: #e3ddd4;
+  --emboss-snow: #f0ebe4;
+  --emboss-cream: #f5f2ec;
+  --emboss-white: #faf8f4;
+  --emboss-vivid-1: #3b82f6;
+  --emboss-vivid-2: #38bdf8;
+  --emboss-vivid-3: #22d3ee;
+  --emboss-gradient: linear-gradient(135deg, #3b82f6, #38bdf8, #22d3ee);
+  --emboss-gradient-text: linear-gradient(135deg, #60a5fa, #38bdf8, #22d3ee);
+  --emboss-press: #3b82f6;
+  --emboss-patina: #10b981;
+  --emboss-relief: #f59e0b;
+  --emboss-signal: #ef4444;
+  --emboss-surface: var(--emboss-white);
+  --emboss-surface-raised: var(--emboss-cream);
+  --emboss-surface-inset: var(--emboss-snow);
+  --emboss-border: rgba(30,28,25,0.07);
+  --emboss-border-strong: rgba(30,28,25,0.13);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Hanken Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --emboss-lift-sm: 0 1px 2px rgba(30,28,25,0.05), 0 1px 3px rgba(30,28,25,0.07);
+  --emboss-lift-md: 0 4px 14px rgba(30,28,25,0.07), 0 1px 3px rgba(30,28,25,0.09);
+  --emboss-lift-lg: 0 12px 40px rgba(30,28,25,0.09), 0 4px 14px rgba(30,28,25,0.06);
+  --emboss-lift-xl: 0 20px 60px rgba(30,28,25,0.11), 0 8px 20px rgba(30,28,25,0.07);
+}
+[data-theme="dark"] {
+  --emboss-ash: #9d9488;
+  --emboss-surface: #131210;
+  --emboss-surface-raised: #1e1c19;
+  --emboss-surface-inset: #181613;
+  --emboss-border: rgba(250,248,244,0.06);
+  --emboss-border-strong: rgba(250,248,244,0.12);
+  --emboss-lift-sm: 0 1px 3px rgba(0,0,0,0.35);
+  --emboss-lift-md: 0 4px 14px rgba(0,0,0,0.4);
+  --emboss-lift-lg: 0 14px 44px rgba(0,0,0,0.5);
+  --emboss-lift-xl: 0 22px 64px rgba(0,0,0,0.6);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--emboss-surface);
+  color: var(--emboss-coal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+[data-theme="dark"] body { color: var(--emboss-fog); }
+a { color: var(--emboss-press); text-decoration:none; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding: 14px 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(250,248,244,0.8);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid var(--emboss-border);
+}
+[data-theme="dark"] nav { background: rgba(19,18,16,0.82); }
+.emboss-logo { display:inline-flex; align-items:center; gap:10px; }
+.emboss-wordmark {
+  font-family: var(--font-body); font-weight:700;
+  letter-spacing: -0.03em; color: var(--emboss-coal);
+}
+[data-theme="dark"] .emboss-wordmark { color: var(--emboss-white); }
+.emboss-logo.on-dark .emboss-wordmark { color: var(--emboss-white); }
+.nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+.nav-links a { font-size:14px; font-weight:500; color:var(--emboss-slate); transition:color 0.2s; }
+.nav-links a:hover { color:var(--emboss-coal); }
+[data-theme="dark"] .nav-links a:hover { color:var(--emboss-white); }
+.theme-toggle {
+  width:36px; height:36px; border-radius:10px;
+  border: 1px solid var(--emboss-border-strong);
+  background: var(--emboss-surface-raised);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:16px; transition:all 0.2s;
+}
+.theme-toggle:hover { box-shadow:var(--emboss-lift-sm); transform:translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding: 120px 40px 80px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:10%; left:50%; transform:translateX(-50%);
+  width:1000px; height:700px;
+  background:
+    radial-gradient(ellipse 500px 400px at 50% 50%, rgba(59,130,246,0.03), transparent);
+  pointer-events:none; filter:blur(60px);
+}
+[data-theme="dark"] .hero::before {
+  background:
+    radial-gradient(ellipse 500px 400px at 50% 50%, rgba(59,130,246,0.06), transparent);
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 6px 16px 6px 6px; border-radius:100px;
+  background: var(--emboss-surface-raised);
+  border: 1px solid var(--emboss-border-strong);
+  font-size:13px; font-weight:500; color:var(--emboss-slate);
+  margin-bottom:32px; box-shadow:var(--emboss-lift-sm);
+  position:relative; z-index:1; animation: fadeUp 0.6s ease-out;
+}
+.hero-badge-dot { width:22px; height:22px; border-radius:50%; background:var(--emboss-gradient); flex-shrink:0; }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 90px);
+  font-weight:400; line-height:1.06; letter-spacing:-0.02em;
+  color: var(--emboss-coal); max-width:860px;
+  position:relative; z-index:1;
+  animation: fadeUp 0.6s ease-out 0.1s both;
+}
+[data-theme="dark"] .hero h1 { color: var(--emboss-white); }
+.hero h1 em {
+  font-style:italic;
+  background: var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero-sub {
+  font-size: clamp(17px, 2vw, 20px); color:var(--emboss-slate);
+  max-width:540px; margin-top:24px; line-height:1.7;
+  position:relative; z-index:1; animation: fadeUp 0.6s ease-out 0.2s both;
+}
+[data-theme="dark"] .hero-sub { color: var(--emboss-ash); }
+.hero-ctas {
+  display:flex; gap:16px; margin-top:40px;
+  position:relative; z-index:1; animation: fadeUp 0.6s ease-out 0.3s both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+/* BUTTONS */
+.btn-primary {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 28px; border-radius:12px;
+  background:var(--emboss-coal); color:var(--emboss-white);
+  font-family:var(--font-body); font-size:15px; font-weight:600;
+  border:none; cursor:pointer; box-shadow:var(--emboss-lift-md); transition:all 0.2s;
+}
+[data-theme="dark"] .btn-primary { background:var(--emboss-white); color:var(--emboss-coal); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:var(--emboss-lift-lg); }
+.btn-secondary {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 28px; border-radius:12px;
+  background:var(--emboss-surface-raised); color:var(--emboss-coal);
+  font-family:var(--font-body); font-size:15px; font-weight:600;
+  border:1px solid var(--emboss-border-strong); cursor:pointer; transition:all 0.2s;
+}
+[data-theme="dark"] .btn-secondary { color:var(--emboss-fog); }
+.btn-secondary:hover { transform:translateY(-2px); box-shadow:var(--emboss-lift-md); }
+.btn-vivid {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 28px; border-radius:12px;
+  background:var(--emboss-gradient); color:white;
+  font-family:var(--font-body); font-size:15px; font-weight:600;
+  border:none; cursor:pointer;
+  box-shadow: 0 4px 18px rgba(59,130,246,0.22), 0 2px 6px rgba(34,211,238,0.15);
+  transition:all 0.2s;
+}
+.btn-vivid:hover { transform:translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,0.28), 0 4px 14px rgba(34,211,238,0.2); }
+
+/* SECTIONS */
+.section { padding:100px 40px; max-width:1200px; margin:0 auto; }
+.section-label {
+  font-family:var(--font-mono); font-size:11px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  margin-bottom:16px;
+}
+.section-title {
+  font-family:var(--font-display); font-size:clamp(32px, 4vw, 48px);
+  font-weight:400; line-height:1.15; letter-spacing:-0.02em;
+  color:var(--emboss-coal); margin-bottom:16px;
+}
+[data-theme="dark"] .section-title { color:var(--emboss-white); }
+.section-desc { font-size:17px; line-height:1.7; color:var(--emboss-slate); max-width:640px; margin-bottom:48px; }
+[data-theme="dark"] .section-desc { color:var(--emboss-ash); }
+
+/* MISSION */
+.mission { padding:120px 40px; text-align:center; }
+.mission-statement {
+  font-family:var(--font-display); font-size:clamp(28px, 4vw, 44px);
+  font-weight:400; line-height:1.35; color:var(--emboss-coal);
+  max-width:800px; margin:0 auto; letter-spacing:-0.01em;
+}
+[data-theme="dark"] .mission-statement { color:var(--emboss-fog); }
+.vivid-text {
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.mission-sub { font-size:18px; color:var(--emboss-ash); margin-top:24px; max-width:500px; margin-left:auto; margin-right:auto; font-style:italic; }
+
+/* PHILOSOPHY */
+.philosophy-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; }
+.philosophy-card {
+  padding:32px; border-radius:20px;
+  background:var(--emboss-surface-raised); border:1px solid var(--emboss-border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.philosophy-card:hover { transform:translateY(-3px); box-shadow:var(--emboss-lift-md); }
+.philosophy-icon {
+  width:42px; height:42px; border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; margin-bottom:18px;
+  background:var(--emboss-gradient); color:white;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.18);
+}
+.philosophy-card h3 { font-size:17px; font-weight:700; color:var(--emboss-coal); margin-bottom:8px; }
+[data-theme="dark"] .philosophy-card h3 { color:var(--emboss-white); }
+.philosophy-card p { font-size:14px; line-height:1.65; color:var(--emboss-slate); }
+[data-theme="dark"] .philosophy-card p { color:var(--emboss-ash); }
+/* PREVIEW */
+.preview-container {
+  border-radius:20px; overflow:hidden;
+  border:1px solid var(--emboss-border-strong);
+  box-shadow:var(--emboss-lift-xl); background:var(--emboss-surface);
+}
+.preview-toolbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px;
+  background:var(--emboss-surface-raised);
+  border-bottom:1px solid var(--emboss-border);
+}
+.preview-dots { display:flex; gap:8px; }
+.preview-dots span { width:12px; height:12px; border-radius:50%; background:var(--emboss-cloud); }
+.preview-dots span:first-child { background:#ff5f57; }
+.preview-dots span:nth-child(2) { background:#ffbd2e; }
+.preview-dots span:nth-child(3) { background:#27c93f; }
+.preview-tabs { display:flex; background:var(--emboss-surface-inset); border-radius:10px; padding:3px; }
+.preview-tab {
+  padding:6px 16px; border-radius:8px;
+  font-family:var(--font-body); font-size:12px; font-weight:500;
+  color:var(--emboss-ash); background:transparent; border:none; cursor:pointer; transition:all 0.15s;
+}
+.preview-tab.active { background:var(--emboss-surface); color:var(--emboss-coal); box-shadow:var(--emboss-lift-sm); }
+[data-theme="dark"] .preview-tab.active { color:var(--emboss-white); }
+.preview-tab.vivid-active { background:var(--emboss-gradient); color:white; box-shadow:0 2px 8px rgba(59,130,246,0.22); }
+.preview-chart { padding:24px; min-height:340px; position:relative; overflow:hidden; }
+
+/* GANTT BARS */
+.gantt-bar {
+  height:26px; border-radius:13px; position:relative; overflow:hidden;
+  transition:transform 0.2s, opacity 0.2s; cursor:pointer;
+}
+.gantt-bar:hover { transform:scaleY(1.08); }
+.gantt-bar-track { position:absolute; inset:0; background:var(--emboss-cloud); border-radius:13px; }
+[data-theme="dark"] .gantt-bar-track { background:var(--emboss-graphite); }
+.gantt-bar-fill {
+  position:absolute; top:0; left:0; bottom:0; border-radius:13px 0 0 13px;
+  transition:width 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.gantt-bar-fill.full { border-radius:13px; }
+.gantt-bar-fill::before {
+  content:''; position:absolute; top:2px; left:4px; right:4px;
+  height:40%; border-radius:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.12) 60%, transparent 100%);
+}
+.gantt-bar-fill::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:35%;
+  background:linear-gradient(0deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+  border-radius:0 0 0 13px;
+}
+.gantt-bar-fill.full::after { border-radius:0 0 13px 13px; }
+.gantt-bar-label {
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-size:11.5px; font-weight:500; white-space:nowrap; z-index:2; font-family:var(--font-body);
+}
+.gantt-bar-label.inside { left:10px; color:white; text-shadow:0 1px 2px rgba(0,0,0,0.2); }
+.gantt-bar-label.outside { color:var(--emboss-ash); }
+.gantt-bar-marker {
+  position:absolute; top:50%; transform:translate(-50%,-50%);
+  width:12px; height:12px; border-radius:50%; background:white;
+  box-shadow:0 0 0 2px white, 0 2px 4px rgba(0,0,0,0.15); z-index:3; transition:transform 0.2s;
+}
+.gantt-bar:hover .gantt-bar-marker { transform:translate(-50%,-50%) scale(1.15); }
+.gantt-bar-marker-inner {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:6px; height:6px; border-radius:50%;
+}
+.gantt-handle {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:3px; height:55%; border-radius:2px;
+  background:rgba(255,255,255,0.4); opacity:0; transition:opacity 0.15s; z-index:4;
+}
+.gantt-bar:hover .gantt-handle { opacity:1; }
+.gantt-handle-left { left:4px; }
+.gantt-handle-right { right:4px; }
+.fill-gray-active { background:linear-gradient(90deg, #574f45, #6d6358); }
+.fill-gray-done { background:linear-gradient(90deg, #9d9488, #a8a098); }
+.fill-gray-upcoming { background:linear-gradient(90deg, #9d9488, #a8a098); }
+.fill-vivid-active { background:linear-gradient(90deg, #3b82f6, #22d3ee); }
+.fill-vivid-done { background:linear-gradient(90deg, #38bdf8, #22d3ee); }
+.fill-vivid-upcoming { background:linear-gradient(90deg, #60a5fa, #38bdf8); }
+.gantt-bar.done { opacity:0.45; }
+.gantt-bar.done:hover { opacity:0.65; }
+.gantt-bar.upcoming .gantt-bar-fill { opacity:0.5; }
+.today-marker { position:absolute; top:0; bottom:0; width:1.5px; background:var(--emboss-signal); opacity:0.5; z-index:10; }
+.today-dot { position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:var(--emboss-signal); z-index:11; }
+.today-ring {
+  position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  width:16px; height:16px; border-radius:50%;
+  border:1.5px solid var(--emboss-signal); opacity:0.3;
+  animation:todayPulse 2s ease-in-out infinite;
+}
+@keyframes todayPulse {
+  0%,100% { transform:translateX(-50%) scale(1); opacity:0.3; }
+  50% { transform:translateX(-50%) scale(1.6); opacity:0; }
+}
+.today-label {
+  position:absolute; top:-22px; left:50%; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:8px; font-weight:500;
+  letter-spacing:0.08em; color:var(--emboss-signal);
+}
+.gantt-grid-line { position:absolute; top:0; bottom:0; width:1px; background:var(--emboss-coal); opacity:0.04; }
+
+/* LOGO */
+.logo-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:20px; }
+.logo-card {
+  border-radius:20px; padding:48px 40px;
+  display:flex; align-items:center; justify-content:center;
+  min-height:180px; position:relative;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.logo-card:hover { transform:translateY(-4px); box-shadow:var(--emboss-lift-lg); }
+.logo-card.light-bg { background:var(--emboss-cream); border:1px solid var(--emboss-border); }
+.logo-card.dark-bg { background:var(--emboss-coal); }
+.logo-card.gradient-bg { background:var(--emboss-gradient); }
+.logo-card-label {
+  position:absolute; bottom:14px; right:18px;
+  font-family:var(--font-mono); font-size:9px;
+  letter-spacing:0.08em; text-transform:uppercase; opacity:0.45;
+}
+.logo-card.dark-bg .logo-card-label, .logo-card.gradient-bg .logo-card-label { color:white; }
+.logo-sizes {
+  display:flex; align-items:flex-end; gap:36px; margin-top:32px;
+  padding:48px; border-radius:20px;
+  background:var(--emboss-surface-raised); border:1px solid var(--emboss-border); flex-wrap:wrap;
+}
+.logo-size-item { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.logo-size-label { font-family:var(--font-mono); font-size:9px; color:var(--emboss-ash); letter-spacing:0.06em; }
+
+/* COLORS */
+.color-group-label {
+  font-family:var(--font-mono); font-size:11px; font-weight:500;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--emboss-ash); margin-bottom:16px; margin-top:40px;
+}
+.color-group-label:first-child { margin-top:0; }
+.color-palette { display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:12px; }
+.color-chip { border-radius:14px; overflow:hidden; border:1px solid var(--emboss-border); transition:transform 0.2s, box-shadow 0.2s; }
+.color-chip:hover { transform:translateY(-3px); box-shadow:var(--emboss-lift-md); }
+.color-chip-swatch { height:68px; position:relative; }
+.color-chip-swatch::after {
+  content:''; position:absolute; top:5px; left:7px; right:7px;
+  height:38%; border-radius:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+}
+.color-chip-info { padding:9px 11px; background:var(--emboss-surface); }
+.color-chip-name { font-size:12px; font-weight:600; color:var(--emboss-coal); margin-bottom:1px; }
+[data-theme="dark"] .color-chip-name { color:var(--emboss-fog); }
+.color-chip-hex { font-family:var(--font-mono); font-size:10px; color:var(--emboss-ash); }
+.color-palette-gradient { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+.gradient-chip { border-radius:14px; overflow:hidden; border:1px solid var(--emboss-border); transition:transform 0.2s, box-shadow 0.2s; }
+.gradient-chip:hover { transform:translateY(-3px); box-shadow:var(--emboss-lift-md); }
+.gradient-chip-swatch { height:52px; position:relative; }
+.gradient-chip-swatch::after {
+  content:''; position:absolute; top:4px; left:8px; right:8px;
+  height:36%; border-radius:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 100%);
+}
+.gradient-chip-info { padding:10px 14px; background:var(--emboss-surface); }
+.gradient-chip-name { font-size:12px; font-weight:600; color:var(--emboss-coal); }
+[data-theme="dark"] .gradient-chip-name { color:var(--emboss-fog); }
+.gradient-chip-desc { font-size:11px; color:var(--emboss-ash); margin-top:2px; }
+/* TYPOGRAPHY */
+.type-specimen {
+  padding:40px; border-radius:20px;
+  background:var(--emboss-surface-raised); border:1px solid var(--emboss-border);
+  margin-bottom:20px;
+}
+.type-label {
+  font-family:var(--font-mono); font-size:10px;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--emboss-ash); margin-bottom:16px;
+}
+.type-display {
+  font-family:var(--font-display); font-size:clamp(36px,5vw,56px);
+  line-height:1.1; color:var(--emboss-coal); letter-spacing:-0.02em;
+}
+[data-theme="dark"] .type-display { color:var(--emboss-white); }
+.type-body { font-family:var(--font-body); font-size:17px; line-height:1.7; color:var(--emboss-slate); }
+[data-theme="dark"] .type-body { color:var(--emboss-ash); }
+.type-mono { font-family:var(--font-mono); font-size:14px; line-height:1.6; color:var(--emboss-slate); }
+.type-weights { display:flex; flex-wrap:wrap; gap:24px; margin-top:16px; }
+.type-weight { font-family:var(--font-body); font-size:28px; color:var(--emboss-coal); }
+[data-theme="dark"] .type-weight { color:var(--emboss-fog); }
+
+/* VOICE */
+.voice-examples { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+.voice-card { padding:24px 28px; border-radius:16px; border-left:3px solid; background:var(--emboss-surface-raised); }
+.voice-card.do { border-color:var(--emboss-patina); }
+.voice-card.dont { border-color:var(--emboss-signal); }
+.voice-card-label { font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:10px; }
+.voice-card.do .voice-card-label { color:var(--emboss-patina); }
+.voice-card.dont .voice-card-label { color:var(--emboss-signal); }
+.voice-card blockquote { font-size:15px; line-height:1.6; color:var(--emboss-coal); font-style:italic; }
+[data-theme="dark"] .voice-card blockquote { color:var(--emboss-fog); }
+.voice-principles {
+  margin-top:40px; padding:36px; border-radius:20px;
+  background:var(--emboss-surface-raised); border:1px solid var(--emboss-border);
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:28px;
+}
+.voice-principle h4 { font-size:14px; font-weight:700; color:var(--emboss-coal); margin-bottom:6px; }
+[data-theme="dark"] .voice-principle h4 { color:var(--emboss-white); }
+.voice-principle p { font-size:13.5px; color:var(--emboss-slate); line-height:1.6; }
+[data-theme="dark"] .voice-principle p { color:var(--emboss-ash); }
+
+/* PRICING */
+.pricing-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:24px; }
+.pricing-card {
+  padding:40px 36px; border-radius:20px;
+  background:var(--emboss-surface-raised); border:1px solid var(--emboss-border);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.pricing-card:hover { transform:translateY(-4px); box-shadow:var(--emboss-lift-lg); }
+.pricing-card.featured {
+  border:2px solid transparent;
+  background-image: linear-gradient(var(--emboss-surface-raised), var(--emboss-surface-raised)), var(--emboss-gradient);
+  background-origin:border-box; background-clip:padding-box, border-box;
+  position:relative;
+}
+.pricing-card.featured::before {
+  content:'Most popular'; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  padding:4px 16px; border-radius:100px;
+  background:var(--emboss-gradient); color:white; font-size:11px; font-weight:600;
+}
+.pricing-card h3 { font-weight:700; font-size:20px; color:var(--emboss-coal); }
+[data-theme="dark"] .pricing-card h3 { color:var(--emboss-white); }
+.pricing-card .price { font-family:var(--font-display); font-size:40px; color:var(--emboss-coal); margin:16px 0; }
+[data-theme="dark"] .pricing-card .price { color:var(--emboss-white); }
+.pricing-card .price span { font-family:var(--font-body); font-size:15px; color:var(--emboss-ash); font-weight:400; }
+.pricing-features { list-style:none; margin:24px 0; }
+.pricing-features li {
+  padding:7px 0; font-size:14.5px; color:var(--emboss-slate);
+  display:flex; align-items:center; gap:10px;
+}
+[data-theme="dark"] .pricing-features li { color:var(--emboss-ash); }
+.pricing-features li::before {
+  content:'✓'; font-weight:700; font-size:13px;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* FOOTER */
+footer { padding:60px 40px 40px; max-width:1200px; margin:0 auto; border-top:1px solid var(--emboss-border); }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:48px; }
+.footer-brand p { font-size:14px; color:var(--emboss-ash); max-width:280px; line-height:1.6; margin-top:12px; }
+.footer-col h4 { font-size:13px; font-weight:700; color:var(--emboss-coal); margin-bottom:16px; }
+[data-theme="dark"] .footer-col h4 { color:var(--emboss-fog); }
+.footer-col ul { list-style:none; }
+.footer-col ul li { margin-bottom:10px; }
+.footer-col ul li a { font-size:13.5px; color:var(--emboss-ash); transition:color 0.15s; }
+.footer-col ul li a:hover { color:var(--emboss-coal); }
+[data-theme="dark"] .footer-col ul li a:hover { color:var(--emboss-white); }
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:24px; border-top:1px solid var(--emboss-border);
+}
+.footer-bottom p { font-size:13px; color:var(--emboss-ash); }
+.footer-tagline {
+  font-family:var(--font-mono); font-size:11px;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* RESPONSIVE */
+@media (max-width:768px) {
+  .hero { padding:100px 24px 60px; }
+  .section { padding:60px 24px; }
+  .mission { padding:80px 24px; }
+  nav { padding:12px 20px; }
+  .nav-links { display:none; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .hero-ctas { flex-direction:column; align-items:center; }
+  .logo-sizes { justify-content:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG defs: D1 dipped corner gradient + P1 glow filter -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <radialGradient id="dip" cx="0.85" cy="0.75" r="1.2" fx="0.95" fy="0.95">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.8"/>
+      <stop offset="30%" stop-color="#38bdf8" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#3b82f6" stop-opacity="0.22"/>
+      <stop offset="80%" stop-color="#3b82f6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav>
+  <div class="emboss-logo">
+    <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="12" fill="#1e1c19"/>
+      <rect width="48" height="48" rx="12" fill="url(#dip)"/>
+      <text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" font-weight="400" fill="white">E</text>
+    </svg>
+    <span class="emboss-wordmark" style="font-size:18px;">emboss</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#product">Product</a></li>
+    <li><a href="#brand">Brand</a></li>
+    <li><a href="#colors">Colors</a></li>
+    <li><a href="#voice">Voice</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Open source design layer — v0.1
+  </div>
+  <h1>Beautiful software<br>isn't a luxury.<br>It's <em>accessibility.</em></h1>
+  <p class="hero-sub">Emboss brings the finish to open source. We take proven, powerful frameworks and give them the design layer they deserve.</p>
+  <div class="hero-ctas">
+    <button class="btn-primary">npm install @emboss/core →</button>
+    <button class="btn-secondary">View on GitHub</button>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="mission" id="mission">
+  <p class="section-label">Mission</p>
+  <p class="mission-statement">
+    The surface is where the human meets the tool.<br>
+    Open source builds the engine. <span class="vivid-text">Emboss brings the finish.</span>
+  </p>
+  <p class="mission-sub">"Frappe Gantt does the math. We thought it deserved a finish to match."</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="product">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">The Tiptap of Gantt charts</h2>
+  <p class="section-desc">Frappe Gantt is the engine — rock-solid date math, drag handling, dependency resolution. Emboss wraps it in a design system, extension architecture, and glass-finished visual layer.</p>
+  <div class="philosophy-grid">
+    <div class="philosophy-card">
+      <div class="philosophy-icon">◈</div>
+      <h3>Everything is a Row</h3>
+      <p>Phases, tasks, milestones, subtasks — one data model, one render pipeline. Extensions enrich rows. Renderers consume them.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-icon">◎</div>
+      <h3>Glass-finished bars</h3>
+      <p>Track + fill + glass highlight + shadow. Progress markers, smart labels, drag handles. Every bar looks designed by hand.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-icon">⟐</div>
+      <h3>Extensions, not forks</h3>
+      <p>Today markers, tooltips, arrows, sidebars, milestones — all extensions. Register what you need. Override what you want.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-icon">◆</div>
+      <h3>Themes via CSS vars</h3>
+      <p>Every visual value flows through custom properties. Light, dark, vivid — swap a class, change the feel. Build your own in 20 lines.</p>
+    </div>
+  </div>
+</section>
+<!-- PREVIEW -->
+<section class="section">
+  <p class="section-label">Preview</p>
+  <h2 class="section-title">See the difference</h2>
+  <p class="section-desc">The same data. Two moods. Grayscale keeps it professional. Vivid makes it sing.</p>
+  <div class="preview-container">
+    <div class="preview-toolbar">
+      <div class="preview-dots"><span></span><span></span><span></span></div>
+      <div class="preview-tabs">
+        <button class="preview-tab active" onclick="setMode('grayscale',this)">Grayscale</button>
+        <button class="preview-tab" onclick="setMode('vivid',this)">✦ Vivid</button>
+      </div>
+      <div class="preview-tabs">
+        <button class="preview-tab" style="font-size:11px">Day</button>
+        <button class="preview-tab active" style="font-size:11px">Week</button>
+        <button class="preview-tab" style="font-size:11px">Month</button>
+      </div>
+    </div>
+    <div class="preview-chart" id="ganttPreview"></div>
+  </div>
+</section>
+
+<!-- LOGO -->
+<section class="section" id="brand">
+  <p class="section-label">Brand</p>
+  <h2 class="section-title">The mark</h2>
+  <p class="section-desc">A letterpress block dipped in color. The dark square is the foundation. The bottom-right corner carries the gradient — blue fading into cyan, like it was dipped in paint. The white "E" sits on top, glowing softly. Foundation holds. Finish bleeds through.</p>
+
+  <div class="logo-grid">
+    <div class="logo-card light-bg">
+      <div class="emboss-logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#1e1c19"/>
+          <rect width="48" height="48" rx="12" fill="url(#dip)"/>
+          <text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" font-weight="400" fill="white">E</text>
+        </svg>
+        <span class="emboss-wordmark" style="font-size:26px;">emboss</span>
+      </div>
+      <span class="logo-card-label">On light</span>
+    </div>
+    <div class="logo-card dark-bg">
+      <div class="emboss-logo on-dark">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#2e2b26"/>
+          <rect width="48" height="48" rx="12" fill="url(#dip)"/>
+          <text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" font-weight="400" fill="white">E</text>
+        </svg>
+        <span class="emboss-wordmark" style="font-size:26px;">emboss</span>
+      </div>
+      <span class="logo-card-label">On dark</span>
+    </div>
+    <div class="logo-card gradient-bg">
+      <div class="emboss-logo on-dark">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="rgba(0,0,0,0.25)"/>
+          <text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" font-weight="400" fill="white">E</text>
+        </svg>
+        <span class="emboss-wordmark" style="font-size:26px;">emboss</span>
+      </div>
+      <span class="logo-card-label">On gradient</span>
+    </div>
+    <div class="logo-card light-bg">
+      <svg width="72" height="72" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="#1e1c19"/>
+        <rect width="48" height="48" rx="12" fill="url(#dip)"/>
+        <text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" font-weight="400" fill="white">E</text>
+      </svg>
+      <span class="logo-card-label">Mark only</span>
+    </div>
+  </div>
+
+  <div class="logo-sizes">
+    <div class="logo-size-item">
+      <svg width="64" height="64" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+      <span class="logo-size-label">64px</span>
+    </div>
+    <div class="logo-size-item">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+      <span class="logo-size-label">48px</span>
+    </div>
+    <div class="logo-size-item">
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+      <span class="logo-size-label">36px</span>
+    </div>
+    <div class="logo-size-item">
+      <svg width="28" height="28" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+      <span class="logo-size-label">28px</span>
+    </div>
+    <div class="logo-size-item">
+      <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+      <span class="logo-size-label">20px — min</span>
+    </div>
+    <div style="margin-left:auto; max-width:280px;">
+      <p style="font-size:13px; color:var(--emboss-slate); line-height:1.6;">Dipped corner: blue→cyan radial gradient bleeds from bottom-right. White E with soft glow sits on top at every size.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLORS -->
+<section class="section" id="colors">
+  <p class="section-label">Color system</p>
+  <h2 class="section-title">Warm foundation,<br>cool finish</h2>
+  <p class="section-desc">Warm undertones in the neutrals — never clinical, never cold. The blue→cyan gradient appears at moments of energy and transformation. Color earns its place.</p>
+
+  <p class="color-group-label">Warmed Neutrals — The Surface</p>
+  <div class="color-palette">
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#1e1c19"></div><div class="color-chip-info"><div class="color-chip-name">Coal</div><div class="color-chip-hex">#1e1c19</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#2e2b26"></div><div class="color-chip-info"><div class="color-chip-name">Graphite</div><div class="color-chip-hex">#2e2b26</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#574f45"></div><div class="color-chip-info"><div class="color-chip-name">Slate</div><div class="color-chip-hex">#574f45</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#736a61"></div><div class="color-chip-info"><div class="color-chip-name">Ash</div><div class="color-chip-hex">#736a61</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#cdc6bb"></div><div class="color-chip-info"><div class="color-chip-name">Fog</div><div class="color-chip-hex">#cdc6bb</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#e3ddd4"></div><div class="color-chip-info"><div class="color-chip-name">Cloud</div><div class="color-chip-hex">#e3ddd4</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#f0ebe4"></div><div class="color-chip-info"><div class="color-chip-name">Snow</div><div class="color-chip-hex">#f0ebe4</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#f5f2ec"></div><div class="color-chip-info"><div class="color-chip-name">Cream</div><div class="color-chip-hex">#f5f2ec</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#faf8f4; border-bottom:1px solid #e3ddd4;"></div><div class="color-chip-info"><div class="color-chip-name">White</div><div class="color-chip-hex">#faf8f4</div></div></div>
+  </div>
+
+  <p class="color-group-label">The Gradient — The Finish</p>
+  <div class="color-palette">
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#3b82f6"></div><div class="color-chip-info"><div class="color-chip-name">Deep Blue</div><div class="color-chip-hex">#3b82f6</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#60a5fa"></div><div class="color-chip-info"><div class="color-chip-name">Light Blue</div><div class="color-chip-hex">#60a5fa</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#38bdf8"></div><div class="color-chip-info"><div class="color-chip-name">Sky</div><div class="color-chip-hex">#38bdf8</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#22d3ee"></div><div class="color-chip-info"><div class="color-chip-name">Cyan</div><div class="color-chip-hex">#22d3ee</div></div></div>
+  </div>
+
+  <div class="color-palette-gradient">
+    <div class="gradient-chip">
+      <div class="gradient-chip-swatch" style="background:linear-gradient(135deg, #3b82f6, #38bdf8, #22d3ee);"></div>
+      <div class="gradient-chip-info"><div class="gradient-chip-name">Brand Gradient — Blue → Cyan</div><div class="gradient-chip-desc">Logo dip, section labels, CTAs, premium features. The finish.</div></div>
+    </div>
+  </div>
+
+  <p class="color-group-label">Functional Accents</p>
+  <div class="color-palette" style="grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));">
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#3b82f6"></div><div class="color-chip-info"><div class="color-chip-name">Press</div><div class="color-chip-hex">#3b82f6 · Action</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#10b981"></div><div class="color-chip-info"><div class="color-chip-name">Patina</div><div class="color-chip-hex">#10b981 · Success</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#f59e0b"></div><div class="color-chip-info"><div class="color-chip-name">Relief</div><div class="color-chip-hex">#f59e0b · Warning</div></div></div>
+    <div class="color-chip"><div class="color-chip-swatch" style="background:#ef4444"></div><div class="color-chip-info"><div class="color-chip-name">Signal</div><div class="color-chip-hex">#ef4444 · Alert</div></div></div>
+  </div>
+
+  <div style="margin-top:40px; padding:28px 32px; border-radius:16px; background:var(--emboss-surface-raised); border:1px solid var(--emboss-border);">
+    <p style="font-size:14px; color:var(--emboss-slate); line-height:1.7;"><strong style="color:var(--emboss-coal);">The rule:</strong> Neutrals do 90% of the work. The blue→cyan gradient appears at moments of brand expression — the logo dip, the hero keyword, section labels, CTAs, premium features. It's always the <em>finish</em>, never the <em>surface</em>.</p>
+  </div>
+</section>
+<!-- TYPOGRAPHY -->
+<section class="section">
+  <p class="section-label">Typography</p>
+  <h2 class="section-title">Three voices, one system</h2>
+  <p class="section-desc">Display for presence. Body for clarity. Mono for precision.</p>
+
+  <div class="type-specimen">
+    <p class="type-label">Display — DM Serif Display</p>
+    <p class="type-display">The surface is where<br>the human meets the tool.</p>
+    <div class="type-weights" style="margin-top:20px;">
+      <span class="type-weight" style="font-family:var(--font-display); font-size:26px;">Regular</span>
+      <span class="type-weight" style="font-family:var(--font-display); font-size:26px; font-style:italic;">Italic</span>
+    </div>
+  </div>
+  <div class="type-specimen">
+    <p class="type-label">Body — Hanken Grotesk</p>
+    <p class="type-body">Emboss takes proven, powerful open source frameworks and gives them the design layer they deserve — so the tools developers build actually feel like something people want to use.</p>
+    <div class="type-weights" style="margin-top:20px;">
+      <span class="type-weight" style="font-weight:300;">Light</span>
+      <span class="type-weight" style="font-weight:400;">Regular</span>
+      <span class="type-weight" style="font-weight:600;">Semi</span>
+      <span class="type-weight" style="font-weight:700;">Bold</span>
+    </div>
+  </div>
+  <div class="type-specimen">
+    <p class="type-label">Mono — JetBrains Mono</p>
+    <p class="type-mono">npm install @emboss/core<br>import { Emboss } from '@emboss/core'<br>const chart = new Emboss('#gantt', tasks, { theme: 'dark' })</p>
+  </div>
+</section>
+
+<!-- VOICE -->
+<section class="section" id="voice">
+  <p class="section-label">Voice & Tone</p>
+  <h2 class="section-title">Confident craft,<br>not corporate polish</h2>
+  <p class="section-desc">Self-aware, a little dry, never desperate. We honor what came before and we're having fun building what's next.</p>
+  <div class="voice-examples">
+    <div class="voice-card do"><p class="voice-card-label">✓ This</p><blockquote>"Frappe Gantt does the math. We thought it deserved a finish to match."</blockquote></div>
+    <div class="voice-card dont"><p class="voice-card-label">✗ Not this</p><blockquote>"Finally, a Gantt chart library that doesn't look terrible."</blockquote></div>
+    <div class="voice-card do"><p class="voice-card-label">✓ This</p><blockquote>"Open source builds the engine. Emboss brings the finish."</blockquote></div>
+    <div class="voice-card dont"><p class="voice-card-label">✗ Not this</p><blockquote>"The most beautiful Gantt chart library ever made."</blockquote></div>
+    <div class="voice-card do"><p class="voice-card-label">✓ This</p><blockquote>"A beautiful skin shouldn't be this hard to find."</blockquote></div>
+    <div class="voice-card dont"><p class="voice-card-label">✗ Not this</p><blockquote>"We're disrupting the Gantt chart space with AI-powered design."</blockquote></div>
+  </div>
+  <div class="voice-principles">
+    <div class="voice-principle"><h4>Elevation, not demolition</h4><p>We build on what exists. We honor the foundations. We don't smear what came before — we finish it.</p></div>
+    <div class="voice-principle"><h4>Craft, not credentials</h4><p>The work speaks. If it's beautiful and it works, that's the credential.</p></div>
+    <div class="voice-principle"><h4>Dry wit, not desperation</h4><p>We're having fun. We know Gantt charts are niche. That self-awareness is charming, not undermining.</p></div>
+    <div class="voice-principle"><h4>Accessible, not dumbed down</h4><p>Clear language, real examples, no gatekeeping.</p></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <p class="section-label">Pricing</p>
+  <h2 class="section-title">The engine is free.<br>The finish is worth it.</h2>
+  <p class="section-desc">Core + free extensions are MIT licensed forever. Paid bundles are one-time purchases.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Core</h3>
+      <p style="font-size:14px; color:var(--emboss-ash); margin-top:4px;">The foundation</p>
+      <p class="price">Free</p>
+      <ul class="pricing-features">
+        <li>Glass-finished bars</li><li>4 view modes</li><li>3 density options</li>
+        <li>Light & dark themes</li><li>Today marker</li><li>Hover tooltips</li>
+        <li>Dependency arrows</li><li>Drag to reschedule</li>
+      </ul>
+      <button class="btn-secondary" style="width:100%; justify-content:center;">Get started</button>
+    </div>
+    <div class="pricing-card featured">
+      <h3>Organize</h3>
+      <p style="font-size:14px; color:var(--emboss-ash); margin-top:4px;">Structure & navigation</p>
+      <p class="price">$49 <span>one-time</span></p>
+      <ul class="pricing-features">
+        <li>Everything in Core</li><li>Sidebar with collapse</li><li>Phase grouping</li>
+        <li>Milestone diamonds</li><li>Inline editing</li><li>Rail mode (compact)</li>
+      </ul>
+      <button class="btn-vivid" style="width:100%; justify-content:center;">Purchase →</button>
+    </div>
+    <div class="pricing-card">
+      <h3>Templates</h3>
+      <p style="font-size:14px; color:var(--emboss-ash); margin-top:4px;">Visual themes</p>
+      <p class="price">$19 <span>each</span></p>
+      <ul class="pricing-features">
+        <li>Vivid (color gradients)</li><li>Mono (minimal)</li><li>Blueprint (technical)</li>
+        <li>20 lines of CSS each</li><li>Dark mode included</li>
+      </ul>
+      <button class="btn-secondary" style="width:100%; justify-content:center;">Browse themes</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="mission" style="padding-bottom:120px;">
+  <p class="section-label">Get started</p>
+  <p class="mission-statement" style="font-size:clamp(24px,3.5vw,36px);">
+    The part they forgot to design.<br>
+    <span class="vivid-text">You remembered.</span>
+  </p>
+  <div style="margin-top:32px; display:flex; gap:16px; justify-content:center;">
+    <button class="btn-vivid">npm install @emboss/core →</button>
+    <button class="btn-secondary">Read the docs</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="emboss-logo" style="gap:8px; margin-bottom:4px;">
+        <svg width="22" height="22" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+        <span class="emboss-wordmark" style="font-size:16px;">emboss</span>
+      </div>
+      <p>Beautiful software isn't a luxury. It's accessibility.</p>
+    </div>
+    <div class="footer-col"><h4>Product</h4><ul><li><a href="#">Core library</a></li><li><a href="#">Organize bundle</a></li><li><a href="#">Templates</a></li><li><a href="#">Changelog</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Documentation</a></li><li><a href="#">Extensions guide</a></li><li><a href="#">GitHub</a></li><li><a href="#">npm</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">Leantime</a></li><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Emboss. Made by the Leantime team.</p>
+    <span class="footer-tagline">open source builds the engine. we bring the finish.</span>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelector('.theme-toggle').textContent = isDark ? '☀' : '☾';
+}
+
+let currentMode = 'grayscale';
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.preview-tab').forEach(t => { t.classList.remove('active','vivid-active'); });
+  btn.classList.add(mode === 'vivid' ? 'vivid-active' : 'active');
+  renderGanttPreview();
+}
+
+function renderGanttPreview() {
+  const c = document.getElementById('ganttPreview');
+  if (!c) return;
+  const tasks = [
+    { name:'Research & Discovery', start:0, duration:18, progress:100, status:'done' },
+    { name:'Design System Setup', start:4, duration:22, progress:100, status:'done' },
+    { name:'Core Architecture', start:12, duration:28, progress:78, status:'active' },
+    { name:'Extension API', start:22, duration:16, progress:45, status:'active' },
+    { name:'Glass Bar Rendering', start:30, duration:14, progress:20, status:'active' },
+    { name:'Dependency Arrows', start:38, duration:10, progress:0, status:'upcoming' },
+    { name:'Organize Bundle', start:44, duration:20, progress:0, status:'upcoming' },
+  ];
+  const dw=10, rh=44, bh=26, td=70, today=34;
+  const pf = currentMode==='vivid' ? 'vivid' : 'gray';
+  let h = '';
+  for (let d=0; d<td; d+=7) h += '<div class="gantt-grid-line" style="left:'+d*dw+'px;"></div>';
+  h += '<div class="today-marker" style="left:'+today*dw+'px;"><span class="today-label">TODAY</span><div class="today-dot"></div><div class="today-ring"></div></div>';
+  tasks.forEach((t,i) => {
+    const l=t.start*dw, w=t.duration*dw, top=i*rh+(rh-bh)/2;
+    const fw=Math.max(14, w*t.progress/100);
+    const fc='fill-'+pf+'-'+t.status;
+    const wide=w>70, full=t.progress===100, mark=t.progress>0&&t.progress<100;
+    const mc = currentMode==='vivid' ? '#22d3ee' : '#574f45';
+    h += '<div class="gantt-bar '+t.status+'" style="position:absolute;left:'+l+'px;top:'+top+'px;width:'+w+'px;">';
+    h += '<div class="gantt-bar-track"></div>';
+    h += '<div class="gantt-bar-fill '+fc+(full?' full':'')+'" style="width:'+(t.status==='upcoming'?'100%':fw+'px')+';'+(t.status==='upcoming'?'opacity:0.5;':'')+'"></div>';
+    if (mark) h += '<div class="gantt-bar-marker" style="left:'+fw+'px;"><div class="gantt-bar-marker-inner" style="background:'+mc+'"></div></div>';
+    h += '<div class="gantt-handle gantt-handle-left"></div><div class="gantt-handle gantt-handle-right"></div>';
+    h += '<span class="gantt-bar-label '+(wide?'inside':'outside')+'" style="'+(wide?'':'left:'+(w+6)+'px;')+'">'+t.name+(mark?' · '+t.progress+'%':'')+'</span>';
+    h += '</div>';
+  });
+  c.style.height = (tasks.length*rh+20)+'px';
+  c.innerHTML = h;
+}
+renderGanttPreview();
+
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';} });
+}, {threshold:0.08});
+document.querySelectorAll('.section,.mission').forEach(el => {
+  el.style.opacity='0'; el.style.transform='translateY(24px)';
+  el.style.transition='opacity 0.7s ease, transform 0.7s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>

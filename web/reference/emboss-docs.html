@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation — Emboss</title>
+<meta name="description" content="Getting started, API reference, and extension guides for Emboss — the design layer for open source Gantt charts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS (same as homepage)
+   ═══════════════════════════════════════════ */
+:root {
+  --emboss-coal: #1e1c19;
+  --emboss-graphite: #2e2b26;
+  --emboss-slate: #574f45;
+  --emboss-ash: #736a61;
+  --emboss-fog: #cdc6bb;
+  --emboss-cloud: #e3ddd4;
+  --emboss-snow: #f0ebe4;
+  --emboss-cream: #f5f2ec;
+  --emboss-white: #faf8f4;
+  --emboss-vivid-1: #3b82f6;
+  --emboss-vivid-2: #38bdf8;
+  --emboss-vivid-3: #22d3ee;
+  --emboss-gradient: linear-gradient(135deg, #3b82f6, #38bdf8, #22d3ee);
+  --emboss-gradient-text: linear-gradient(135deg, #60a5fa, #38bdf8, #22d3ee);
+  --emboss-press: #3b82f6;
+  --emboss-patina: #10b981;
+  --emboss-signal: #ef4444;
+  --emboss-surface: var(--emboss-white);
+  --emboss-surface-raised: var(--emboss-cream);
+  --emboss-surface-inset: var(--emboss-snow);
+  --emboss-border: rgba(30,28,25,0.07);
+  --emboss-border-strong: rgba(30,28,25,0.13);
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Hanken Grotesk', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --emboss-lift-sm: 0 1px 2px rgba(30,28,25,0.05), 0 1px 3px rgba(30,28,25,0.07);
+  --emboss-lift-md: 0 4px 14px rgba(30,28,25,0.07), 0 1px 3px rgba(30,28,25,0.09);
+  --emboss-lift-lg: 0 12px 40px rgba(30,28,25,0.09), 0 4px 14px rgba(30,28,25,0.06);
+}
+[data-theme="dark"] {
+  --emboss-ash: #9d9488;
+  --emboss-surface: #131210;
+  --emboss-surface-raised: #1e1c19;
+  --emboss-surface-inset: #181613;
+  --emboss-border: rgba(250,248,244,0.06);
+  --emboss-border-strong: rgba(250,248,244,0.12);
+  --emboss-lift-sm: 0 1px 3px rgba(0,0,0,0.35);
+  --emboss-lift-md: 0 4px 14px rgba(0,0,0,0.4);
+  --emboss-lift-lg: 0 14px 44px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--emboss-surface);
+  color: var(--emboss-coal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+[data-theme="dark"] body { color: var(--emboss-fog); }
+a { color: var(--emboss-press); text-decoration:none; }
+
+/* ═══════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding: 14px 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(250,248,244,0.8);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid var(--emboss-border);
+}
+[data-theme="dark"] nav { background: rgba(19,18,16,0.82); }
+.emboss-logo { display:inline-flex; align-items:center; gap:10px; text-decoration:none; }
+.emboss-wordmark { font-family: var(--font-body); font-weight:700; letter-spacing:-0.03em; color:var(--emboss-coal); }
+[data-theme="dark"] .emboss-wordmark { color: var(--emboss-white); }
+.nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+.nav-links a { font-size:14px; font-weight:500; color:var(--emboss-slate); transition:color 0.2s; text-decoration:none; }
+.nav-links a:hover { color:var(--emboss-coal); }
+.nav-links a.active { color:var(--emboss-coal); font-weight:600; }
+[data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active { color:var(--emboss-white); }
+.theme-toggle {
+  width:36px; height:36px; border-radius:10px;
+  border: 1px solid var(--emboss-border-strong);
+  background: var(--emboss-surface-raised);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:16px; transition:all 0.2s;
+}
+.theme-toggle:hover { box-shadow:var(--emboss-lift-sm); transform:translateY(-1px); }
+
+/* ═══════════════════════════════════════════
+   DOCS LAYOUT
+   ═══════════════════════════════════════════ */
+.docs-layout {
+  display:grid; grid-template-columns:240px 1fr;
+  max-width:1200px; margin:0 auto;
+  padding-top:80px; min-height:100vh;
+}
+
+/* SIDEBAR */
+.docs-sidebar {
+  padding:32px 24px 60px 40px;
+  border-right:1px solid var(--emboss-border);
+  position:sticky; top:80px; height:calc(100vh - 80px);
+  overflow-y:auto;
+}
+.docs-sidebar-section { margin-bottom:28px; }
+.docs-sidebar-label {
+  font-family:var(--font-mono); font-size:10px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--emboss-ash); margin-bottom:10px;
+}
+.docs-sidebar ul { list-style:none; }
+.docs-sidebar li { margin-bottom:2px; }
+.docs-sidebar a {
+  display:block; padding:6px 12px; border-radius:8px;
+  font-size:13.5px; color:var(--emboss-slate); transition:all 0.15s;
+  text-decoration:none;
+}
+.docs-sidebar a:hover { background:var(--emboss-surface-raised); color:var(--emboss-coal); }
+[data-theme="dark"] .docs-sidebar a:hover { color:var(--emboss-white); }
+.docs-sidebar a.active {
+  background:var(--emboss-surface-raised); color:var(--emboss-coal); font-weight:600;
+}
+[data-theme="dark"] .docs-sidebar a.active { color:var(--emboss-white); }
+
+/* CONTENT */
+.docs-content {
+  padding:40px 60px 100px 48px;
+  max-width:760px;
+}
+.docs-content h1 {
+  font-family:var(--font-display); font-size:36px;
+  font-weight:400; line-height:1.2; letter-spacing:-0.02em;
+  color:var(--emboss-coal); margin-bottom:8px;
+}
+[data-theme="dark"] .docs-content h1 { color:var(--emboss-white); }
+.docs-content .subtitle {
+  font-size:17px; color:var(--emboss-slate); line-height:1.7; margin-bottom:40px;
+}
+[data-theme="dark"] .docs-content .subtitle { color:var(--emboss-ash); }
+.docs-content h2 {
+  font-family:var(--font-body); font-size:20px; font-weight:700;
+  color:var(--emboss-coal); margin-top:48px; margin-bottom:12px;
+  padding-top:24px; border-top:1px solid var(--emboss-border);
+}
+[data-theme="dark"] .docs-content h2 { color:var(--emboss-white); }
+.docs-content h2:first-of-type { border-top:none; padding-top:0; margin-top:0; }
+.docs-content h3 {
+  font-size:16px; font-weight:600; color:var(--emboss-coal);
+  margin-top:32px; margin-bottom:8px;
+}
+[data-theme="dark"] .docs-content h3 { color:var(--emboss-fog); }
+.docs-content p {
+  font-size:15px; line-height:1.7; color:var(--emboss-slate); margin-bottom:16px;
+}
+[data-theme="dark"] .docs-content p { color:var(--emboss-ash); }
+
+/* Code blocks */
+.docs-code {
+  background:var(--emboss-graphite); color:#e5e7eb;
+  padding:20px 24px; border-radius:12px;
+  font-family:var(--font-mono); font-size:13px; line-height:1.7;
+  overflow-x:auto; margin:16px 0 24px;
+  border:1px solid rgba(250,248,244,0.06);
+}
+.docs-code .kw { color:#22d3ee; }
+.docs-code .str { color:#38bdf8; }
+.docs-code .fn { color:#60a5fa; }
+.docs-code .cm { color:#6b7280; font-style:italic; }
+code {
+  font-family:var(--font-mono); font-size:13px;
+  background:var(--emboss-surface-inset); padding:2px 6px; border-radius:4px;
+  color:var(--emboss-coal);
+}
+[data-theme="dark"] code { background:var(--emboss-surface-raised); color:var(--emboss-fog); }
+
+/* Placeholder badge */
+.placeholder {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 12px; border-radius:100px;
+  background:var(--emboss-surface-inset);
+  border:1px solid var(--emboss-border);
+  font-family:var(--font-mono); font-size:10px; font-weight:500;
+  letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--emboss-ash); margin-bottom:16px;
+}
+
+/* Prop table */
+.prop-table { width:100%; border-collapse:collapse; margin:16px 0 24px; font-size:13.5px; }
+.prop-table th {
+  text-align:left; padding:8px 12px;
+  font-family:var(--font-mono); font-size:11px; font-weight:500;
+  letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--emboss-ash); border-bottom:2px solid var(--emboss-border);
+}
+.prop-table td {
+  padding:10px 12px; border-bottom:1px solid var(--emboss-border);
+  color:var(--emboss-slate); line-height:1.5;
+}
+[data-theme="dark"] .prop-table td { color:var(--emboss-ash); }
+.prop-table td:first-child {
+  font-family:var(--font-mono); font-size:12.5px; color:var(--emboss-coal); font-weight:500;
+}
+[data-theme="dark"] .prop-table td:first-child { color:var(--emboss-fog); }
+
+/* Footer */
+footer { padding:40px; max-width:1200px; margin:0 auto; border-top:1px solid var(--emboss-border); }
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+}
+.footer-bottom p { font-size:13px; color:var(--emboss-ash); }
+.footer-tagline {
+  font-family:var(--font-mono); font-size:11px;
+  background:var(--emboss-gradient-text);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+
+/* Responsive */
+@media (max-width:768px) {
+  nav { padding:12px 20px; }
+  .nav-links { display:none; }
+  .docs-layout { grid-template-columns:1fr; }
+  .docs-sidebar { display:none; }
+  .docs-content { padding:32px 24px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG defs -->
+<svg style="position:absolute;width:0;height:0;">
+  <defs>
+    <radialGradient id="dip" cx="0.85" cy="0.75" r="1.2" fx="0.95" fy="0.95">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.8"/>
+      <stop offset="30%" stop-color="#38bdf8" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#3b82f6" stop-opacity="0.22"/>
+      <stop offset="80%" stop-color="#3b82f6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="emboss-logo">
+    <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#1e1c19"/><rect width="48" height="48" rx="12" fill="url(#dip)"/><text x="24" y="32.5" text-anchor="middle" font-family="'DM Serif Display', Georgia, serif" font-size="30" fill="white">E</text></svg>
+    <span class="emboss-wordmark">emboss</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/features">Features</a></li>
+    <li><a href="/docs" class="active">Docs</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="https://github.com/leantime/emboss">GitHub</a></li>
+  </ul>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</nav>
+
+<!-- DOCS LAYOUT -->
+<div class="docs-layout">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="docs-sidebar">
+    <div class="docs-sidebar-section">
+      <div class="docs-sidebar-label">Getting Started</div>
+      <ul>
+        <li><a href="#installation" class="active">Installation</a></li>
+        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#your-first-chart">Your First Chart</a></li>
+      </ul>
+    </div>
+    <div class="docs-sidebar-section">
+      <div class="docs-sidebar-label">Core Concepts</div>
+      <ul>
+        <li><a href="#row-model">The Row Model</a></li>
+        <li><a href="#state">State & Mutation</a></li>
+        <li><a href="#views">Views & Density</a></li>
+        <li><a href="#themes">Themes</a></li>
+        <li><a href="#events">Events</a></li>
+      </ul>
+    </div>
+    <div class="docs-sidebar-section">
+      <div class="docs-sidebar-label">Extensions</div>
+      <ul>
+        <li><a href="#using-extensions">Using Extensions</a></li>
+        <li><a href="#today-marker">Today Marker</a></li>
+        <li><a href="#tooltips">Tooltips</a></li>
+        <li><a href="#dependency-arrows">Dependency Arrows</a></li>
+        <li><a href="#writing-extensions">Writing Your Own</a></li>
+      </ul>
+    </div>
+    <div class="docs-sidebar-section">
+      <div class="docs-sidebar-label">Organize Bundle</div>
+      <ul>
+        <li><a href="#sidebar">Sidebar</a></li>
+        <li><a href="#phases">Phase Grouping</a></li>
+        <li><a href="#milestones">Milestones</a></li>
+        <li><a href="#inline-editing">Inline Editing</a></li>
+      </ul>
+    </div>
+    <div class="docs-sidebar-section">
+      <div class="docs-sidebar-label">API Reference</div>
+      <ul>
+        <li><a href="#emboss-class">Emboss Class</a></li>
+        <li><a href="#config">Configuration</a></li>
+        <li><a href="#row-type">Row Type</a></li>
+        <li><a href="#scale-type">Scale Type</a></li>
+        <li><a href="#extension-type">Extension Type</a></li>
+        <li><a href="#css-properties">CSS Properties</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="docs-content">
+
+    <!-- ═══ GETTING STARTED ═══ -->
+    <h1>Documentation</h1>
+    <p class="subtitle">Everything you need to add a glass-finished Gantt chart to your project. The library isn't built yet — this is the structure the docs will follow.</p>
+
+    <h2 id="installation">Installation</h2>
+    <span class="placeholder">Coming soon</span>
+    <div class="docs-code">
+<span class="cm">// npm</span><br>
+npm install @emboss/core<br>
+<br>
+<span class="cm">// yarn</span><br>
+yarn add @emboss/core<br>
+<br>
+<span class="cm">// pnpm</span><br>
+pnpm add @emboss/core
+    </div>
+    <p>Emboss ships as a single package. Core rendering, free extensions, and paid bundles are all exported from <code>@emboss/core</code>. Paid features log a console reminder if used without a license key — they still work, nothing is gated.</p>
+
+    <h2 id="quick-start">Quick Start</h2>
+    <span class="placeholder">Coming soon</span>
+    <div class="docs-code">
+<span class="kw">import</span> { Emboss } <span class="kw">from</span> <span class="str">'@emboss/core'</span><br>
+<span class="kw">import</span> { todayMarker, tooltips, arrows } <span class="kw">from</span> <span class="str">'@emboss/core/extensions'</span><br>
+<br>
+<span class="kw">const</span> chart = <span class="kw">new</span> <span class="fn">Emboss</span>(<span class="str">'#gantt'</span>, tasks, {<br>
+&nbsp;&nbsp;extensions: [<span class="fn">todayMarker</span>, <span class="fn">tooltips</span>, <span class="fn">arrows</span>],<br>
+&nbsp;&nbsp;theme: <span class="str">'dark'</span>,<br>
+&nbsp;&nbsp;view: <span class="str">'week'</span><br>
+})
+    </div>
+    <p>That gives you glass-finished bars, a pulsing today marker, hover tooltips, and dependency arrows. Five lines.</p>
+
+    <h2 id="your-first-chart">Your First Chart</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Step-by-step walkthrough: preparing task data, mounting the chart, configuring views, and handling drag-to-reschedule events. Will include a live editable example.</p>
+
+    <!-- ═══ CORE CONCEPTS ═══ -->
+    <h2 id="row-model">The Row Model</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Everything in Emboss is a row. Phases, tasks, milestones, subtasks — one data structure, one render pipeline. Extensions enrich rows with additional fields. Renderers consume them.</p>
+    <p>The <code>Row</code> interface defines the shape of every item in your chart. Full type reference will be documented here once the API is finalized.</p>
+
+    <h2 id="state">State & Mutation</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>One state object. One source of truth. All changes go through methods on the Emboss instance — <code>setView()</code>, <code>updateRow()</code>, <code>toggleCollapse()</code>. Extensions read state, never write directly.</p>
+
+    <h2 id="views">Views & Density</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Four view modes (day, week, month, quarter) and three density options (working, presentation, dense). Each combination produces a specific scale — pixel-per-day, row height, bar height, and label size. Full scale table will be documented here.</p>
+
+    <h2 id="themes">Themes</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Every visual value flows through <code>--emboss-</code> prefixed CSS custom properties. Swap a class on the container to change the entire feel. Ship with grayscale light and dark. Build your own theme in 20 lines of CSS.</p>
+
+    <h2 id="events">Events</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Events are the only way user actions affect state. Drag events, click events, hover events — extensions intercept them, core processes them. Return <code>false</code> from any handler to cancel the action.</p>
+
+    <!-- ═══ EXTENSIONS ═══ -->
+    <h2 id="using-extensions">Using Extensions</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Pass extensions in the config array. Registration order matters — later extensions override earlier ones for the same renderer key. Core registers first, then your extensions in array order.</p>
+    <div class="docs-code">
+<span class="kw">const</span> chart = <span class="kw">new</span> <span class="fn">Emboss</span>(<span class="str">'#gantt'</span>, tasks, {<br>
+&nbsp;&nbsp;extensions: [<span class="fn">todayMarker</span>, <span class="fn">tooltips</span>, <span class="fn">arrows</span>, <span class="fn">sidebar</span>, <span class="fn">phases</span>]<br>
+})
+    </div>
+
+    <h2 id="today-marker">Today Marker</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Free extension. Renders a pulsing red line at today's position — line, dot, animated ring, and subtle column glow. Always shows where you are in the timeline. No configuration needed.</p>
+
+    <h2 id="tooltips">Tooltips</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Free extension. Cursor-following cards that show task name, dates, progress, and assignee on hover. Boundary-aware positioning so they never clip off-screen. Dark card on light theme, light card on dark theme.</p>
+
+    <h2 id="dependency-arrows">Dependency Arrows</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Free extension. Start-to-start right-angle routing between dependent tasks. Hidden by default, visible when you hover a connected bar. Status-based styling — solid lines for active dependencies, dashed for future.</p>
+
+    <h2 id="writing-extensions">Writing Your Own Extension</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Extensions are plain objects with a standard shape. Declare what you provide — renderers, event handlers, row enrichment, CSS — and the core merges them in. One-page guide with a working example.</p>
+
+    <!-- ═══ ORGANIZE BUNDLE ═══ -->
+    <h2 id="sidebar">Sidebar</h2>
+    <span class="placeholder">Organize bundle — coming soon</span>
+    <p>Full-width or rail mode. Task names with status dots, phase pills with collapse chevrons, assignee avatars. Scroll-synced with the chart. Collapsible to a 48px rail with icon-only view.</p>
+
+    <h2 id="phases">Phase Grouping</h2>
+    <span class="placeholder">Organize bundle — coming soon</span>
+    <p>Collapsible groups that span their children. Color-coded thin bars on the timeline. Click the chevron to expand or collapse. Phase progress is computed from children.</p>
+
+    <h2 id="milestones">Milestones</h2>
+    <span class="placeholder">Organize bundle — coming soon</span>
+    <p>Diamond markers for deadlines and checkpoints. Phase-colored borders, progress fill bottom-to-top, glass highlight. 20×20px rotated square with hover scale.</p>
+
+    <h2 id="inline-editing">Inline Editing</h2>
+    <span class="placeholder">Organize bundle — coming soon</span>
+    <p>Click-to-edit on task and phase names directly in the sidebar. Phase-colored border on focus. Enter to save, Escape to cancel.</p>
+
+    <!-- ═══ API REFERENCE ═══ -->
+    <h2 id="emboss-class">Emboss Class</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>The main entry point. Constructor, instance methods, and event subscriptions.</p>
+    <h3>Constructor</h3>
+    <div class="docs-code">
+<span class="kw">new</span> <span class="fn">Emboss</span>(selector: <span class="str">string</span>, tasks: <span class="str">Task[]</span>, config?: <span class="str">EmbossConfig</span>)
+    </div>
+    <h3>Methods</h3>
+    <table class="prop-table">
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>setView(view)</td><td>Switch between 'day', 'week', 'month', 'quarter'. Recalculates scale and re-renders.</td></tr>
+        <tr><td>setDensity(density)</td><td>Switch between 'working', 'presentation', 'dense'. Recalculates scale.</td></tr>
+        <tr><td>setTheme(theme)</td><td>Apply a theme by swapping the class on the root container.</td></tr>
+        <tr><td>updateRow(id, changes)</td><td>Merge partial changes into a row and re-render.</td></tr>
+        <tr><td>toggleCollapse(id)</td><td>Expand or collapse a row's children.</td></tr>
+        <tr><td>on(event, handler)</td><td>Subscribe to an event.</td></tr>
+        <tr><td>use(extension)</td><td>Register an extension at runtime.</td></tr>
+        <tr><td>destroy()</td><td>Unmount the chart and clean up event listeners.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="config">Configuration</h2>
+    <span class="placeholder">Coming soon</span>
+    <table class="prop-table">
+      <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>extensions</td><td>Extension[]</td><td>[]</td><td>Array of extensions to register.</td></tr>
+        <tr><td>view</td><td>string</td><td>'week'</td><td>Initial view mode.</td></tr>
+        <tr><td>density</td><td>string</td><td>'working'</td><td>Initial density.</td></tr>
+        <tr><td>theme</td><td>string</td><td>'grayscale'</td><td>Initial theme.</td></tr>
+        <tr><td>licenseKey</td><td>string</td><td>undefined</td><td>License key for paid extensions.</td></tr>
+        <tr><td>markWeekends</td><td>boolean</td><td>true</td><td>Show weekend shading.</td></tr>
+        <tr><td>excludeWeekends</td><td>boolean</td><td>false</td><td>Collapse weekends from timeline.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="row-type">Row Type</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Complete <code>Row</code> interface with all fields, types, and defaults. Will be documented once the type is finalized.</p>
+
+    <h2 id="scale-type">Scale Type</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>The <code>Scale</code> object that controls pixel dimensions. Derived from view × density combination. Full table of values will be here.</p>
+
+    <h2 id="extension-type">Extension Type</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>The <code>EmbossExtension</code> interface — name, type, renderers, handlers, enrichRows, styles, init. Everything an extension can provide.</p>
+
+    <h2 id="css-properties">CSS Custom Properties</h2>
+    <span class="placeholder">Coming soon</span>
+    <p>Complete list of <code>--emboss-</code> prefixed custom properties with default values for light and dark themes. This is the theming API.</p>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bottom">
+    <p>© 2026 Emboss. Made by the Leantime team.</p>
+    <span class="footer-tagline">open source builds the engine. we bring the finish.</span>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelector('.theme-toggle').textContent = isDark ? '☀' : '☾';
+  localStorage.setItem('emboss-theme', isDark ? 'light' : 'dark');
+}
+if (localStorage.getItem('emboss-theme') === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+  document.querySelector('.theme-toggle').textContent = '☾';
+}
+
+// Sidebar active state on scroll
+const sections = document.querySelectorAll('h2[id]');
+const sidebarLinks = document.querySelectorAll('.docs-sidebar a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      sidebarLinks.forEach(l => l.classList.remove('active'));
+      const match = document.querySelector('.docs-sidebar a[href="#' + e.target.id + '"]');
+      if (match) match.classList.add('active');
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

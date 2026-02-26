@@ -1,0 +1,97 @@
+<section class="section" id="extensions">
+  <p class="section-label">Extensions</p>
+  <h2 class="section-title">Register what you need.<br>Override what you want.</h2>
+  <p class="section-desc">Every feature beyond core bars is an extension. Free extensions ship with the package. Paid bundles add structure, flare, and analysis.</p>
+  <div class="ext-grid">
+    <div class="ext-card">
+      <div class="ext-card-header">
+        <h3>Today Marker</h3>
+        <span class="ext-badge free">Free</span>
+      </div>
+      <p>Pulsing red line with dot, ring animation, and subtle column glow. Always shows where you are in the timeline.</p>
+    </div>
+    <div class="ext-card">
+      <div class="ext-card-header">
+        <h3>Tooltips</h3>
+        <span class="ext-badge free">Free</span>
+      </div>
+      <p>Cursor-following cards with task name, dates, progress, and assignee. Boundary-aware positioning. Dark on light, light on dark.</p>
+    </div>
+    <div class="ext-card">
+      <div class="ext-card-header">
+        <h3>Dependency Arrows</h3>
+        <span class="ext-badge free">Free</span>
+      </div>
+      <p>Start-to-start right-angle routing. Hidden by default, appears on hover. Status-based styling — solid for active, dashed for future.</p>
+    </div>
+    <div class="ext-card">
+      <div class="ext-card-header">
+        <h3>Sidebar</h3>
+        <span class="ext-badge paid">Organize</span>
+      </div>
+      <p>Full-width or rail mode. Phase pills with collapse chevrons, task names with status dots, assignee avatars. Scroll-synced with the chart.</p>
+    </div>
+    <div class="ext-card">
+      <div class="ext-card-header">
+        <h3>Phase Grouping</h3>
+        <span class="ext-badge paid">Organize</span>
+      </div>
+      <p>Collapsible phase rows that span their children. Color-coded thin bars. Click to expand or collapse entire phases.</p>
+    </div>
+    <div class="ext-card">
+      <div class="ext-card-header">
+        <h3>Milestones</h3>
+        <span class="ext-badge paid">Organize</span>
+      </div>
+      <p>Diamond markers for deadlines and checkpoints. Phase-colored borders, progress fill bottom-to-top, glass highlight.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ext-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .ext-card {
+    padding: 32px;
+    border-radius: 20px;
+    background: var(--emboss-surface-raised);
+    border: 1px solid var(--emboss-border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .ext-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--emboss-lift-md);
+  }
+  .ext-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .ext-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--emboss-coal);
+  }
+  :global([data-theme="dark"]) .ext-card h3 { color: var(--emboss-white); }
+  .ext-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+  .ext-badge.free { background: var(--emboss-patina); color: white; }
+  .ext-badge.paid { background: var(--emboss-gradient); color: white; }
+  .ext-card p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--emboss-slate);
+  }
+  :global([data-theme="dark"]) .ext-card p { color: var(--emboss-ash); }
+</style>

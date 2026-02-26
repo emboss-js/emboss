@@ -1,0 +1,206 @@
+<section class="section">
+  <p class="section-label">Preview</p>
+  <h2 class="section-title">See the difference</h2>
+  <p class="section-desc">The same data. Two moods. Grayscale keeps it professional. Vivid makes it sing.</p>
+  <div class="preview-container">
+    <div class="preview-toolbar">
+      <div class="preview-dots"><span></span><span></span><span></span></div>
+      <div class="preview-tabs">
+        <button class="preview-tab active" data-mode="grayscale">Grayscale</button>
+        <button class="preview-tab" data-mode="vivid">&#10022; Vivid</button>
+      </div>
+      <div class="preview-tabs">
+        <button class="preview-tab" style="font-size:11px">Day</button>
+        <button class="preview-tab active" style="font-size:11px">Week</button>
+        <button class="preview-tab" style="font-size:11px">Month</button>
+      </div>
+    </div>
+    <div class="preview-chart" id="ganttPreview"></div>
+  </div>
+</section>
+
+<style>
+  .preview-container {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--emboss-border-strong);
+    box-shadow: var(--emboss-lift-xl);
+    background: var(--emboss-surface);
+  }
+  .preview-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--emboss-surface-raised);
+    border-bottom: 1px solid var(--emboss-border);
+  }
+  .preview-dots { display: flex; gap: 8px; }
+  .preview-dots span { width: 12px; height: 12px; border-radius: 50%; background: var(--emboss-cloud); }
+  .preview-dots span:first-child { background: #ff5f57; }
+  .preview-dots span:nth-child(2) { background: #ffbd2e; }
+  .preview-dots span:nth-child(3) { background: #27c93f; }
+  .preview-tabs {
+    display: flex;
+    background: var(--emboss-surface-inset);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .preview-tab {
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--emboss-ash);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .preview-tab.active {
+    background: var(--emboss-surface);
+    color: var(--emboss-coal);
+    box-shadow: var(--emboss-lift-sm);
+  }
+  :global([data-theme="dark"]) .preview-tab.active { color: var(--emboss-white); }
+  .preview-tab.vivid-active {
+    background: var(--emboss-gradient);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.22);
+  }
+  .preview-chart {
+    padding: 24px;
+    min-height: 340px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Gantt bars */
+  :global(.gantt-bar) {
+    height: 26px; border-radius: 13px; position: relative; overflow: hidden;
+    transition: transform 0.2s, opacity 0.2s; cursor: pointer;
+  }
+  :global(.gantt-bar:hover) { transform: scaleY(1.08); }
+  :global(.gantt-bar-track) { position: absolute; inset: 0; background: var(--emboss-cloud); border-radius: 13px; }
+  :global([data-theme="dark"] .gantt-bar-track) { background: var(--emboss-graphite); }
+  :global(.gantt-bar-fill) {
+    position: absolute; top: 0; left: 0; bottom: 0; border-radius: 13px 0 0 13px;
+    transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  :global(.gantt-bar-fill.full) { border-radius: 13px; }
+  :global(.gantt-bar-fill::before) {
+    content: ''; position: absolute; top: 2px; left: 4px; right: 4px;
+    height: 40%; border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.12) 60%, transparent 100%);
+  }
+  :global(.gantt-bar-fill::after) {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
+    background: linear-gradient(0deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+    border-radius: 0 0 0 13px;
+  }
+  :global(.gantt-bar-fill.full::after) { border-radius: 0 0 13px 13px; }
+  :global(.gantt-bar-label) {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 11.5px; font-weight: 500; white-space: nowrap; z-index: 2; font-family: var(--font-body);
+  }
+  :global(.gantt-bar-label.inside) { left: 10px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  :global(.gantt-bar-label.outside) { color: var(--emboss-ash); }
+  :global(.gantt-bar-marker) {
+    position: absolute; top: 50%; transform: translate(-50%,-50%);
+    width: 12px; height: 12px; border-radius: 50%; background: white;
+    box-shadow: 0 0 0 2px white, 0 2px 4px rgba(0,0,0,0.15); z-index: 3; transition: transform 0.2s;
+  }
+  :global(.gantt-bar:hover .gantt-bar-marker) { transform: translate(-50%,-50%) scale(1.15); }
+  :global(.gantt-bar-marker-inner) {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  :global(.gantt-handle) {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 55%; border-radius: 2px;
+    background: rgba(255,255,255,0.4); opacity: 0; transition: opacity 0.15s; z-index: 4;
+  }
+  :global(.gantt-bar:hover .gantt-handle) { opacity: 1; }
+  :global(.gantt-handle-left) { left: 4px; }
+  :global(.gantt-handle-right) { right: 4px; }
+  :global(.fill-gray-active) { background: linear-gradient(90deg, #574f45, #6d6358); }
+  :global(.fill-gray-done) { background: linear-gradient(90deg, #9d9488, #a8a098); }
+  :global(.fill-gray-upcoming) { background: linear-gradient(90deg, #9d9488, #a8a098); }
+  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #22d3ee); }
+  :global(.fill-vivid-done) { background: linear-gradient(90deg, #38bdf8, #22d3ee); }
+  :global(.fill-vivid-upcoming) { background: linear-gradient(90deg, #60a5fa, #38bdf8); }
+  :global(.gantt-bar.done) { opacity: 0.45; }
+  :global(.gantt-bar.done:hover) { opacity: 0.65; }
+  :global(.gantt-bar.upcoming .gantt-bar-fill) { opacity: 0.5; }
+  :global(.today-marker) { position: absolute; top: 0; bottom: 0; width: 1.5px; background: var(--emboss-signal); opacity: 0.5; z-index: 10; }
+  :global(.today-dot) { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--emboss-signal); z-index: 11; }
+  :global(.today-ring) {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid var(--emboss-signal); opacity: 0.3;
+    animation: todayPulse 2s ease-in-out infinite;
+  }
+  @keyframes todayPulse {
+    0%,100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
+    50% { transform: translateX(-50%) scale(1.6); opacity: 0; }
+  }
+  :global(.today-label) {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 8px; font-weight: 500;
+    letter-spacing: 0.08em; color: var(--emboss-signal);
+  }
+  :global(.gantt-grid-line) { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--emboss-coal); opacity: 0.04; }
+</style>
+
+<script>
+  let currentMode = 'grayscale';
+
+  document.querySelectorAll('[data-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-mode')!;
+      currentMode = mode;
+      document.querySelectorAll('[data-mode]').forEach(t => {
+        t.classList.remove('active', 'vivid-active');
+      });
+      btn.classList.add(mode === 'vivid' ? 'vivid-active' : 'active');
+      renderGanttPreview();
+    });
+  });
+
+  function renderGanttPreview() {
+    const c = document.getElementById('ganttPreview');
+    if (!c) return;
+    const tasks = [
+      { name: 'Research & Discovery', start: 0, duration: 18, progress: 100, status: 'done' },
+      { name: 'Design System Setup', start: 4, duration: 22, progress: 100, status: 'done' },
+      { name: 'Core Architecture', start: 12, duration: 28, progress: 78, status: 'active' },
+      { name: 'Extension API', start: 22, duration: 16, progress: 45, status: 'active' },
+      { name: 'Glass Bar Rendering', start: 30, duration: 14, progress: 20, status: 'active' },
+      { name: 'Dependency Arrows', start: 38, duration: 10, progress: 0, status: 'upcoming' },
+      { name: 'Organize Bundle', start: 44, duration: 20, progress: 0, status: 'upcoming' },
+    ];
+    const dw = 10, rh = 44, bh = 26, td = 70, today = 34;
+    const pf = currentMode === 'vivid' ? 'vivid' : 'gray';
+    let h = '';
+    for (let d = 0; d < td; d += 7) h += '<div class="gantt-grid-line" style="left:' + d * dw + 'px;"></div>';
+    h += '<div class="today-marker" style="left:' + today * dw + 'px;"><span class="today-label">TODAY</span><div class="today-dot"></div><div class="today-ring"></div></div>';
+    tasks.forEach((t, i) => {
+      const l = t.start * dw, w = t.duration * dw, top = i * rh + (rh - bh) / 2;
+      const fw = Math.max(14, w * t.progress / 100);
+      const fc = 'fill-' + pf + '-' + t.status;
+      const wide = w > 70, full = t.progress === 100, mark = t.progress > 0 && t.progress < 100;
+      const mc = currentMode === 'vivid' ? '#22d3ee' : '#574f45';
+      h += '<div class="gantt-bar ' + t.status + '" style="position:absolute;left:' + l + 'px;top:' + top + 'px;width:' + w + 'px;">';
+      h += '<div class="gantt-bar-track"></div>';
+      h += '<div class="gantt-bar-fill ' + fc + (full ? ' full' : '') + '" style="width:' + (t.status === 'upcoming' ? '100%' : fw + 'px') + ';' + (t.status === 'upcoming' ? 'opacity:0.5;' : '') + '"></div>';
+      if (mark) h += '<div class="gantt-bar-marker" style="left:' + fw + 'px;"><div class="gantt-bar-marker-inner" style="background:' + mc + '"></div></div>';
+      h += '<div class="gantt-handle gantt-handle-left"></div><div class="gantt-handle gantt-handle-right"></div>';
+      h += '<span class="gantt-bar-label ' + (wide ? 'inside' : 'outside') + '" style="' + (wide ? '' : 'left:' + (w + 6) + 'px;') + '">' + t.name + (mark ? ' \u00b7 ' + t.progress + '%' : '') + '</span>';
+      h += '</div>';
+    });
+    c.style.height = (tasks.length * rh + 20) + 'px';
+    c.innerHTML = h;
+  }
+  renderGanttPreview();
+</script>

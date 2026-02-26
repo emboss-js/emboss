@@ -1,0 +1,118 @@
+---
+import Logo from './Logo.astro';
+
+const pathname = Astro.url.pathname;
+function isActive(href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+
+<nav>
+  <a href="/" class="emboss-logo">
+    <Logo size={30} />
+    <span class="emboss-wordmark">emboss</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/features" class:list={[{ active: isActive('/features') }]}>Features</a></li>
+    <li><a href="/docs" class:list={[{ active: isActive('/docs') }]}>Docs</a></li>
+    <li><a href="/pricing" class:list={[{ active: isActive('/pricing') }]}>Pricing</a></li>
+    <li><a href="https://github.com/leantime/emboss" target="_blank" rel="noopener">GitHub</a></li>
+  </ul>
+  <button class="theme-toggle" aria-label="Toggle theme">&#9728;</button>
+</nav>
+
+<style>
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(250,248,244,0.8);
+    backdrop-filter: blur(24px) saturate(1.5);
+    border-bottom: 1px solid var(--emboss-border);
+  }
+  :global([data-theme="dark"]) nav {
+    background: rgba(19,18,16,0.82);
+  }
+
+  .emboss-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .emboss-wordmark {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.03em;
+    color: var(--emboss-coal);
+  }
+  :global([data-theme="dark"]) .emboss-wordmark {
+    color: var(--emboss-white);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--emboss-slate);
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .nav-links a:hover { color: var(--emboss-coal); }
+  .nav-links a.active { color: var(--emboss-coal); font-weight: 600; }
+  :global([data-theme="dark"]) .nav-links a:hover,
+  :global([data-theme="dark"]) .nav-links a.active { color: var(--emboss-white); }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--emboss-border-strong);
+    background: var(--emboss-surface-raised);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover {
+    box-shadow: var(--emboss-lift-sm);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 12px 20px; }
+    .nav-links { display: none; }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.theme-toggle');
+  if (toggle) {
+    if (document.documentElement.getAttribute('data-theme') === 'dark') {
+      toggle.textContent = '\u263E';
+    }
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      const next = isDark ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('emboss-theme', next);
+      toggle.textContent = isDark ? '\u2600' : '\u263E';
+    });
+  }
+</script>

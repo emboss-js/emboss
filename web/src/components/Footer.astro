@@ -1,0 +1,128 @@
+---
+import Logo from './Logo.astro';
+---
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="emboss-logo">
+        <Logo size={22} />
+        <span class="emboss-wordmark">emboss</span>
+      </a>
+      <p>Beautiful software isn't a luxury. It's accessibility.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#">Core library</a></li>
+        <li><a href="#">Organize bundle</a></li>
+        <li><a href="#">Templates</a></li>
+        <li><a href="#">Changelog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="/docs">Documentation</a></li>
+        <li><a href="/extensions">Extensions guide</a></li>
+        <li><a href="https://github.com/leantime/emboss" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="#">npm</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="https://leantime.io" target="_blank" rel="noopener">Leantime</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; {new Date().getFullYear()} Emboss. Made by the Leantime team.</p>
+    <span class="footer-tagline">open source builds the engine. we bring the finish.</span>
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 60px 40px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid var(--emboss-border);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+
+  .emboss-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    text-decoration: none;
+  }
+  .emboss-wordmark {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.03em;
+    color: var(--emboss-coal);
+  }
+  :global([data-theme="dark"]) .emboss-wordmark { color: var(--emboss-white); }
+
+  .footer-brand p {
+    font-size: 14px;
+    color: var(--emboss-ash);
+    max-width: 280px;
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+
+  .footer-col h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--emboss-coal);
+    margin-bottom: 16px;
+  }
+  :global([data-theme="dark"]) .footer-col h4 { color: var(--emboss-fog); }
+
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a {
+    font-size: 13.5px;
+    color: var(--emboss-ash);
+    transition: color 0.15s;
+  }
+  .footer-col ul li a:hover { color: var(--emboss-coal); }
+  :global([data-theme="dark"]) .footer-col ul li a:hover { color: var(--emboss-white); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--emboss-border);
+  }
+  .footer-bottom p {
+    font-size: 13px;
+    color: var(--emboss-ash);
+  }
+  .footer-tagline {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--emboss-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>

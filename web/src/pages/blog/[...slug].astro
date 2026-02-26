@@ -1,0 +1,168 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <article class="post">
+    <header>
+      <a href="/blog" class="back-link">&larr; All posts</a>
+      <time datetime={post.data.date.toISOString()}>
+        {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+      <h1>{post.data.title}</h1>
+      <p class="author">by {post.data.author}</p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 140px 40px 100px;
+  }
+
+  .back-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--emboss-ash);
+    display: inline-block;
+    margin-bottom: 32px;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--emboss-coal); }
+  :global([data-theme="dark"]) .back-link:hover { color: var(--emboss-white); }
+
+  header time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--emboss-ash);
+    letter-spacing: 0.04em;
+  }
+
+  header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5vw, 44px);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--emboss-coal);
+    margin-top: 12px;
+  }
+  :global([data-theme="dark"]) header h1 { color: var(--emboss-white); }
+
+  .author {
+    font-size: 14px;
+    color: var(--emboss-ash);
+    margin-top: 8px;
+  }
+
+  .prose {
+    margin-top: 48px;
+  }
+
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--emboss-coal);
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+  :global([data-theme="dark"]) .prose :global(h2) { color: var(--emboss-white); }
+
+  .prose :global(h3) {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--emboss-coal);
+    margin-top: 36px;
+    margin-bottom: 12px;
+  }
+  :global([data-theme="dark"]) .prose :global(h3) { color: var(--emboss-white); }
+
+  .prose :global(p) {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--emboss-slate);
+    margin-bottom: 20px;
+  }
+  :global([data-theme="dark"]) .prose :global(p) { color: var(--emboss-ash); }
+
+  .prose :global(em) { font-style: italic; }
+  .prose :global(strong) {
+    font-weight: 700;
+    color: var(--emboss-coal);
+  }
+  :global([data-theme="dark"]) .prose :global(strong) { color: var(--emboss-fog); }
+
+  .prose :global(ul), .prose :global(ol) {
+    margin-bottom: 20px;
+    padding-left: 24px;
+  }
+  .prose :global(li) {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--emboss-slate);
+    margin-bottom: 8px;
+  }
+  :global([data-theme="dark"]) .prose :global(li) { color: var(--emboss-ash); }
+
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--emboss-vivid-2);
+    padding: 4px 0 4px 20px;
+    margin: 24px 0;
+    font-style: italic;
+    color: var(--emboss-slate);
+  }
+  :global([data-theme="dark"]) .prose :global(blockquote) { color: var(--emboss-ash); }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background: var(--emboss-surface-raised);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--emboss-border);
+  }
+
+  .prose :global(pre) {
+    background: var(--emboss-surface-raised);
+    border: 1px solid var(--emboss-border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .prose :global(a) {
+    color: var(--emboss-press);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 768px) {
+    .post { padding: 120px 24px 60px; }
+  }
+</style>

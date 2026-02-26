@@ -1,0 +1,60 @@
+<section class="section">
+  <p class="section-label">Quick start</p>
+  <h2 class="section-title">Five lines to beautiful</h2>
+  <p class="section-desc">Install, import, render. Extensions snap in when you're ready.</p>
+  <div class="code-block">
+    <div class="code-header"><span></span><span></span><span></span></div>
+    <div class="code-body">
+      <span class="kw">import</span> {'{'} Emboss {'}'} <span class="kw">from</span> <span class="str">'@emboss-js/core'</span><br>
+      <span class="kw">import</span> {'{'} todayMarker, tooltips, arrows {'}'} <span class="kw">from</span> <span class="str">'@emboss-js/core/extensions'</span><br>
+      <br>
+      <span class="kw">const</span> chart = <span class="kw">new</span> <span class="fn">Emboss</span>(<span class="str">'#gantt'</span>, tasks, {'{'}<br>
+      &nbsp;&nbsp;extensions: [<span class="fn">todayMarker</span>, <span class="fn">tooltips</span>, <span class="fn">arrows</span>],<br>
+      &nbsp;&nbsp;theme: <span class="str">'dark'</span>,<br>
+      &nbsp;&nbsp;view: <span class="str">'week'</span><br>
+      {'}'})<br>
+      <br>
+      <span class="cm">// That's it. Glass bars, today marker, tooltips, dependency arrows.</span><br>
+      <span class="cm">// Add the Organize bundle for sidebar, phases, and milestones.</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .code-block {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--emboss-border-strong);
+    box-shadow: var(--emboss-lift-md);
+    margin-top: 48px;
+  }
+  .code-header {
+    padding: 10px 20px;
+    background: var(--emboss-coal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  :global([data-theme="dark"]) .code-header { background: #0a0908; }
+  .code-header span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .code-header span:nth-child(1) { background: #ff5f57; }
+  .code-header span:nth-child(2) { background: #ffbd2e; }
+  .code-header span:nth-child(3) { background: #27c93f; }
+  .code-body {
+    padding: 24px 28px;
+    background: var(--emboss-graphite);
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #e5e7eb;
+    overflow-x: auto;
+  }
+  .kw { color: #22d3ee; }
+  .str { color: #38bdf8; }
+  .fn { color: #60a5fa; }
+  .cm { color: #6b7280; font-style: italic; }
+</style>

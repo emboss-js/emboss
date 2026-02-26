@@ -1,0 +1,72 @@
+<section class="section" id="features">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">The Tiptap of Gantt charts</h2>
+  <p class="section-desc">Frappe Gantt is the engine — rock-solid date math, drag handling, dependency resolution. Emboss wraps it in a design system, extension architecture, and glass-finished visual layer.</p>
+  <div class="philosophy-grid">
+    <div class="philosophy-card">
+      <div class="philosophy-icon">&loz;</div>
+      <h3>Everything is a Row</h3>
+      <p>Phases, tasks, milestones, subtasks — one data model, one render pipeline. Extensions enrich rows. Renderers consume them.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-icon">&#9678;</div>
+      <h3>Glass-finished bars</h3>
+      <p>Track + fill + glass highlight + shadow. Progress markers, smart labels, drag handles. Every bar looks designed by hand.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-icon">&#10192;</div>
+      <h3>Extensions, not forks</h3>
+      <p>Today markers, tooltips, arrows, sidebars, milestones — all extensions. Register what you need. Override what you want.</p>
+    </div>
+    <div class="philosophy-card">
+      <div class="philosophy-icon">&#9670;</div>
+      <h3>Themes via CSS vars</h3>
+      <p>Every visual value flows through custom properties. Light, dark, vivid — swap a class, change the feel. Build your own in 20 lines.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .philosophy-card {
+    padding: 32px;
+    border-radius: 20px;
+    background: var(--emboss-surface-raised);
+    border: 1px solid var(--emboss-border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .philosophy-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--emboss-lift-md);
+  }
+  .philosophy-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 18px;
+    background: var(--emboss-gradient);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.18);
+  }
+  .philosophy-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--emboss-coal);
+    margin-bottom: 8px;
+  }
+  :global([data-theme="dark"]) .philosophy-card h3 { color: var(--emboss-white); }
+  .philosophy-card p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--emboss-slate);
+  }
+  :global([data-theme="dark"]) .philosophy-card p { color: var(--emboss-ash); }
+</style>

@@ -1,0 +1,165 @@
+---
+import Base from '../layouts/Base.astro';
+import Mission from '../components/Mission.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Preview from '../components/Preview.astro';
+import Compare from '../components/Compare.astro';
+import QuickStart from '../components/QuickStart.astro';
+import Extensions from '../components/Extensions.astro';
+import Pricing from '../components/Pricing.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<Base
+  title="Emboss"
+  description="The design layer for open source Gantt charts. Glass-finished bars, extension architecture, and themes that actually look good. Built on Frappe Gantt."
+>
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Open source Gantt chart library — v0.1
+    </div>
+    <h1>Beautiful software<br>isn't a luxury.<br>It's <em>accessibility.</em></h1>
+    <p class="hero-sub">Emboss brings the finish to open source. A design layer, extension architecture, and glass-finished visual system — built on Frappe Gantt.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" id="hero-copy">npm install @emboss-js/core &rarr;</button>
+      <a href="https://github.com/leantime/emboss" target="_blank" rel="noopener" class="btn-secondary">View on GitHub</a>
+    </div>
+  </section>
+
+  <Mission />
+  <HowItWorks />
+  <Preview />
+  <Compare />
+  <QuickStart />
+  <Extensions />
+  <Pricing />
+  <CTA />
+</Base>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 700px;
+    background: radial-gradient(ellipse 500px 400px at 50% 50%, rgba(59,130,246,0.03), transparent);
+    pointer-events: none;
+    filter: blur(60px);
+  }
+  :global([data-theme="dark"]) .hero::before {
+    background: radial-gradient(ellipse 500px 400px at 50% 50%, rgba(59,130,246,0.06), transparent);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px 6px 6px;
+    border-radius: 100px;
+    background: var(--emboss-surface-raised);
+    border: 1px solid var(--emboss-border-strong);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--emboss-slate);
+    margin-bottom: 32px;
+    box-shadow: var(--emboss-lift-sm);
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease-out;
+  }
+  .hero-badge-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--emboss-gradient);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 7vw, 90px);
+    font-weight: 400;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--emboss-coal);
+    max-width: 860px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease-out 0.1s both;
+  }
+  :global([data-theme="dark"]) h1 { color: var(--emboss-white); }
+  h1 em {
+    font-style: italic;
+    background: var(--emboss-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: clamp(17px, 2vw, 20px);
+    color: var(--emboss-slate);
+    max-width: 540px;
+    margin-top: 24px;
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease-out 0.2s both;
+  }
+  :global([data-theme="dark"]) .hero-sub { color: var(--emboss-ash); }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease-out 0.3s both;
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 100px 24px 60px; }
+    .hero-ctas { flex-direction: column; align-items: center; }
+  }
+</style>
+
+<script>
+  // Clipboard copy for install button
+  const heroCopy = document.getElementById('hero-copy');
+  if (heroCopy) {
+    heroCopy.addEventListener('click', () => {
+      navigator.clipboard.writeText('npm install @emboss-js/core');
+    });
+  }
+
+  // Scroll-in animations
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.section, .mission, .cta').forEach(el => {
+    (el as HTMLElement).style.opacity = '0';
+    (el as HTMLElement).style.transform = 'translateY(24px)';
+    (el as HTMLElement).style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    obs.observe(el);
+  });
+</script>

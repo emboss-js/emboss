@@ -1,0 +1,48 @@
+<section class="cta">
+  <p class="section-label">Get started</p>
+  <p class="cta-statement">
+    The engine was always there.<br>
+    <span class="vivid-text">We're drawing out the beauty.</span>
+  </p>
+  <div class="cta-buttons">
+    <button class="btn-vivid" id="cta-copy">npm install @emboss-js/core &rarr;</button>
+    <a href="/docs" class="btn-secondary">Read the docs</a>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding: 120px 40px;
+    text-align: center;
+  }
+  .cta-statement {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--emboss-coal);
+    max-width: 800px;
+    margin: 0 auto;
+    letter-spacing: -0.01em;
+  }
+  :global([data-theme="dark"]) .cta-statement { color: var(--emboss-fog); }
+  .cta-buttons {
+    margin-top: 32px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 768px) {
+    .cta { padding: 80px 24px; }
+  }
+</style>
+
+<script>
+  const ctaCopy = document.getElementById('cta-copy');
+  if (ctaCopy) {
+    ctaCopy.addEventListener('click', () => {
+      navigator.clipboard.writeText('npm install @emboss-js/core');
+    });
+  }
+</script>

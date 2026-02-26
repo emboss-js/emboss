@@ -1,0 +1,60 @@
+<section class="section">
+  <p class="section-label">Why Emboss</p>
+  <h2 class="section-title">What changes when<br>you add a finish</h2>
+  <p class="section-desc">Frappe Gantt nailed the engine. Emboss adds the finish it deserves.</p>
+  <div class="compare-grid">
+    <div class="compare-card before">
+      <div class="compare-label">Frappe Gantt alone</div>
+      <h4>Flat bars, basic popup</h4>
+      <p>Functional but generic. Every implementation looks the same. Limited customization without forking. No sidebar, no phases, no visual hierarchy.</p>
+    </div>
+    <div class="compare-card after">
+      <div class="compare-label">With Emboss</div>
+      <h4>Glass bars, extension system</h4>
+      <p>Progress markers, drag handles, dependency arrows on hover. Sidebar with phase grouping, collapse, rail mode. Dark theme. Dense mode. All composable through extensions.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .compare-card {
+    border-radius: 20px;
+    padding: 32px;
+    overflow: hidden;
+    border: 1px solid var(--emboss-border);
+  }
+  .compare-card.before { background: var(--emboss-surface-inset); }
+  .compare-card.after { background: var(--emboss-surface-raised); }
+  .compare-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .compare-card.before .compare-label { color: var(--emboss-ash); }
+  .compare-card.after .compare-label { color: var(--emboss-vivid-1); }
+  .compare-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--emboss-coal);
+    margin-bottom: 8px;
+  }
+  :global([data-theme="dark"]) .compare-card h4 { color: var(--emboss-white); }
+  .compare-card p {
+    font-size: 14px;
+    color: var(--emboss-slate);
+    line-height: 1.6;
+  }
+  :global([data-theme="dark"]) .compare-card p { color: var(--emboss-ash); }
+
+  @media (max-width: 768px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>

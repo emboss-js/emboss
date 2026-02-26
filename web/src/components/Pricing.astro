@@ -1,0 +1,123 @@
+<section class="section" id="pricing">
+  <p class="section-label">Pricing</p>
+  <h2 class="section-title">The engine is free.<br>The finish is worth it.</h2>
+  <p class="section-desc">Core + free extensions are MIT licensed forever. Paid bundles are one-time purchases — the design infrastructure you'd spend weeks building, ready in one import.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Core</h3>
+      <p class="pricing-sub">The foundation</p>
+      <p class="price">Free</p>
+      <ul class="pricing-features">
+        <li>Glass-finished bars</li>
+        <li>4 view modes</li>
+        <li>3 density options</li>
+        <li>Light & dark themes</li>
+        <li>Today marker</li>
+        <li>Hover tooltips</li>
+        <li>Dependency arrows</li>
+        <li>Drag to reschedule</li>
+      </ul>
+      <button class="btn-secondary" style="width:100%; justify-content:center;">Get started</button>
+    </div>
+    <div class="pricing-card featured">
+      <h3>Organize</h3>
+      <p class="pricing-sub">Structure & navigation</p>
+      <p class="price">$49 <span>one-time</span></p>
+      <ul class="pricing-features">
+        <li>Everything in Core</li>
+        <li>Sidebar with collapse</li>
+        <li>Phase grouping</li>
+        <li>Milestone diamonds</li>
+        <li>Inline editing</li>
+        <li>Rail mode (compact)</li>
+      </ul>
+      <button class="btn-vivid" style="width:100%; justify-content:center;">Purchase &rarr;</button>
+    </div>
+    <div class="pricing-card">
+      <h3>Templates</h3>
+      <p class="pricing-sub">Visual themes</p>
+      <p class="price">$19 <span>each</span></p>
+      <ul class="pricing-features">
+        <li>Vivid (color gradients)</li>
+        <li>Mono (minimal)</li>
+        <li>Blueprint (technical)</li>
+        <li>20 lines of CSS each</li>
+        <li>Dark mode included</li>
+      </ul>
+      <button class="btn-secondary" style="width:100%; justify-content:center;">Browse themes</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .pricing-card {
+    padding: 40px 36px;
+    border-radius: 20px;
+    background: var(--emboss-surface-raised);
+    border: 1px solid var(--emboss-border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .pricing-card:hover { transform: translateY(-4px); box-shadow: var(--emboss-lift-lg); }
+  .pricing-card.featured {
+    border: 2px solid transparent;
+    background-image:
+      linear-gradient(var(--emboss-surface-raised), var(--emboss-surface-raised)),
+      var(--emboss-gradient);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    position: relative;
+  }
+  .pricing-card.featured::before {
+    content: 'Most popular';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 16px;
+    border-radius: 100px;
+    background: var(--emboss-gradient);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pricing-card h3 { font-weight: 700; font-size: 20px; color: var(--emboss-coal); }
+  :global([data-theme="dark"]) .pricing-card h3 { color: var(--emboss-white); }
+  .pricing-sub { font-size: 14px; color: var(--emboss-ash); margin-top: 4px; }
+  .price {
+    font-family: var(--font-display);
+    font-size: 40px;
+    color: var(--emboss-coal);
+    margin: 16px 0;
+  }
+  :global([data-theme="dark"]) .price { color: var(--emboss-white); }
+  .price span {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--emboss-ash);
+    font-weight: 400;
+  }
+  .pricing-features { list-style: none; margin: 24px 0; }
+  .pricing-features li {
+    padding: 7px 0;
+    font-size: 14.5px;
+    color: var(--emboss-slate);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  :global([data-theme="dark"]) .pricing-features li { color: var(--emboss-ash); }
+  .pricing-features li::before {
+    content: '\2713';
+    font-weight: 700;
+    font-size: 13px;
+    background: var(--emboss-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
