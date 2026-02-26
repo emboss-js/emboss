@@ -8,9 +8,12 @@ covered by the MIT License in the root `LICENSE` file.
 
 ## What requires a commercial license
 
-- **Organize bundle** — sidebar, phases, milestones, inline edit
-- **Columns bundle** — duration and date columns
-- **Vivid theme** — color-coded bar rendering
+All paid features ship as a single bundle called **Organize**:
+
+- Sidebar, phase grouping, milestones, inline editing
+- Duration and date columns
+- Dense, working, and presentation density modes
+- Vivid color theme
 
 ## Grant
 

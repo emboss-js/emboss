@@ -33,13 +33,12 @@ const chart = new Emboss('#gantt', [
 
 ## Features
 
-| Core (free) | Free Extensions | Paid Extensions |
+| Free | Free Extensions | Organize (paid) |
 |---|---|---|
-| Glass bar rendering | Today marker | **Organize** — sidebar, phases, milestones, inline edit |
-| Day / week / month / quarter views | Tooltips | **Columns** — duration & dates columns |
-| Dense / working / presentation density | Dependency arrows | |
-| Grayscale + dark themes | | Vivid theme (included with Organize) |
-| Drag to move, resize, adjust progress | | |
+| Glass-finished bars | Today marker | Dense / working / presentation density |
+| Day / week / month / quarter views | Tooltips | Vivid color theme |
+| Drag to move, resize, adjust progress | Dependency arrows | Sidebar, phase grouping, milestones |
+| Grayscale + dark themes | | Inline editing, duration & date columns |
 | Extension system | | |
 
 ## Views & Density
@@ -94,23 +93,9 @@ const chart = new Emboss('#gantt', rows, {
 
 <!-- TODO: screenshot — extensions.png: chart with today marker, tooltips, dependency arrows visible -->
 
-### Paid
+### Organize (paid)
 
-Paid extensions require a license key. Two bundles are available:
-
-**Organize** — sidebar, phase rows, milestone rendering, inline editing.
-
-```js
-import { sidebar, phases, milestones, inlineEdit } from '@emboss-js/core/extensions/organize'
-```
-
-**Columns** — duration and date columns for the sidebar (requires Organize).
-
-```js
-import { columns } from '@emboss-js/core/extensions/columns'
-```
-
-Register with a license key:
+One bundle, one license key. Includes sidebar, phases, milestones, inline editing, duration & date columns, density modes, and the Vivid color theme.
 
 ```js
 import { Emboss, setLicense } from '@emboss-js/core'
@@ -173,7 +158,7 @@ See [`EmbossInstance`](src/core/types.ts) and [`EmbossConfig`](src/core/index.ts
 Dual-licensed:
 
 - **MIT** — core library, free extensions, grayscale and dark themes. See [LICENSE](./LICENSE).
-- **Commercial** — Organize bundle, Columns bundle, Vivid theme. See [LICENSE-COMMERCIAL.md](./LICENSE-COMMERCIAL.md).
+- **Commercial** — Organize bundle (all paid extensions). See [LICENSE-COMMERCIAL.md](./LICENSE-COMMERCIAL.md).
 
 <!-- TODO: update domain -->
 [Purchase a license &rarr;](https://emboss-js.dev/pricing)
