@@ -1,5 +1,5 @@
 /**
- * @emboss/core — state.ts
+ * @emboss-js/core — state.ts
  * CONTRACT: Section 2 (State), Section 2 scale table
  *
  * Creates initial state, recalculates scale on view/density change,

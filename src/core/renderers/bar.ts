@@ -1,5 +1,5 @@
 /**
- * @emboss/core — renderers/bar.ts
+ * @emboss-js/core — renderers/bar.ts
  * CONTRACT: Section 3.2 (BarRenderer), Section 9.1 (glass bar), 9.2 (labels), 9.5 (drag handles)
  *
  * Renders the glass track/fill/marker bar for type 'task' and 'subtask'.

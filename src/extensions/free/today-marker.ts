@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/free/today-marker.ts
+ * @emboss-js/core — extensions/free/today-marker.ts
  * CONTRACT: Section 9.3 (today marker visual spec), Section 5 (extension shape)
  *
  * Line: 1.5px, var(--emboss-today), opacity 0.5, z-index 20

@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/free/tooltips.ts
+ * @emboss-js/core — extensions/free/tooltips.ts
  * CONTRACT: Section 5 (extension shape), Phase 3 spec
  *
  * Dark card: var(--emboss-ink) bg, 10px radius, 10px 14px padding, 240px max-width

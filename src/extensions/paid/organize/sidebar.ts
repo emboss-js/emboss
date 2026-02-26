@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/paid/organize/sidebar.ts
+ * @emboss-js/core — extensions/paid/organize/sidebar.ts
  * CONTRACT: Section 3.1 (SidebarRenderer), Section 9.6 (sidebar visual spec)
  * BUNDLE: Organize ($79)
  *

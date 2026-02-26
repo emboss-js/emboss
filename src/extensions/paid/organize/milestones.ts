@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/paid/organize/milestones.ts
+ * @emboss-js/core — extensions/paid/organize/milestones.ts
  * CONTRACT: Section 9.4 (milestone visual spec), Section 3.2 (BarRenderer for 'milestone')
  * BUNDLE: Organize ($79)
  *

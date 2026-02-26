@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/free/dependency-arrows.ts
+ * @emboss-js/core — extensions/free/dependency-arrows.ts
  * CONTRACT: Section 7 (dependency arrows)
  *
  * SVG overlay, z-index 15. HIDDEN by default, shown on bar hover.

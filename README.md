@@ -17,8 +17,8 @@ See [`docs/BUILD_SPEC.md`](docs/BUILD_SPEC.md) for the complete architecture con
 ## Quick Start (once published)
 
 ```js
-import { Emboss } from '@emboss/core'
-import { todayMarker, tooltips, dependencyArrows } from '@emboss/core/extensions/free'
+import { Emboss } from '@emboss-js/core'
+import { todayMarker, tooltips, dependencyArrows } from '@emboss-js/core/extensions/free'
 
 const chart = new Emboss('#gantt', tasks, {
   extensions: [todayMarker, tooltips, dependencyArrows],

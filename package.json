@@ -1,5 +1,5 @@
 {
-  "name": "@emboss/core",
+  "name": "@emboss-js/core",
   "version": "0.1.0",
   "description": "The Tiptap of Gantt charts. Beautiful, extensible, open core.",
   "main": "dist/index.js",
@@ -24,14 +24,17 @@
       "import": "./dist/extensions/paid/organize/index.mjs",
       "require": "./dist/extensions/paid/organize/index.js"
     },
+    "./extensions/organize/vivid.css": "./dist/themes/vivid.css",
     "./extensions/columns": {
       "types": "./dist/extensions/paid/columns/index.d.ts",
       "import": "./dist/extensions/paid/columns/index.mjs",
       "require": "./dist/extensions/paid/columns/index.js"
-    }
+    },
+    "./themes/grayscale.css": "./dist/themes/grayscale.css",
+    "./themes/dark.css": "./dist/themes/dark.css"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && mkdir -p dist/themes && cp src/core/themes/grayscale.css src/core/themes/dark.css src/core/themes/vivid.css dist/themes/",
     "dev": "tsup --watch",
     "test": "vitest"
   },

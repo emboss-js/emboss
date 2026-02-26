@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/paid/columns/columns.ts
+ * @emboss-js/core — extensions/paid/columns/columns.ts
  * CONTRACT: Section 9.6 (sidebar columns), emboss-bundle-restructure-v2.md
  * BUNDLE: Columns ($29, requires Organize)
  *

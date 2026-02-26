@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/paid/organize/inline-edit.ts
+ * @emboss-js/core — extensions/paid/organize/inline-edit.ts
  * CONTRACT: Section 6.3 (inline editing spec)
  * BUNDLE: Organize ($79)
  *

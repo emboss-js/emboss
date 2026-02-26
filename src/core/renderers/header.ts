@@ -1,5 +1,5 @@
 /**
- * @emboss/core — renderers/header.ts
+ * @emboss-js/core — renderers/header.ts
  * CONTRACT: Section 3.3 (HeaderRenderer)
  *
  * Timeline header showing time divisions. View mode determines granularity:

@@ -1,5 +1,5 @@
 /**
- * @emboss/core — types.ts
+ * @emboss-js/core — types.ts
  * CONTRACT: Sections 1 (Row), 2 (State/Scale), 3 (Renderers), 4 (Events), 5 (Extensions)
  *
  * This is THE source of truth for all types. Every other file imports from here.

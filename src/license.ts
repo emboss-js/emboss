@@ -1,5 +1,5 @@
 /**
- * @emboss/core — license.ts
+ * @emboss-js/core — license.ts
  * CONTRACT: Spec Section 3.3 (license enforcement)
  *
  * Soft enforcement only. Console warning if paid features used without key.

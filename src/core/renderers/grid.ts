@@ -1,5 +1,5 @@
 /**
- * @emboss/core — renderers/grid.ts
+ * @emboss-js/core — renderers/grid.ts
  * CONTRACT: Section 10 Phase 2 (grid lines, weekend markers)
  *
  * Renders vertical grid lines and weekend shading.

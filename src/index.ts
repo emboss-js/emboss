@@ -1,13 +1,12 @@
 /**
- * @emboss/core — index.ts (package entry)
+ * @emboss-js/core — index.ts (package entry)
  *
  * Usage:
- *   import { Emboss, todayMarker, tooltips, dependencyArrows } from '@emboss/core'
- *   import { organize } from '@emboss/core'
+ *   import { Emboss, todayMarker, tooltips, dependencyArrows } from '@emboss-js/core'
  *
- * Sub-path imports also work:
- *   import { todayMarker } from '@emboss/core/extensions/free'
- *   import { sidebar, milestones } from '@emboss/core/extensions/organize'
+ * Paid extensions via sub-path imports:
+ *   import { sidebar, milestones } from '@emboss-js/core/extensions/organize'
+ *   import { columns } from '@emboss-js/core/extensions/columns'
  */
 
 export { Emboss } from './core/index'
@@ -27,12 +26,6 @@ export type {
 
 // Free extensions — named exports
 export { todayMarker, tooltips, dependencyArrows } from './extensions/free/index'
-
-// Organize bundle — named export
-export * as organize from './extensions/paid/organize/index'
-
-// Columns bundle — named export
-export * as columnBundle from './extensions/paid/columns/index'
 
 // License
 export { setLicense } from './license'

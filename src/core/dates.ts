@@ -1,5 +1,5 @@
 /**
- * @emboss/core — dates.ts
+ * @emboss-js/core — dates.ts
  * CONTRACT: Section 8 (Frappe mapping — KEEP date math utilities)
  *
  * Date arithmetic, working days, day-to-pixel mapping.

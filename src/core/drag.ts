@@ -1,5 +1,5 @@
 /**
- * @emboss/core — drag.ts
+ * @emboss-js/core — drag.ts
  * CONTRACT: Section 4 (drag events), Section 8 (Frappe mapping — KEEP drag handling)
  *
  * Mousedown/mousemove/mouseup lifecycle for bar dragging.

@@ -1,5 +1,5 @@
 /**
- * @emboss/core — extensions/paid/organize/phases.ts
+ * @emboss-js/core — extensions/paid/organize/phases.ts
  * CONTRACT: Section 3.2 (phase bar renderer), Section 1 (Row type 'phase')
  * BUNDLE: Organize ($79)
  *

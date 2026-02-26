@@ -1,5 +1,5 @@
 /**
- * @emboss/core — index.ts (core)
+ * @emboss-js/core — index.ts (core)
  * CONTRACT: Section 2 (state mutations), Section 5 (extension registration), Section 10 Phase 2
  *
  * The Emboss class. Creates state, registers extensions, runs render cycle.
