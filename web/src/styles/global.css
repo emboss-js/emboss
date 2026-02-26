@@ -15,9 +15,9 @@
   /* The Gradient — The Finish (blue→cyan only) */
   --emboss-vivid-1: #3b82f6;   /* Deep Blue */
   --emboss-vivid-2: #38bdf8;   /* Sky */
-  --emboss-vivid-3: #22d3ee;   /* Cyan */
-  --emboss-gradient: linear-gradient(135deg, #3b82f6, #38bdf8, #22d3ee);
-  --emboss-gradient-text: linear-gradient(135deg, #60a5fa, #38bdf8, #22d3ee);
+  --emboss-vivid-3: #2fa8d4;   /* Cyan (darkened to match logo) */
+  --emboss-gradient: linear-gradient(135deg, #3b82f6, #2563eb, #38bdf8);
+  --emboss-gradient-text: linear-gradient(135deg, #60a5fa, #2563eb, #38bdf8);
 
   /* Functional Accents */
   --emboss-press: #3b82f6;     /* Action */

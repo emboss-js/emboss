@@ -251,7 +251,7 @@ import Base from '../layouts/Base.astro';
         </div>
         <div class="demo-theme-chart" id="vividDemo">
           <div class="g-row"><div class="g-bar" style="left:12px;width:170px;"><div class="g-track"></div><div class="g-fill fill-vivid-done full" style="width:100%" id="vd1"></div><span class="g-label inside">Design System</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#22d3ee" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#2fa8d4" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#a855f7,#c084fc)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#a855f7" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
           <!-- Vivid milestone diamonds -->
@@ -278,7 +278,7 @@ import Base from '../layouts/Base.astro';
             <span class="demo-color-dot" style="background:#f59e0b"></span>
             <span class="demo-color-dot" style="background:#22c55e"></span>
             <span class="demo-color-dot" style="background:#ef4444"></span>
-            <span class="demo-color-dot" style="background:#22d3ee"></span>
+            <span class="demo-color-dot" style="background:#2fa8d4"></span>
             <span class="demo-color-dot" style="background:#f97316"></span>
           </div>
         </div>
@@ -487,7 +487,7 @@ import Base from '../layouts/Base.astro';
             <div class="demo-sb-name">UI Components</div>
           </div>
           <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#22d3ee"></div>
+            <div class="demo-sb-pill" style="background:#2fa8d4"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Engineering</div>
             <span class="demo-sb-count">5</span>
           </div>
@@ -965,8 +965,8 @@ import Base from '../layouts/Base.astro';
   :global(.demo-theme-chart.dark-demo .g-label.outside) { color: #9d9488; }
 
   /* Vivid fills */
-  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #22d3ee); }
-  :global(.fill-vivid-done) { background: linear-gradient(90deg, #38bdf8, #22d3ee); }
+  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #2fa8d4); }
+  :global(.fill-vivid-done) { background: linear-gradient(90deg, #38bdf8, #2fa8d4); }
   :global(.fill-vivid-upcoming) { background: linear-gradient(90deg, #60a5fa, #38bdf8); }
 
   /* ═══════════════════════════════════════════
@@ -1295,11 +1295,11 @@ function setDemoTheme(mode, btn) {
     var vm2 = document.getElementById('vd2m');
     var vm3 = document.getElementById('vd3m');
     if (mode === 'vivid') {
-      vd1.style.background = 'linear-gradient(90deg, #38bdf8, #22d3ee)';
-      vd2.style.background = 'linear-gradient(90deg, #3b82f6, #22d3ee)';
+      vd1.style.background = 'linear-gradient(90deg, #38bdf8, #2fa8d4)';
+      vd2.style.background = 'linear-gradient(90deg, #3b82f6, #2fa8d4)';
       vd3.style.background = 'linear-gradient(90deg, #a855f7, #c084fc)';
       vd4.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
-      vm2.style.background = '#22d3ee'; vm3.style.background = '#a855f7';
+      vm2.style.background = '#2fa8d4'; vm3.style.background = '#a855f7';
     } else {
       vd1.style.background = 'linear-gradient(90deg, #9d9488, #a8a098)';
       vd2.style.background = 'linear-gradient(90deg, #574f45, #6d6358)';
@@ -1326,7 +1326,7 @@ function setBarMode(mode, btn) {
     el.className = el.className.replace(/fill-(vivid-)?upcoming/, vivid ? 'fill-vivid-upcoming' : 'fill-upcoming');
   });
   demo.querySelectorAll('.gb-marker').forEach(function(el) {
-    el.style.background = vivid ? '#22d3ee' : '#574f45';
+    el.style.background = vivid ? '#2fa8d4' : '#574f45';
   });
 }
 
