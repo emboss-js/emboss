@@ -234,14 +234,14 @@ import Base from '../layouts/Base.astro';
     </div>
   </div>
 
-  <!-- ──── VIEWS & DENSITY ──── -->
+  <!-- ──── VIEWS ──── -->
   <div class="feature-row reverse">
     <div class="feature-text">
       <span class="feature-badge free">Core</span>
-      <h3>Views & Density</h3>
-      <p>Four zoom levels — day, week, month, quarter — and three density modes. Working for daily use, presentation for client meetings, dense for when you need the big picture.</p>
+      <h3>Four zoom levels</h3>
+      <p>Day, week, month, and quarter views — each with its own header format, grid spacing, and label thresholds. Swap with one method call.</p>
       <div class="feature-detail">
-        Each view &times; density combination maps to specific pixel values: day width, row height, bar height, label size. Swap with one method call.
+        Day view shows individual dates with weekend dimming. Week shows Monday boundaries. Month and quarter compress for roadmap-level planning. Each view &times; density combo maps to exact pixel values.
       </div>
     </div>
     <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
@@ -263,6 +263,64 @@ import Base from '../layouts/Base.astro';
       </div>
     </div>
   </div>
+
+  <!-- ──── DENSITY MODES ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge free">Core</span>
+      <h3>Density modes</h3>
+      <p>Three presentation contexts. Working mode for daily planning with full interactivity. Presentation mode for client demos with larger bars and hidden controls. Dense mode for big-picture overviews with compact rows and zebra striping.</p>
+      <div class="feature-detail">
+        Working: 44px rows, 26px bars, drag handles visible. Presentation: 60px rows, 34px bars, handles and add/delete buttons hidden, today marker enlarged. Dense: 30px rows, 18px bars, zebra striping, minibar progress indicators, floating name tags on hover.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-views-wrap">
+        <div class="demo-views-tabs">
+          <button class="demo-views-tab active" onclick="setDensityMode('working',this)">Working</button>
+          <button class="demo-views-tab" onclick="setDensityMode('presentation',this)">Presentation</button>
+          <button class="demo-views-tab" onclick="setDensityMode('dense',this)">Dense</button>
+        </div>
+        <div class="demo-chart" id="densityDemo" style="min-height:180px;padding:16px 20px;transition:all 0.3s ease">
+          <div class="g-row density-row" id="dr1" style="height:44px">
+            <div class="g-bar bar-done" id="db1" style="left:12px;width:140px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill fill-done full" style="width:100%;border-radius:13px"></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl1" style="font-size:11.5px">Research</span>
+            </div>
+          </div>
+          <div class="g-row density-row" id="dr2" style="height:44px">
+            <div class="g-bar" id="db2" style="left:60px;width:220px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill fill-active" style="width:154px;border-radius:13px 0 0 13px"></div>
+              <div class="g-marker" id="dm2" style="left:154px"><div class="g-marker-inner" style="background:#574f45"></div></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl2" style="font-size:11.5px">Architecture &middot; 70%</span>
+            </div>
+          </div>
+          <div class="g-row density-row" id="dr3" style="height:44px">
+            <div class="g-bar" id="db3" style="left:120px;width:160px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill fill-active" style="width:48px;border-radius:13px 0 0 13px"></div>
+              <div class="g-marker" id="dm3" style="left:48px"><div class="g-marker-inner" style="background:#574f45"></div></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl3" style="font-size:11.5px">Extensions &middot; 30%</span>
+            </div>
+          </div>
+          <div class="g-row density-row" id="dr4" style="height:44px">
+            <div class="g-bar bar-upcoming" id="db4" style="left:200px;width:120px;height:26px;top:9px;border-radius:13px">
+              <div class="g-track" style="border-radius:13px"></div>
+              <div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px"></div>
+              <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
+              <span class="g-label inside" id="dl4" style="font-size:11.5px;opacity:0.75">Bundle</span>
+            </div>
+          </div>
+          <p class="density-label" id="densityLabel" style="position:absolute;bottom:8px;right:16px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">44px ROWS &middot; 26px BARS &middot; DRAG HANDLES ON</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
@@ -278,45 +336,59 @@ import Base from '../layouts/Base.astro';
     <div class="feature-text">
       <span class="feature-badge paid">Organize</span>
       <h3>Sidebar</h3>
-      <p>A scroll-synced panel showing task names, status dots, phase grouping, and assignee avatars. Full-width mode at 280px or collapse to a 48px rail with icon-only view.</p>
+      <p>A scroll-synced panel with task names, status dots, duration, date ranges, and assignee avatars. Full-width at 280px or collapse to a 48px rail. Drag to reorder, click to add or delete rows, pick phase colors inline.</p>
       <div class="feature-detail">
-        Phase rows show colored pill + name + chevron + task count. Task rows show status dot + name. Milestones show diamond icon + italic name. Subtasks indent by depth.
+        Phase rows: colored pill + name + chevron + task count. Task rows: status dot + name + duration + dates. Milestones: diamond icon + italic name + single date. Hover reveals grip handle, delete button, and add-child menu.
       </div>
     </div>
     <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
-      <div class="demo-sidebar-wrap">
+      <div class="demo-sidebar-wrap demo-sidebar-cols">
         <div class="demo-sidebar">
+          <div class="demo-sb-header">
+            <span class="demo-sb-hdr-name">Name</span>
+            <span class="demo-sb-hdr-col">Duration</span>
+            <span class="demo-sb-hdr-col">Dates</span>
+          </div>
           <div class="demo-sb-row">
             <div class="demo-sb-pill" style="background:#3b82f6"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
-            <span class="demo-sb-count">3</span>
+            <span class="demo-sb-col-val"></span>
+            <span class="demo-sb-col-val" style="font-size:10px">Jan 6 &ndash; Feb 14</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
             <div class="demo-sb-dot" style="background:#9d9488"></div>
             <div class="demo-sb-name">Research</div>
+            <span class="demo-sb-col-val">8d</span>
+            <span class="demo-sb-col-val" style="font-size:10px">Jan 6 &ndash; Jan 15</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
             <div class="demo-sb-dot" style="background:#574f45"></div>
             <div class="demo-sb-name">Wireframes</div>
+            <span class="demo-sb-col-val">12d</span>
+            <span class="demo-sb-col-val" style="font-size:10px">Jan 13 &ndash; Jan 28</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
             <div class="demo-sb-dot" style="background:#574f45"></div>
             <div class="demo-sb-name">UI Components</div>
+            <span class="demo-sb-col-val">10d</span>
+            <span class="demo-sb-col-val" style="font-size:10px">Jan 27 &ndash; Feb 7</span>
           </div>
           <div class="demo-sb-row">
             <div class="demo-sb-pill" style="background:#22d3ee"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Engineering</div>
-            <span class="demo-sb-count">5</span>
+            <span class="demo-sb-col-val"></span>
+            <span class="demo-sb-col-val" style="font-size:10px">Feb 3 &ndash; Apr 11</span>
           </div>
         </div>
-        <div class="demo-sidebar-chart" style="min-height:200px;position:relative">
+        <div class="demo-sidebar-chart" style="min-height:240px;position:relative">
           <!-- Phase bar -->
-          <div style="position:absolute;left:8px;top:14px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.2)"></div>
+          <div style="position:absolute;left:8px;top:50px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.2)"></div>
+          <div class="g-row" style="height:36px"></div>
           <div class="g-row"><div class="g-bar bar-done" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:98px"></div><span class="g-label inside" style="font-size:10.5px">Wireframes &middot; 70%</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:36px"></div><span class="g-label inside" style="font-size:10.5px">UI &middot; 30%</span></div></div>
           <!-- Collapsed phase indicator -->
-          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(34,211,238,0.2)"></div>
+          <div style="position:absolute;left:8px;top:186px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(34,211,238,0.2)"></div>
           <div class="g-row"></div>
         </div>
       </div>
@@ -399,9 +471,9 @@ import Base from '../layouts/Base.astro';
     <div class="feature-text">
       <span class="feature-badge paid">Organize</span>
       <h3>Inline Editing</h3>
-      <p>Click any name in the sidebar to edit it directly. Phase-colored border on focus. Enter to save, Escape to cancel. No modals, no forms — just type.</p>
+      <p>Click any name, duration, or date in the sidebar to edit it directly. Phase-colored border on focus. Enter to save, Escape to cancel. No modals, no forms — just type.</p>
       <div class="feature-detail">
-        Editable fields: task name, phase name. The input inherits sidebar typography. Changes emit an onRowUpdate event that your app can listen to and persist.
+        Editable fields: task name, phase name, duration (e.g. "5d"), and date range. Date picker popover for start/end. Changes emit an onRowUpdate event that your app can listen to and persist.
       </div>
     </div>
     <div class="feature-visual">
@@ -454,7 +526,7 @@ import Base from '../layouts/Base.astro';
         <tr><td>Drag to reschedule</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr class="group-row"><td colspan="4">Views & Modes</td></tr>
         <tr><td>Day / Week / Month / Quarter</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
-        <tr><td>Working / Presentation / Dense</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
+        <tr><td>Working / Presentation / Dense density</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr><td>Light & dark themes</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr><td>Custom theme CSS</td><td><span class="check">&#10003;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td></tr>
         <tr class="group-row"><td colspan="4">Free Extensions</td></tr>
@@ -467,6 +539,9 @@ import Base from '../layouts/Base.astro';
         <tr><td>Phase grouping & collapse</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Milestone diamonds</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Inline editing</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+        <tr><td>Duration & date columns</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+        <tr><td>Drag to reorder rows</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
+        <tr><td>Color picker per phase</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr class="group-row"><td colspan="4">Themes</td></tr>
         <tr><td>Vivid template</td><td><span class="dash">&mdash;</span></td><td class="featured"><span class="check">&#10003;</span></td><td><span class="dash">&mdash;</span></td></tr>
         <tr><td>Mono template</td><td><span class="dash">&mdash;</span></td><td><span class="dash">&mdash;</span></td><td><span class="soon">Soon</span></td></tr>
@@ -906,6 +981,42 @@ import Base from '../layouts/Base.astro';
   :global(.future-card p) { font-size: 14px; line-height: 1.65; color: var(--emboss-slate); }
   :global([data-theme="dark"] .future-card p) { color: var(--emboss-ash); }
 
+  /* ═══════════════════════════════════════════
+     DEMO: SIDEBAR COLUMNS
+     ═══════════════════════════════════════════ */
+  :global(.demo-sidebar-cols .demo-sidebar) { min-width: 260px; }
+  :global(.demo-sb-header) {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 14px; height: 32px;
+    border-bottom: 1px solid var(--emboss-border);
+    background: var(--emboss-surface-inset);
+  }
+  :global(.demo-sb-hdr-name) {
+    flex: 1; font-family: var(--font-mono); font-size: 9px;
+    font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--emboss-ash); opacity: 0.6;
+  }
+  :global(.demo-sb-hdr-col) {
+    width: 72px; text-align: right;
+    font-family: var(--font-mono); font-size: 9px;
+    font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--emboss-ash); opacity: 0.6;
+  }
+  :global(.demo-sb-col-val) {
+    width: 72px; text-align: right; flex-shrink: 0;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--emboss-ash);
+  }
+
+  /* ═══════════════════════════════════════════
+     DEMO: DENSITY MODES
+     ═══════════════════════════════════════════ */
+  :global(.density-row) { transition: height 0.3s ease; }
+  :global(.density-row .g-bar) { transition: height 0.3s ease, top 0.3s ease, border-radius 0.3s ease, transform 0.2s, opacity 0.2s; }
+  :global(.density-row .g-marker) { transition: transform 0.2s, width 0.3s ease, height 0.3s ease; }
+  :global(.density-zebra .density-row:nth-child(even)) { background: rgba(0,0,0,0.035); }
+  :global([data-theme="dark"] .density-zebra .density-row:nth-child(even)) { background: rgba(255,255,255,0.035); }
+
   /* MISSION / CTA */
   .mission { padding: 120px 40px; text-align: center; }
   :global(.mission-statement) {
@@ -1003,6 +1114,48 @@ function setDemoView(view, btn) {
     bar.style.left = s.bars[i].l + 'px';
     bar.style.width = s.bars[i].w + 'px';
   });
+}
+
+// Density mode demo
+function setDensityMode(mode, btn) {
+  document.querySelectorAll('.demo-views-tab').forEach(function(t) {
+    if (t.closest('#densityDemo') || t.parentElement === btn.parentElement) return;
+  });
+  btn.closest('.demo-views-tabs').querySelectorAll('.demo-views-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  var demo = document.getElementById('densityDemo');
+  var label = document.getElementById('densityLabel');
+  var rows = [document.getElementById('dr1'),document.getElementById('dr2'),document.getElementById('dr3'),document.getElementById('dr4')];
+  var bars = [document.getElementById('db1'),document.getElementById('db2'),document.getElementById('db3'),document.getElementById('db4')];
+  var labels = [document.getElementById('dl1'),document.getElementById('dl2'),document.getElementById('dl3'),document.getElementById('dl4')];
+  var markers = [document.getElementById('dm2'),document.getElementById('dm3')];
+  var handles = demo.querySelectorAll('.g-handle');
+
+  demo.classList.remove('density-zebra');
+
+  if (mode === 'working') {
+    rows.forEach(function(r) { r.style.height = '44px'; });
+    bars.forEach(function(b) { b.style.height = '26px'; b.style.top = '9px'; b.style.borderRadius = '13px'; b.querySelectorAll('.g-track,.g-fill').forEach(function(c){c.style.borderRadius=''}); });
+    labels.forEach(function(l) { l.style.fontSize = '11.5px'; });
+    markers.forEach(function(m) { if(m) { m.style.display = ''; m.style.width = '12px'; m.style.height = '12px'; } });
+    handles.forEach(function(h) { h.style.display = ''; });
+    label.textContent = '44px ROWS \u00b7 26px BARS \u00b7 DRAG HANDLES ON';
+  } else if (mode === 'presentation') {
+    rows.forEach(function(r) { r.style.height = '60px'; });
+    bars.forEach(function(b) { b.style.height = '34px'; b.style.top = '13px'; b.style.borderRadius = '17px'; b.querySelectorAll('.g-track,.g-fill').forEach(function(c){c.style.borderRadius=''}); });
+    labels.forEach(function(l) { l.style.fontSize = '13px'; });
+    markers.forEach(function(m) { if(m) { m.style.display = ''; m.style.width = '14px'; m.style.height = '14px'; } });
+    handles.forEach(function(h) { h.style.display = 'none'; });
+    label.textContent = '60px ROWS \u00b7 34px BARS \u00b7 HANDLES HIDDEN';
+  } else {
+    demo.classList.add('density-zebra');
+    rows.forEach(function(r) { r.style.height = '30px'; });
+    bars.forEach(function(b) { b.style.height = '18px'; b.style.top = '6px'; b.style.borderRadius = '9px'; b.querySelectorAll('.g-track,.g-fill').forEach(function(c){c.style.borderRadius=''}); });
+    labels.forEach(function(l) { l.style.fontSize = '10px'; });
+    markers.forEach(function(m) { if(m) { m.style.display = 'none'; } });
+    handles.forEach(function(h) { h.style.display = 'none'; });
+    label.textContent = '30px ROWS \u00b7 18px BARS \u00b7 ZEBRA STRIPING';
+  }
 }
 
 // Scroll animations
