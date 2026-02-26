@@ -68,9 +68,9 @@ describe('Key parsing', () => {
     expect(checkLicense('columns')).toBe(false)
   })
 
-  it('missing flag — EMB-O does not unlock columns (no C)', () => {
+  it('EMB-O unlocks columns (organize includes columns)', () => {
     setLicense(generateKey('O', '20991231'))
-    expect(checkLicense('columns')).toBe(false)
+    expect(checkLicense('columns')).toBe(true)
   })
 
   it('columns without organize — EMB-C does not unlock columns', () => {
@@ -142,8 +142,7 @@ describe('Extension gating', () => {
     warnSpy.mockRestore()
   })
 
-  it('valid O key — organize registers, columns skips', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  it('valid O key — organize registers, columns also registers', () => {
     const chart = makeChart({
       licenseKey: generateKey('O', '20991231'),
       extensions: [sidebar, columns],
@@ -152,10 +151,9 @@ describe('Extension gating', () => {
     const styles = document.querySelectorAll('[data-emboss-ext]')
     const names = Array.from(styles).map(el => (el as HTMLElement).dataset.embossExt)
     expect(names).toContain('sidebar')
-    expect(names).not.toContain('columns')
+    expect(names).toContain('columns')
 
     chart.destroy()
-    warnSpy.mockRestore()
   })
 
   it('valid OC key — both organize and columns register', () => {
@@ -282,10 +280,10 @@ describe('Integration — chart renders correctly under license scenarios', () =
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const chart = makeChart({ licenseKey: generateKey('O', '20991231') })
 
-    // Runtime use — columns should be gated (no C flag)
+    // Runtime use — columns should work (O flag unlocks columns)
     chart.use(columns)
     const colStyle = document.querySelector('[data-emboss-ext="columns"]')
-    expect(colStyle).toBeNull()
+    expect(colStyle).toBeTruthy()
 
     // Sidebar should work fine (O flag present)
     chart.use(sidebar)

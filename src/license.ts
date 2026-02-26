@@ -96,11 +96,11 @@ export function checkLicense(bundle: string): boolean {
 
   if (!flag) return false // unknown bundle
 
+  // Columns is part of Organize — only O flag unlocks it
+  if (bundle === 'columns') return upperFlags.includes('O')
+
   // Check if the bundle's flag is present
   if (!upperFlags.includes(flag)) return false
-
-  // Columns requires organize
-  if (bundle === 'columns' && !upperFlags.includes('O')) return false
 
   // Soft expiry check — warn but still return true
   const expiryDate = parseExpiry(expiry)
