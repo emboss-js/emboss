@@ -170,8 +170,10 @@ See [`EmbossInstance`](src/core/types.ts) and [`EmbossConfig`](src/core/index.ts
 
 ## License
 
-MIT for the core library and free extensions.
+Dual-licensed:
 
-Paid extensions (Organize, Columns, Vivid theme) require a license key.
+- **MIT** — core library, free extensions, grayscale and dark themes. See [LICENSE](./LICENSE).
+- **Commercial** — Organize bundle, Columns bundle, Vivid theme. See [LICENSE-COMMERCIAL.md](./LICENSE-COMMERCIAL.md).
+
 <!-- TODO: update domain -->
-See [emboss-js.dev/pricing](https://emboss-js.dev/pricing) for details.
+[Purchase a license &rarr;](https://emboss-js.dev/pricing)
