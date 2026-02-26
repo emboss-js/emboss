@@ -212,23 +212,58 @@ import Base from '../layouts/Base.astro';
   <div class="feature-row">
     <div class="feature-text">
       <span class="feature-badge free">Core</span>
-      <h3>Themes</h3>
-      <p>Every visual value flows through CSS custom properties. Light and dark ship with core. Swap themes by changing one class on the container. Build your own in 20 lines of CSS.</p>
+      <h3>Light &amp; Dark</h3>
+      <p>Two polished themes ship with core. Every value flows through ~20 CSS custom properties — surfaces, ink hierarchy, bar fills, track styles. Swap with one class change. Build your own theme in 20 lines of CSS.</p>
       <div class="feature-detail">
-        ~20 custom properties prefixed with --emboss-. Surface colors, ink hierarchy, bar fills, track styles. Dark theme swaps all values. Vivid template overrides fills only.
+        Light theme: warm neutrals, subtle shadows, clean grid. Dark theme: full inversion — backgrounds, text, tracks, markers, tooltips all adapt. Both respond to density and view changes.
       </div>
     </div>
     <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
       <div class="demo-theme-wrap">
         <div class="demo-theme-tabs">
-          <button class="demo-theme-tab active" onclick="setDemoTheme('light',this)">Light</button>
-          <button class="demo-theme-tab" onclick="setDemoTheme('dark',this)">Dark</button>
-          <button class="demo-theme-tab" onclick="setDemoTheme('vivid',this)">&#10022; Vivid</button>
+          <button class="demo-theme-tab active" onclick="setDemoTheme('light',this)">&#9728; Light</button>
+          <button class="demo-theme-tab" onclick="setDemoTheme('dark',this)">&#9790; Dark</button>
         </div>
         <div class="demo-theme-chart" id="themeDemo">
           <div class="g-row"><div class="g-bar bar-done" style="left:12px;width:160px;"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%" id="td1"></div><span class="g-label inside">Design System</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:60px;width:220px;"><div class="g-track"></div><div class="g-fill fill-active" style="width:154px" id="td2"></div><div class="g-marker" style="left:154px"><div class="g-marker-inner" style="background:#574f45" id="td2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
           <div class="g-row"><div class="g-bar bar-upcoming" style="left:180px;width:140px;"><div class="g-track"></div><div class="g-fill fill-upcoming" style="width:100%;opacity:0.5;border-radius:13px" id="td3"></div><span class="g-label inside" style="opacity:0.75">Bundle</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── VIVID ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Vivid Mode</h3>
+      <p>Color-coded bars that auto-assign from an 8-color palette. Each phase gets its own accent — blue, purple, pink, amber, green, red, cyan, orange — and every child task inherits the phase color.</p>
+      <div class="feature-detail">
+        Phase pills, status dots, milestone borders, and bar fills all respond to the phase color. Subtasks render at 70% opacity of the parent. Override any color with the inline color picker.
+      </div>
+    </div>
+    <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
+      <div class="demo-theme-wrap">
+        <div class="demo-theme-tabs">
+          <button class="demo-theme-tab" onclick="setDemoTheme('light',this)">Grayscale</button>
+          <button class="demo-theme-tab vivid-active" onclick="setDemoTheme('vivid',this)">&#10022; Vivid</button>
+        </div>
+        <div class="demo-theme-chart" id="vividDemo">
+          <div class="g-row"><div class="g-bar" style="left:12px;width:170px;"><div class="g-track"></div><div class="g-fill fill-vivid-done full" style="width:100%" id="vd1"></div><span class="g-label inside">Design System</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#22d3ee" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#a855f7,#c084fc)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#a855f7" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
+          <div style="display:flex;gap:6px;margin-top:12px;padding:0 4px">
+            <span class="demo-color-dot" style="background:#3b82f6"></span>
+            <span class="demo-color-dot" style="background:#a855f7"></span>
+            <span class="demo-color-dot" style="background:#ec4899"></span>
+            <span class="demo-color-dot" style="background:#f59e0b"></span>
+            <span class="demo-color-dot" style="background:#22c55e"></span>
+            <span class="demo-color-dot" style="background:#ef4444"></span>
+            <span class="demo-color-dot" style="background:#22d3ee"></span>
+            <span class="demo-color-dot" style="background:#f97316"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -329,68 +364,145 @@ import Base from '../layouts/Base.astro';
 <section class="section">
   <p class="section-label">Organize bundle — $49 one-time</p>
   <h2 class="section-title">Structure your chart</h2>
-  <p class="section-desc">The design infrastructure you'd spend weeks building. Sidebar navigation, phase grouping, milestone diamonds, and inline editing — ready in one import.</p>
+  <p class="section-desc">The design infrastructure you'd spend weeks building. Sidebar, duration and date columns, vivid colors, phase grouping, milestones, and inline editing — each snaps in as a plug-and-play extension.</p>
 
   <!-- ──── SIDEBAR ──── -->
   <div class="feature-row">
     <div class="feature-text">
       <span class="feature-badge paid">Organize</span>
       <h3>Sidebar</h3>
-      <p>A scroll-synced panel with task names, status dots, duration, date ranges, and assignee avatars. Full-width at 280px or collapse to a 48px rail. Drag to reorder, click to add or delete rows, pick phase colors inline.</p>
+      <p>A scroll-synced panel with task names, status dots, phase grouping, and assignee avatars. Full-width at 280px or collapse to a 48px rail with icon-only view. Hover reveals grip handle, delete button, and add-child menu.</p>
       <div class="feature-detail">
-        Phase rows: colored pill + name + chevron + task count. Task rows: status dot + name + duration + dates. Milestones: diamond icon + italic name + single date. Hover reveals grip handle, delete button, and add-child menu.
+        Phase rows: colored pill + name + chevron + task count. Task rows: status dot + name. Milestones: diamond icon + italic name. Subtasks indent by depth. Drag to reorder, click + to add rows, color picker on phase pills.
       </div>
     </div>
     <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
-      <div class="demo-sidebar-wrap demo-sidebar-cols">
+      <div class="demo-sidebar-wrap">
         <div class="demo-sidebar">
-          <div class="demo-sb-header">
-            <span class="demo-sb-hdr-name">Name</span>
-            <span class="demo-sb-hdr-col">Duration</span>
-            <span class="demo-sb-hdr-col">Dates</span>
-          </div>
           <div class="demo-sb-row">
             <div class="demo-sb-pill" style="background:#3b82f6"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
-            <span class="demo-sb-col-val"></span>
-            <span class="demo-sb-col-val" style="font-size:10px">Jan 6 &ndash; Feb 14</span>
+            <span class="demo-sb-count">3</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
             <div class="demo-sb-dot" style="background:#9d9488"></div>
             <div class="demo-sb-name">Research</div>
-            <span class="demo-sb-col-val">8d</span>
-            <span class="demo-sb-col-val" style="font-size:10px">Jan 6 &ndash; Jan 15</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
             <div class="demo-sb-dot" style="background:#574f45"></div>
             <div class="demo-sb-name">Wireframes</div>
-            <span class="demo-sb-col-val">12d</span>
-            <span class="demo-sb-col-val" style="font-size:10px">Jan 13 &ndash; Jan 28</span>
           </div>
           <div class="demo-sb-row" style="padding-left:28px">
             <div class="demo-sb-dot" style="background:#574f45"></div>
             <div class="demo-sb-name">UI Components</div>
-            <span class="demo-sb-col-val">10d</span>
-            <span class="demo-sb-col-val" style="font-size:10px">Jan 27 &ndash; Feb 7</span>
           </div>
           <div class="demo-sb-row">
             <div class="demo-sb-pill" style="background:#22d3ee"></div>
             <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Engineering</div>
-            <span class="demo-sb-col-val"></span>
-            <span class="demo-sb-col-val" style="font-size:10px">Feb 3 &ndash; Apr 11</span>
+            <span class="demo-sb-count">5</span>
           </div>
         </div>
-        <div class="demo-sidebar-chart" style="min-height:240px;position:relative">
+        <div class="demo-sidebar-chart" style="min-height:200px;position:relative">
           <!-- Phase bar -->
-          <div style="position:absolute;left:8px;top:50px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.2)"></div>
-          <div class="g-row" style="height:36px"></div>
+          <div style="position:absolute;left:8px;top:14px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.2)"></div>
           <div class="g-row"><div class="g-bar bar-done" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-done full" style="width:100%"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:98px"></div><span class="g-label inside" style="font-size:10.5px">Wireframes &middot; 70%</span></div></div>
           <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill fill-active" style="width:36px"></div><span class="g-label inside" style="font-size:10.5px">UI &middot; 30%</span></div></div>
           <!-- Collapsed phase indicator -->
-          <div style="position:absolute;left:8px;top:186px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(34,211,238,0.2)"></div>
+          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(34,211,238,0.2)"></div>
           <div class="g-row"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── DURATION COLUMN ──── -->
+  <div class="feature-row reverse">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Duration Column</h3>
+      <p>Plug-and-play column that snaps into the sidebar. Shows task duration as editable day counts — click to type a new value. Milestones show an em-dash. Phases show the total span.</p>
+      <div class="feature-detail">
+        76px column width. Inline number input on click. Changes resize the bar on the timeline in real time. Density-aware — compact format in dense mode.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div style="padding:24px;min-height:180px">
+        <div class="demo-col-table">
+          <div class="demo-col-hdr">
+            <span class="demo-col-hdr-name">Name</span>
+            <span class="demo-col-hdr-dur">Duration</span>
+          </div>
+          <div class="demo-col-row">
+            <div class="demo-sb-pill" style="background:#3b82f6"></div>
+            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
+            <span class="demo-col-dur">&mdash;</span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#9d9488"></div>
+            <span class="demo-col-name">Research</span>
+            <span class="demo-col-dur">8d</span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <span class="demo-col-name">Wireframes</span>
+            <span class="demo-col-dur demo-col-editing">12<span class="blink-cursor">&nbsp;</span></span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <span class="demo-col-name">UI Components</span>
+            <span class="demo-col-dur">10d</span>
+          </div>
+        </div>
+        <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK DURATION TO EDIT &middot; ENTER TO SAVE</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── DATE COLUMN ──── -->
+  <div class="feature-row">
+    <div class="feature-text">
+      <span class="feature-badge paid">Organize</span>
+      <h3>Date Column</h3>
+      <p>Another plug-and-play sidebar column showing start and end dates. Click to open a date picker popover. Milestones show a single date. Format adapts to density mode.</p>
+      <div class="feature-detail">
+        120px column width. Human-readable format in working mode (Jan 15 – Jan 22), compact M/D in dense mode. Date changes move the bar on the timeline. Date picker popover with arrow separator.
+      </div>
+    </div>
+    <div class="feature-visual">
+      <div style="padding:24px;min-height:180px">
+        <div class="demo-col-table">
+          <div class="demo-col-hdr">
+            <span class="demo-col-hdr-name">Name</span>
+            <span class="demo-col-hdr-date">Dates</span>
+          </div>
+          <div class="demo-col-row">
+            <div class="demo-sb-pill" style="background:#3b82f6"></div>
+            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
+            <span class="demo-col-date">Jan 6 &ndash; Feb 14</span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#9d9488"></div>
+            <span class="demo-col-name">Research</span>
+            <span class="demo-col-date">Jan 6 &ndash; Jan 15</span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <span class="demo-col-name">Wireframes</span>
+            <span class="demo-col-date demo-col-editing">Jan 13 &ndash; Jan 28</span>
+          </div>
+          <div class="demo-col-row" style="padding-left:28px">
+            <div class="demo-sb-dot" style="background:#574f45"></div>
+            <span class="demo-col-name">UI Components</span>
+            <span class="demo-col-date">Jan 27 &ndash; Feb 7</span>
+          </div>
+          <div class="demo-col-row">
+            <div style="width:8px;height:8px;background:var(--emboss-ash);transform:rotate(45deg);border-radius:1.5px;flex-shrink:0"></div>
+            <span class="demo-col-name" style="font-style:italic">Design Review</span>
+            <span class="demo-col-date">Feb 14</span>
+          </div>
+        </div>
+        <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK DATE TO OPEN PICKER &middot; MILESTONES SHOW SINGLE DATE</p>
       </div>
     </div>
   </div>
@@ -982,30 +1094,64 @@ import Base from '../layouts/Base.astro';
   :global([data-theme="dark"] .future-card p) { color: var(--emboss-ash); }
 
   /* ═══════════════════════════════════════════
-     DEMO: SIDEBAR COLUMNS
+     DEMO: COLUMN TABLES (Duration / Dates)
      ═══════════════════════════════════════════ */
-  :global(.demo-sidebar-cols .demo-sidebar) { min-width: 260px; }
-  :global(.demo-sb-header) {
+  :global(.demo-col-table) {
+    border: 1px solid var(--emboss-border); border-radius: 12px;
+    overflow: hidden; font-size: 12.5px;
+  }
+  :global(.demo-col-hdr) {
     display: flex; align-items: center; gap: 8px;
     padding: 0 14px; height: 32px;
     border-bottom: 1px solid var(--emboss-border);
     background: var(--emboss-surface-inset);
   }
-  :global(.demo-sb-hdr-name) {
+  :global(.demo-col-hdr-name) {
     flex: 1; font-family: var(--font-mono); font-size: 9px;
     font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--emboss-ash); opacity: 0.6;
   }
-  :global(.demo-sb-hdr-col) {
-    width: 72px; text-align: right;
+  :global(.demo-col-hdr-dur), :global(.demo-col-hdr-date) {
     font-family: var(--font-mono); font-size: 9px;
     font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--emboss-ash); opacity: 0.6;
+    color: var(--emboss-ash); opacity: 0.6; text-align: right;
   }
-  :global(.demo-sb-col-val) {
-    width: 72px; text-align: right; flex-shrink: 0;
+  :global(.demo-col-hdr-dur) { width: 64px; }
+  :global(.demo-col-hdr-date) { width: 120px; }
+  :global(.demo-col-row) {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 14px; height: 38px;
+    border-bottom: 1px solid var(--emboss-border);
+  }
+  :global(.demo-col-row:last-child) { border-bottom: none; }
+  :global(.demo-col-name) {
+    flex: 1; font-weight: 500; color: var(--emboss-coal);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  :global([data-theme="dark"] .demo-col-name) { color: var(--emboss-fog); }
+  :global(.demo-col-dur) {
+    width: 64px; text-align: right; flex-shrink: 0;
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--emboss-ash);
+  }
+  :global(.demo-col-date) {
+    width: 120px; text-align: right; flex-shrink: 0;
     font-family: var(--font-mono); font-size: 11px;
     color: var(--emboss-ash);
+  }
+  :global(.demo-col-editing) {
+    background: var(--emboss-surface);
+    border: 2px solid #3b82f6; border-radius: 6px;
+    padding: 2px 8px; color: var(--emboss-coal);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+  }
+  :global([data-theme="dark"] .demo-col-editing) { color: var(--emboss-fog); }
+
+  /* Vivid color palette dots */
+  :global(.demo-color-dot) {
+    width: 14px; height: 14px; border-radius: 50%;
+    display: inline-block; opacity: 0.85;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
 
   /* ═══════════════════════════════════════════
@@ -1053,26 +1199,49 @@ import Base from '../layouts/Base.astro';
 function showTooltip() { document.getElementById('demoTooltipCard').classList.add('show'); }
 function hideTooltip() { /* keep it visible as a static demo */ }
 
-// Theme demo
+// Theme demo (Light/Dark)
 function setDemoTheme(mode, btn) {
   btn.closest('.demo-theme-tabs').querySelectorAll('.demo-theme-tab').forEach(function(t) { t.classList.remove('active','vivid-active'); });
   btn.classList.add(mode === 'vivid' ? 'vivid-active' : 'active');
+  // Light/Dark demo
   var chart = document.getElementById('themeDemo');
-  chart.classList.remove('dark-demo');
-  var f1 = document.getElementById('td1');
-  var f2 = document.getElementById('td2');
-  var f3 = document.getElementById('td3');
-  var m = document.getElementById('td2m');
-  if (mode === 'dark') {
-    chart.classList.add('dark-demo');
-    f1.className = 'g-fill fill-done full'; f2.className = 'g-fill fill-active'; f3.className = 'g-fill fill-upcoming';
-    m.style.background = '#574f45';
-  } else if (mode === 'vivid') {
-    f1.className = 'g-fill fill-vivid-done full'; f2.className = 'g-fill fill-vivid-active'; f3.className = 'g-fill fill-vivid-active';
-    m.style.background = '#22d3ee';
-  } else {
-    f1.className = 'g-fill fill-done full'; f2.className = 'g-fill fill-active'; f3.className = 'g-fill fill-upcoming';
-    m.style.background = '#574f45';
+  if (chart) {
+    chart.classList.remove('dark-demo');
+    var f1 = document.getElementById('td1');
+    var f2 = document.getElementById('td2');
+    var f3 = document.getElementById('td3');
+    var m = document.getElementById('td2m');
+    if (mode === 'dark') {
+      chart.classList.add('dark-demo');
+      f1.className = 'g-fill fill-done full'; f2.className = 'g-fill fill-active'; f3.className = 'g-fill fill-upcoming';
+      m.style.background = '#574f45';
+    } else {
+      f1.className = 'g-fill fill-done full'; f2.className = 'g-fill fill-active'; f3.className = 'g-fill fill-upcoming';
+      m.style.background = '#574f45';
+    }
+  }
+  // Vivid demo toggle
+  var vdemo = document.getElementById('vividDemo');
+  if (vdemo) {
+    var vd1 = document.getElementById('vd1');
+    var vd2 = document.getElementById('vd2');
+    var vd3 = document.getElementById('vd3');
+    var vd4 = document.getElementById('vd4');
+    var vm2 = document.getElementById('vd2m');
+    var vm3 = document.getElementById('vd3m');
+    if (mode === 'vivid') {
+      vd1.style.background = 'linear-gradient(90deg, #38bdf8, #22d3ee)';
+      vd2.style.background = 'linear-gradient(90deg, #3b82f6, #22d3ee)';
+      vd3.style.background = 'linear-gradient(90deg, #a855f7, #c084fc)';
+      vd4.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+      vm2.style.background = '#22d3ee'; vm3.style.background = '#a855f7';
+    } else {
+      vd1.style.background = 'linear-gradient(90deg, #9d9488, #a8a098)';
+      vd2.style.background = 'linear-gradient(90deg, #574f45, #6d6358)';
+      vd3.style.background = 'linear-gradient(90deg, #574f45, #6d6358)';
+      vd4.style.background = 'linear-gradient(90deg, #9d9488, #a8a098)';
+      vm2.style.background = '#574f45'; vm3.style.background = '#574f45';
+    }
   }
 }
 
