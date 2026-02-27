@@ -363,10 +363,14 @@ import Base from '../layouts/Base.astro';
           <button class="demo-theme-tab vivid-active" onclick="setDemoTheme('vivid',this)">&#10022; Vivid</button>
         </div>
         <div class="demo-theme-chart" id="vividDemo">
-          <div class="g-row"><div class="g-bar" style="left:12px;width:170px;"><div class="g-track"></div><div class="g-fill fill-vivid-done full" style="width:100%" id="vd1"></div><span class="g-label inside">Design System</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill fill-vivid-active" style="width:140px" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#2fa8d4" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#8b5cf6,#a78bfa)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#8b5cf6" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
+          <!-- Done: desaturated, lighter blue → hue+50° indigo -->
+          <div class="g-row"><div class="g-bar" style="left:12px;width:170px;"><div class="g-track"></div><div class="g-fill full" style="width:100%;background:linear-gradient(90deg,#93b4f5,#8a9ef0)" id="vd1"></div><span class="g-label inside">Design System</span></div></div>
+          <!-- Active: blue → hue+50° indigo -->
+          <div class="g-row"><div class="g-bar" style="left:60px;width:200px;"><div class="g-track"></div><div class="g-fill" style="width:140px;background:linear-gradient(90deg,#3b82f6,#6366f1)" id="vd2"></div><div class="g-marker" style="left:140px"><div class="g-marker-inner" style="background:#6366f1" id="vd2m"></div></div><span class="g-label inside">Architecture &middot; 70%</span></div></div>
+          <!-- Active: purple → hue+50° fuchsia -->
+          <div class="g-row"><div class="g-bar" style="left:130px;width:160px;"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#8b5cf6,#d946ef)" id="vd3"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#d946ef" id="vd3m"></div></div><span class="g-label inside">Extensions &middot; 30%</span></div></div>
+          <!-- Upcoming: amber → hue+50° lime -->
+          <div class="g-row"><div class="g-bar" style="left:200px;width:120px;"><div class="g-track"></div><div class="g-fill" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f5a623,#84cc16)" id="vd4"></div><span class="g-label inside" style="opacity:0.75">Testing</span></div></div>
           <!-- Vivid milestone diamonds -->
           <div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:0 4px">
             <div class="g-diamond" style="border-color:#3b82f6;position:relative;top:0">
@@ -586,11 +590,11 @@ import Base from '../layouts/Base.astro';
         <!-- Phase 1: Design (expanded, blue) -->
         <div style="position:absolute;left:20px;top:18px;width:300px;height:5px;border-radius:3px;background:rgba(59,130,246,0.25)"></div>
         <div class="g-row" style="height:38px"></div>
-        <div class="g-row"><div class="g-bar" style="left:20px;width:120px"><div class="g-track"></div><div class="g-fill" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#60a5fa,#3b82f6)"></div><span class="g-label inside">Research</span></div></div>
-        <div class="g-row"><div class="g-bar" style="left:80px;width:160px"><div class="g-track"></div><div class="g-fill" style="width:112px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><div class="g-marker" style="left:112px"><div class="g-marker-inner" style="background:#3b82f6"></div></div><span class="g-label inside">Wireframes &middot; 70%</span></div></div>
-        <div class="g-row"><div class="g-bar" style="left:160px;width:160px"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#3b82f6"></div></div><span class="g-label inside">Components &middot; 30%</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:20px;width:120px"><div class="g-track"></div><div class="g-fill" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#93b4f5,#8a9ef0)"></div><span class="g-label inside">Research</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:80px;width:160px"><div class="g-track"></div><div class="g-fill" style="width:112px;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div><div class="g-marker" style="left:112px"><div class="g-marker-inner" style="background:#6366f1"></div></div><span class="g-label inside">Wireframes &middot; 70%</span></div></div>
+        <div class="g-row"><div class="g-bar" style="left:160px;width:160px"><div class="g-track"></div><div class="g-fill" style="width:48px;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div><div class="g-marker" style="left:48px"><div class="g-marker-inner" style="background:#6366f1"></div></div><span class="g-label inside">Components &middot; 30%</span></div></div>
         <!-- Phase 2: Engineering (collapsed, purple) -->
-        <div style="position:absolute;left:100px;top:196px;width:260px;height:5px;border-radius:3px;background:rgba(168,85,247,0.25)"></div>
+        <div style="position:absolute;left:100px;top:196px;width:260px;height:5px;border-radius:3px;background:rgba(139,92,246,0.25)"></div>
         <div class="g-row" style="height:38px"></div>
         <p style="position:absolute;top:6px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:#3b82f6;font-size:9px;margin-right:4px">&#9660;</span> Design</p>
         <p style="position:absolute;top:188px;left:24px;font-size:12px;font-weight:600;color:var(--emboss-coal)"><span style="color:#8b5cf6;font-size:9px;margin-right:4px">&#9654;</span> Engineering <span style="font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);font-weight:400">(5 tasks)</span></p>
@@ -656,7 +660,7 @@ import Base from '../layouts/Base.astro';
           <div class="g-row density-row" id="dr1" style="height:44px">
             <div class="g-bar bar-done" id="db1" style="left:12px;width:140px;height:26px;top:9px;border-radius:13px">
               <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill" id="df1" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#38bdf8,#2fa8d4)"></div>
+              <div class="g-fill" id="df1" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#93b4f5,#8a9ef0)"></div>
               <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
               <span class="g-label inside" id="dl1" style="font-size:11.5px">Research</span>
             </div>
@@ -664,8 +668,8 @@ import Base from '../layouts/Base.astro';
           <div class="g-row density-row" id="dr2" style="height:44px">
             <div class="g-bar" id="db2" style="left:60px;width:220px;height:26px;top:9px;border-radius:13px">
               <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill" id="df2" style="width:154px;border-radius:13px 0 0 13px;background:linear-gradient(90deg,#3b82f6,#2fa8d4)"></div>
-              <div class="g-marker" id="dm2" style="left:154px"><div class="g-marker-inner" style="background:#2fa8d4"></div></div>
+              <div class="g-fill" id="df2" style="width:154px;border-radius:13px 0 0 13px;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div>
+              <div class="g-marker" id="dm2" style="left:154px"><div class="g-marker-inner" style="background:#6366f1"></div></div>
               <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
               <span class="g-label inside" id="dl2" style="font-size:11.5px">Architecture &middot; 70%</span>
             </div>
@@ -673,8 +677,8 @@ import Base from '../layouts/Base.astro';
           <div class="g-row density-row" id="dr3" style="height:44px">
             <div class="g-bar" id="db3" style="left:120px;width:160px;height:26px;top:9px;border-radius:13px">
               <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill" id="df3" style="width:48px;border-radius:13px 0 0 13px;background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></div>
-              <div class="g-marker" id="dm3" style="left:48px"><div class="g-marker-inner" style="background:#8b5cf6"></div></div>
+              <div class="g-fill" id="df3" style="width:48px;border-radius:13px 0 0 13px;background:linear-gradient(90deg,#8b5cf6,#d946ef)"></div>
+              <div class="g-marker" id="dm3" style="left:48px"><div class="g-marker-inner" style="background:#d946ef"></div></div>
               <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
               <span class="g-label inside" id="dl3" style="font-size:11.5px">Extensions &middot; 30%</span>
             </div>
@@ -682,7 +686,7 @@ import Base from '../layouts/Base.astro';
           <div class="g-row density-row" id="dr4" style="height:44px">
             <div class="g-bar bar-upcoming" id="db4" style="left:200px;width:120px;height:26px;top:9px;border-radius:13px">
               <div class="g-track" style="border-radius:13px"></div>
-              <div class="g-fill" id="df4" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div>
+              <div class="g-fill" id="df4" style="width:100%;opacity:0.5;border-radius:13px;background:linear-gradient(90deg,#f5a623,#84cc16)"></div>
               <div class="g-handle g-handle-l"></div><div class="g-handle g-handle-r"></div>
               <span class="g-label inside" id="dl4" style="font-size:11.5px;opacity:0.75">Testing</span>
             </div>
@@ -1001,9 +1005,9 @@ import Base from '../layouts/Base.astro';
   :global(.demo-theme-chart.dark-demo .g-label.outside) { color: #9d9488; }
 
   /* Vivid fills */
-  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #2fa8d4); }
-  :global(.fill-vivid-done) { background: linear-gradient(90deg, #38bdf8, #2fa8d4); }
-  :global(.fill-vivid-upcoming) { background: linear-gradient(90deg, #60a5fa, #38bdf8); }
+  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+  :global(.fill-vivid-done) { background: linear-gradient(90deg, #93b4f5, #8a9ef0); }
+  :global(.fill-vivid-upcoming) { background: linear-gradient(90deg, #7da8f7, #7b8cf3); }
 
   /* ═══════════════════════════════════════════
      DARK MODE: all demos respond to page toggle
@@ -1352,11 +1356,11 @@ function setDemoTheme(mode, btn) {
     var vm2 = document.getElementById('vd2m');
     var vm3 = document.getElementById('vd3m');
     if (mode === 'vivid') {
-      vd1.style.background = 'linear-gradient(90deg, #38bdf8, #2fa8d4)';
-      vd2.style.background = 'linear-gradient(90deg, #3b82f6, #2fa8d4)';
-      vd3.style.background = 'linear-gradient(90deg, #8b5cf6, #a78bfa)';
-      vd4.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
-      vm2.style.background = '#2fa8d4'; vm3.style.background = '#8b5cf6';
+      vd1.style.background = 'linear-gradient(90deg, #93b4f5, #8a9ef0)';
+      vd2.style.background = 'linear-gradient(90deg, #3b82f6, #6366f1)';
+      vd3.style.background = 'linear-gradient(90deg, #8b5cf6, #d946ef)';
+      vd4.style.background = 'linear-gradient(90deg, #f5a623, #84cc16)';
+      vm2.style.background = '#6366f1'; vm3.style.background = '#d946ef';
     } else {
       vd1.style.background = 'linear-gradient(90deg, #9d9488, #a8a098)';
       vd2.style.background = 'linear-gradient(90deg, #574f45, #6d6358)';
@@ -1383,7 +1387,7 @@ function setBarMode(mode, btn) {
     el.className = el.className.replace(/fill-(vivid-)?upcoming/, vivid ? 'fill-vivid-upcoming' : 'fill-upcoming');
   });
   demo.querySelectorAll('.gb-marker').forEach(function(el) {
-    el.style.background = vivid ? '#2fa8d4' : '#574f45';
+    el.style.background = vivid ? '#6366f1' : '#574f45';
   });
 }
 

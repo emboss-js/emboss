@@ -127,9 +127,9 @@
   :global(.fill-gray-active) { background: linear-gradient(90deg, #574f45, #6d6358); }
   :global(.fill-gray-done) { background: linear-gradient(90deg, #9d9488, #a8a098); }
   :global(.fill-gray-upcoming) { background: linear-gradient(90deg, #9d9488, #a8a098); }
-  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #2fa8d4); }
-  :global(.fill-vivid-done) { background: linear-gradient(90deg, #38bdf8, #2fa8d4); }
-  :global(.fill-vivid-upcoming) { background: linear-gradient(90deg, #60a5fa, #38bdf8); }
+  :global(.fill-vivid-active) { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+  :global(.fill-vivid-done) { background: linear-gradient(90deg, #93b4f5, #8a9ef0); }
+  :global(.fill-vivid-upcoming) { background: linear-gradient(90deg, #7da8f7, #7b8cf3); }
   :global(.gantt-bar.done) { opacity: 0.45; }
   :global(.gantt-bar.done:hover) { opacity: 0.65; }
   :global(.gantt-bar.upcoming .gantt-bar-fill) { opacity: 0.5; }
@@ -190,7 +190,7 @@
       const fw = Math.max(14, w * t.progress / 100);
       const fc = 'fill-' + pf + '-' + t.status;
       const wide = w > 70, full = t.progress === 100, mark = t.progress > 0 && t.progress < 100;
-      const mc = currentMode === 'vivid' ? '#2fa8d4' : '#574f45';
+      const mc = currentMode === 'vivid' ? '#6366f1' : '#574f45';
       h += '<div class="gantt-bar ' + t.status + '" style="position:absolute;left:' + l + 'px;top:' + top + 'px;width:' + w + 'px;">';
       h += '<div class="gantt-bar-track"></div>';
       h += '<div class="gantt-bar-fill ' + fc + (full ? ' full' : '') + '" style="width:' + (t.status === 'upcoming' ? '100%' : fw + 'px') + ';' + (t.status === 'upcoming' ? 'opacity:0.5;' : '') + '"></div>';
