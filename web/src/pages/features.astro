@@ -406,57 +406,63 @@ import Base from '../layouts/Base.astro';
       <h3>Sidebar</h3>
       <p>A scroll-synced panel with task names, status dots, phase grouping, and assignee avatars. Full-width at 280px or collapse to a 48px rail with icon-only view. Hover reveals grip handle, delete button, and add-child menu.</p>
       <div class="feature-detail">
-        Phase rows: colored pill + name + chevron + task count. Task rows: status dot + name. Milestones: diamond icon + italic name. Subtasks indent by depth. Drag to reorder, click + to add rows, color picker on phase pills.
+        Phase rows: chevron + colored pill (10px circle) + name (13px/600) + task count badge. Task rows: status dot (8px) + name (12.5px). Milestones: diamond icon + italic name. Subtasks indent by depth. Drag to reorder, click + to add rows, color picker on phase pills.
       </div>
     </div>
     <div class="feature-visual" style="border:none;box-shadow:none;background:transparent">
       <div class="demo-sidebar-wrap">
         <div class="demo-sidebar">
-          <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#3b82f6"></div>
-            <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
-            <span class="demo-sb-count">3</span>
+          <!-- Phase: Design (expanded) -->
+          <div class="demo-sb-row demo-sb-phase-row">
+            <span class="demo-sb-chevron"></span>
+            <span class="demo-sb-pill" style="background-color:#3b82f6"></span>
+            <span class="demo-sb-phase-name">Design</span>
+            <span class="demo-sb-badge">3</span>
           </div>
-          <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#3b82f6"></div>
-            <div class="demo-sb-name">Research</div>
+          <div class="demo-sb-row demo-sb-task-row">
+            <span class="demo-sb-dot" style="background:#3b82f6"></span>
+            <span class="demo-sb-name">Research</span>
           </div>
-          <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#3b82f6"></div>
-            <div class="demo-sb-name">Wireframes</div>
+          <div class="demo-sb-row demo-sb-task-row">
+            <span class="demo-sb-dot" style="background:#3b82f6"></span>
+            <span class="demo-sb-name">Wireframes</span>
           </div>
-          <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#3b82f6"></div>
-            <div class="demo-sb-name">UI Components</div>
+          <div class="demo-sb-row demo-sb-task-row">
+            <span class="demo-sb-dot" style="background:#3b82f6"></span>
+            <span class="demo-sb-name">UI Components</span>
           </div>
-          <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#8b5cf6"></div>
-            <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Engineering</div>
-            <span class="demo-sb-count">2</span>
+          <!-- Phase: Engineering (expanded) -->
+          <div class="demo-sb-row demo-sb-phase-row">
+            <span class="demo-sb-chevron"></span>
+            <span class="demo-sb-pill" style="background-color:#8b5cf6"></span>
+            <span class="demo-sb-phase-name">Engineering</span>
+            <span class="demo-sb-badge">2</span>
           </div>
-          <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#8b5cf6"></div>
-            <div class="demo-sb-name">Core Architecture</div>
+          <div class="demo-sb-row demo-sb-task-row">
+            <span class="demo-sb-dot" style="background:#8b5cf6"></span>
+            <span class="demo-sb-name">Core Architecture</span>
           </div>
-          <div class="demo-sb-row" style="padding-left:28px">
-            <div class="demo-sb-dot" style="background:#8b5cf6"></div>
-            <div class="demo-sb-name">Extension API</div>
+          <div class="demo-sb-row demo-sb-task-row">
+            <span class="demo-sb-dot" style="background:#8b5cf6"></span>
+            <span class="demo-sb-name">Extension API</span>
           </div>
-          <div class="demo-sb-row">
-            <div class="demo-sb-pill" style="background:#f59e0b"></div>
-            <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9654;</span> Testing</div>
-            <span class="demo-sb-count">4</span>
+          <!-- Phase: Testing (collapsed) -->
+          <div class="demo-sb-row demo-sb-phase-row">
+            <span class="demo-sb-chevron collapsed"></span>
+            <span class="demo-sb-pill" style="background-color:#f59e0b"></span>
+            <span class="demo-sb-phase-name">Testing</span>
+            <span class="demo-sb-badge">4</span>
           </div>
         </div>
         <div class="demo-sidebar-chart" style="min-height:200px;position:relative">
           <!-- Blue phase bar -->
           <div style="position:absolute;left:8px;top:14px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(59,130,246,0.25)"></div>
-          <div class="g-row"><div class="g-bar" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#60a5fa,#3b82f6)"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:98px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><span class="g-label inside" style="font-size:10.5px">Wireframes &middot; 70%</span></div></div>
-          <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:36px;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div><span class="g-label inside" style="font-size:10.5px">UI &middot; 30%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:20px;width:100px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:100%;border-radius:13px;background:linear-gradient(90deg,#93b4f5,#8a9ef0)"></div><span class="g-label inside" style="font-size:10.5px">Research</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:50px;width:140px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:98px;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div><span class="g-label inside" style="font-size:10.5px">Wireframes &middot; 70%</span></div></div>
+          <div class="g-row"><div class="g-bar" style="left:90px;width:120px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:36px;background:linear-gradient(90deg,#3b82f6,#6366f1)"></div><span class="g-label inside" style="font-size:10.5px">UI &middot; 30%</span></div></div>
           <!-- Purple phase bar -->
-          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(168,85,247,0.25)"></div>
-          <div class="g-row"><div class="g-bar" style="left:60px;width:160px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:112px;background:linear-gradient(90deg,#8b5cf6,#7c3aed)"></div><span class="g-label inside" style="font-size:10.5px">Core Arch &middot; 70%</span></div></div>
+          <div style="position:absolute;left:8px;top:146px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(139,92,246,0.25)"></div>
+          <div class="g-row"><div class="g-bar" style="left:60px;width:160px;height:22px;top:11px"><div class="g-track"></div><div class="g-fill" style="width:112px;background:linear-gradient(90deg,#8b5cf6,#d946ef)"></div><span class="g-label inside" style="font-size:10.5px">Core Arch &middot; 70%</span></div></div>
           <!-- Amber phase collapsed -->
           <div style="position:absolute;left:8px;top:190px;width:calc(100% - 24px);height:5px;border-radius:3px;background:rgba(245,158,11,0.25)"></div>
           <div class="g-row"></div>
@@ -483,26 +489,28 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-hdr-dur">Duration</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#3b82f6"></div>
-            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
+            <span class="demo-sb-chevron" style="width:16px;height:16px;padding:0"></span>
+            <span class="demo-sb-pill" style="background-color:#3b82f6"></span>
+            <span class="demo-col-name" style="font-weight:600">Design</span>
             <span class="demo-col-dur">&mdash;</span>
           </div>
-          <div class="demo-col-row" style="padding-left:28px">
+          <div class="demo-col-row" style="padding-left:48px">
             <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <span class="demo-col-name">Research</span>
             <span class="demo-col-dur">8d</span>
           </div>
-          <div class="demo-col-row" style="padding-left:28px">
+          <div class="demo-col-row" style="padding-left:48px">
             <div class="demo-sb-dot" style="background:#3b82f6"></div>
             <span class="demo-col-name">Wireframes</span>
             <span class="demo-col-dur demo-col-editing">12<span class="blink-cursor">&nbsp;</span></span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#8b5cf6"></div>
-            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Engineering</span>
+            <span class="demo-sb-chevron" style="width:16px;height:16px;padding:0"></span>
+            <span class="demo-sb-pill" style="background-color:#8b5cf6"></span>
+            <span class="demo-col-name" style="font-weight:600">Engineering</span>
             <span class="demo-col-dur">&mdash;</span>
           </div>
-          <div class="demo-col-row" style="padding-left:28px">
+          <div class="demo-col-row" style="padding-left:48px">
             <div class="demo-sb-dot" style="background:#8b5cf6"></div>
             <span class="demo-col-name">Core Architecture</span>
             <span class="demo-col-dur">15d</span>
@@ -531,23 +539,25 @@ import Base from '../layouts/Base.astro';
             <span class="demo-col-hdr-date">Dates</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#ec4899"></div>
-            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Design</span>
+            <span class="demo-sb-chevron" style="width:16px;height:16px;padding:0"></span>
+            <span class="demo-sb-pill" style="background-color:#ec4899"></span>
+            <span class="demo-col-name" style="font-weight:600">Design</span>
             <span class="demo-col-date">Jan 6 &ndash; Feb 14</span>
           </div>
-          <div class="demo-col-row" style="padding-left:28px">
+          <div class="demo-col-row" style="padding-left:48px">
             <div class="demo-sb-dot" style="background:#ec4899"></div>
             <span class="demo-col-name">Research</span>
             <span class="demo-col-date">Jan 6 &ndash; Jan 15</span>
           </div>
-          <div class="demo-col-row" style="padding-left:28px">
+          <div class="demo-col-row" style="padding-left:48px">
             <div class="demo-sb-dot" style="background:#ec4899"></div>
             <span class="demo-col-name">Wireframes</span>
             <span class="demo-col-date demo-col-editing">Jan 13 &ndash; Jan 28</span>
           </div>
           <div class="demo-col-row">
-            <div class="demo-sb-pill" style="background:#10b981"></div>
-            <span class="demo-col-name" style="font-weight:600"><span style="color:var(--emboss-ash);font-size:9px;margin-right:4px">&#9660;</span> Engineering</span>
+            <span class="demo-sb-chevron" style="width:16px;height:16px;padding:0"></span>
+            <span class="demo-sb-pill" style="background-color:#10b981"></span>
+            <span class="demo-col-name" style="font-weight:600">Engineering</span>
             <span class="demo-col-date">Feb 3 &ndash; Apr 11</span>
           </div>
           <div class="demo-col-row" style="padding-left:28px">
@@ -600,24 +610,25 @@ import Base from '../layouts/Base.astro';
     </div>
     <div class="feature-visual">
       <div style="padding:24px;min-height:180px">
-        <!-- Simulated sidebar rows, one in edit state with vivid phase colors -->
-        <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px">
-          <div class="demo-sb-pill" style="background:#3b82f6"></div>
-          <div class="demo-sb-phase"><span class="demo-sb-chevron">&#9660;</span> Design</div>
-          <span class="demo-sb-count">3</span>
+        <!-- Simulated sidebar rows, one in edit state -->
+        <div class="demo-sb-row" style="border-bottom:1px solid var(--emboss-border)">
+          <span class="demo-sb-chevron"></span>
+          <span class="demo-sb-pill" style="background-color:#3b82f6"></span>
+          <span class="demo-sb-phase-name">Design</span>
+          <span class="demo-sb-badge">3</span>
         </div>
-        <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;margin-bottom:6px;padding-left:28px">
-          <div class="demo-sb-dot" style="background:#3b82f6"></div>
-          <div class="demo-sb-name">Research & Discovery</div>
+        <div class="demo-sb-row" style="border-bottom:1px solid var(--emboss-border);padding-left:48px">
+          <span class="demo-sb-dot" style="background:#3b82f6"></span>
+          <span class="demo-sb-name">Research & Discovery</span>
         </div>
         <!-- This one is "editing" — border matches phase color -->
-        <div class="demo-sb-row" style="border:2px solid #3b82f6;border-radius:10px;margin-bottom:6px;padding-left:28px;background:var(--emboss-surface)">
-          <div class="demo-sb-dot" style="background:#3b82f6"></div>
-          <div style="font-size:12.5px;font-weight:500;color:var(--emboss-coal)">Wireframes & Prototyp<span class="blink-cursor">&nbsp;</span></div>
+        <div class="demo-sb-row" style="border:2px solid #3b82f6;border-radius:4px;padding-left:48px;background:var(--emboss-surface)">
+          <span class="demo-sb-dot" style="background:#3b82f6"></span>
+          <span style="font-size:12.5px;font-weight:500;color:var(--emboss-slate)">Wireframes & Prototyp<span class="blink-cursor">&nbsp;</span></span>
         </div>
-        <div class="demo-sb-row" style="border:1px solid var(--emboss-border);border-radius:10px;padding-left:28px">
-          <div class="demo-sb-dot" style="background:#3b82f6"></div>
-          <div class="demo-sb-name">UI Components</div>
+        <div class="demo-sb-row" style="border-bottom:1px solid var(--emboss-border);padding-left:48px">
+          <span class="demo-sb-dot" style="background:#3b82f6"></span>
+          <span class="demo-sb-name">UI Components</span>
         </div>
         <p style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--emboss-ash);letter-spacing:0.04em">CLICK TO EDIT &middot; ENTER TO SAVE &middot; ESC TO CANCEL</p>
       </div>
@@ -1020,25 +1031,46 @@ import Base from '../layouts/Base.astro';
   }
   :global(.demo-sb-row) {
     height: 40px; display: flex; align-items: center; gap: 8px;
-    padding: 0 14px; border-bottom: 1px solid var(--emboss-border);
-    transition: background 0.15s;
+    padding: 0 12px; border-bottom: 1px solid var(--emboss-border);
+    transition: background 0.15s; white-space: nowrap; overflow: hidden;
   }
   :global(.demo-sb-row:hover) { background: var(--emboss-surface-inset); }
-  :global(.demo-sb-dot) { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  :global(.demo-sb-name) { color: var(--emboss-coal); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :global(.demo-sb-task-row) { padding-left: 48px; }
+  :global(.demo-sb-dot) { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  :global(.demo-sb-name) {
+    color: var(--emboss-slate); font-size: 12.5px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
   :global([data-theme="dark"] .demo-sb-name) { color: var(--emboss-fog); }
-  :global(.demo-sb-phase) {
-    font-weight: 600; font-size: 12px; color: var(--emboss-coal);
-    display: flex; align-items: center; gap: 6px;
+  /* Chevron: CSS triangle via ::before, rotated 90° when expanded */
+  :global(.demo-sb-chevron) {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; flex-shrink: 0;
+    color: var(--emboss-ash); cursor: pointer;
+    transition: transform 0.15s; transform: rotate(90deg);
+    border-radius: 4px;
   }
-  :global([data-theme="dark"] .demo-sb-phase) { color: var(--emboss-white); }
-  :global(.demo-sb-chevron) { font-size: 9px; color: var(--emboss-ash); transition: transform 0.2s; }
+  :global(.demo-sb-chevron::before) {
+    content: ''; display: block; width: 0; height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+  :global(.demo-sb-chevron.collapsed) { transform: rotate(0deg); }
+  /* Pill: 10px colored circle inside 24px hit area */
   :global(.demo-sb-pill) {
-    width: 8px; height: 22px; border-radius: 4px; flex-shrink: 0;
+    width: 24px; height: 24px; padding: 7px;
+    background-clip: content-box; border-radius: 50%; flex-shrink: 0;
   }
-  :global(.demo-sb-count) {
-    font-family: var(--font-mono); font-size: 10px; color: var(--emboss-ash);
-    margin-left: auto;
+  :global(.demo-sb-phase-name) {
+    font-size: 13px; font-weight: 600; color: var(--emboss-coal); flex: 1;
+  }
+  :global([data-theme="dark"] .demo-sb-phase-name) { color: var(--emboss-white); }
+  /* Badge: pill-shaped count with border */
+  :global(.demo-sb-badge) {
+    font-size: 10px; font-weight: 500; color: var(--emboss-ash);
+    background: var(--emboss-surface-inset); border: 1px solid var(--emboss-border);
+    padding: 1px 6px; border-radius: 8px; flex-shrink: 0; margin-left: auto;
   }
   :global(.demo-sidebar-chart) { padding: 12px 16px; position: relative; overflow: hidden; }
 
