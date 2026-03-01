@@ -17,7 +17,7 @@
         <li>Dependency arrows</li>
         <li>Drag to reschedule</li>
       </ul>
-      <button class="btn-secondary" style="width:100%; justify-content:center;">Get started</button>
+      <a href="https://www.npmjs.com/package/@emboss-js/core" class="btn-secondary" style="width:100%; justify-content:center; text-decoration:none;" target="_blank" rel="noopener">Get started</a>
     </div>
     <div class="pricing-card featured">
       <h3>Organize</h3>
@@ -113,5 +113,8 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  .pricing-card:not(.featured) .pricing-features li::before {
+    background: linear-gradient(135deg, #574f45, #6d6358);
   }
 </style>
