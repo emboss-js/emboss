@@ -62,7 +62,7 @@ export function checkLicense(bundle: string): boolean {
       warned.add(bundle)
       console.warn(
         `[Emboss] The "${bundle}" bundle requires a license. ` +
-        `Get one at https://emboss.dev/pricing — your chart will work fine without it, ` +
+        `Get one at https://getemboss.io/pricing — your chart will work fine without it, ` +
         `but please support the project.`
       )
     }
@@ -109,7 +109,7 @@ export function checkLicense(bundle: string): boolean {
       warned.add('expired')
       console.warn(
         `[Emboss] Your license key expired on ${expiry.slice(0, 4)}-${expiry.slice(4, 6)}-${expiry.slice(6, 8)}. ` +
-        `Please renew at https://emboss.dev/pricing`
+        `Please renew at https://getemboss.io/pricing`
       )
     }
   }

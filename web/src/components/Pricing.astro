@@ -22,7 +22,7 @@
     <div class="pricing-card featured">
       <h3>Organize</h3>
       <p class="pricing-sub">Structure & navigation</p>
-      <p class="price">$49 <span>one-time</span></p>
+      <p class="price">$149 <span>one-time</span></p>
       <ul class="pricing-features">
         <li>Everything in Core</li>
         <li>Sidebar with collapse</li>
@@ -31,20 +31,7 @@
         <li>Inline editing</li>
         <li>Rail mode (compact)</li>
       </ul>
-      <button class="btn-vivid" style="width:100%; justify-content:center;">Purchase &rarr;</button>
-    </div>
-    <div class="pricing-card">
-      <h3>Templates</h3>
-      <p class="pricing-sub">Visual themes</p>
-      <p class="price">$19 <span>each</span></p>
-      <ul class="pricing-features">
-        <li>Vivid (color gradients)</li>
-        <li>Mono (minimal)</li>
-        <li>Blueprint (technical)</li>
-        <li>20 lines of CSS each</li>
-        <li>Dark mode included</li>
-      </ul>
-      <button class="btn-secondary" style="width:100%; justify-content:center;">Browse themes</button>
+      <a href="#" id="buy-organize" class="btn-vivid" style="width:100%; justify-content:center; text-decoration:none;">Purchase &rarr;</a>
     </div>
   </div>
 </section>
@@ -52,8 +39,15 @@
 <style>
   .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  @media (max-width: 600px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+    }
   }
   .pricing-card {
     padding: 40px 36px;
